@@ -1,0 +1,56 @@
+entity Plants {
+	name String
+    latinName String
+    description String
+    price Integer
+    stock Integer
+    imagePath String
+}
+
+entity Category {
+    categoryName String
+}
+
+entity Command {
+    address String
+    state CommandState
+    purchaseDate LocalDate
+}
+
+entity Customer {
+
+}
+
+relationship OneToOne{
+	Customer{user} to User
+}
+
+relationship ManyToMany {
+	Plants{categories} to Category{plants}
+  	Command{plants} to Plants{commands}
+}
+
+relationship OneToMany{
+    Customer{commands} to Command{customer}
+}
+
+enum CommandState {
+	InProgress, Completed, Cancelled
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
