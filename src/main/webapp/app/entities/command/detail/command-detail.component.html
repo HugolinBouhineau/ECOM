@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="command">
+      <h2 data-cy="commandDetailsHeading"><span jhiTranslate="ecomApp.command.detail.title">Command</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ command.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.command.address">Address</span></dt>
+        <dd>
+          <span>{{ command.address }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.command.state">State</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'ecomApp.CommandState.' + command.state }}">{{ command.state }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.command.purchaseDate">Purchase Date</span></dt>
+        <dd>
+          <span>{{ command.purchaseDate | formatMediumDate }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.command.plants">Plants</span></dt>
+        <dd>
+          <span *ngFor="let plants of command.plants; let last = last">
+            <a [routerLink]="['/plants', plants.id, 'view']">{{ plants.id }}</a
+            >{{ last ? '' : ', ' }}
+          </span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.command.customer">Customer</span></dt>
+        <dd>
+          <div *ngIf="command.customer">
+            <a [routerLink]="['/customer', command.customer.id, 'view']">{{ command.customer.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/command', command.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

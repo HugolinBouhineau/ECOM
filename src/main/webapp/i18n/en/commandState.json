@@ -1,0 +1,10 @@
+{
+  "ecomApp": {
+    "CommandState": {
+      "null": "",
+      "InProgress": "InProgress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    }
+  }
+}

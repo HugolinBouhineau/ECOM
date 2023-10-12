@@ -1,0 +1,28 @@
+{
+  "ecomApp": {
+    "command": {
+      "home": {
+        "title": "Commands",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Command",
+        "createOrEditLabel": "Créer ou éditer un Command",
+        "notFound": "Aucun Command trouvé"
+      },
+      "created": "Un nouveau Command a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Command avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Command avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Command {{ id }} ?"
+      },
+      "detail": {
+        "title": "Command"
+      },
+      "id": "ID",
+      "address": "Address",
+      "state": "State",
+      "purchaseDate": "Purchase Date",
+      "plants": "Plants",
+      "customer": "Customer"
+    }
+  }
+}

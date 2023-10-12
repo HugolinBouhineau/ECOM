@@ -1,0 +1,125 @@
+<div>
+  <h2 id="page-heading" data-cy="CommandHeading">
+    <span jhiTranslate="ecomApp.command.home.title">Commands</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="ecomApp.command.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-command"
+        [routerLink]="['/command/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="ecomApp.command.home.createLabel"> Create a new Command </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="commands?.length === 0">
+    <span jhiTranslate="ecomApp.command.home.notFound">No Commands found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="commands && commands.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="address">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.command.address">Address</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="state">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.command.state">State</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="purchaseDate">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.command.purchaseDate">Purchase Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="plants.id">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.command.plants">Plants</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="customer.id">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.command.customer">Customer</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let command of commands; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/command', command.id, 'view']">{{ command.id }}</a>
+          </td>
+          <td>{{ command.address }}</td>
+          <td jhiTranslate="{{ 'ecomApp.CommandState.' + command.state }}">{{ command.state }}</td>
+          <td>{{ command.purchaseDate | formatMediumDate }}</td>
+          <td>
+            <span *ngFor="let plants of command.plants; let last = last">
+              <a class="form-control-static" [routerLink]="['/plants', plants.id, 'view']">{{ plants.id }}</a
+              >{{ last ? '' : ', ' }}
+            </span>
+          </td>
+          <td>
+            <div *ngIf="command.customer">
+              <a [routerLink]="['/customer', command.customer.id, 'view']">{{ command.customer.id }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/command', command.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/command', command.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(command)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+{
+  "applications": "*",
+  "changelogDate": "20231012082901",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "customer",
+  "fields": [],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Customer",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "ownerSide": true,
+      "relationshipName": "user",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "command",
+      "otherEntityRelationshipName": "customer",
+      "relationshipName": "commands",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "no"
+}
