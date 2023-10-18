@@ -1,0 +1,31 @@
+{
+  "ecomApp": {
+    "plant": {
+      "home": {
+        "title": "Plants",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Plant",
+        "createOrEditLabel": "Créer ou éditer un Plant",
+        "notFound": "Aucun Plant trouvé"
+      },
+      "created": "Un nouveau Plant a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Plant avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Plant avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Plant {{ id }} ?"
+      },
+      "detail": {
+        "title": "Plant"
+      },
+      "id": "ID",
+      "name": "Name",
+      "latinName": "Latin Name",
+      "description": "Description",
+      "price": "Price",
+      "stock": "Stock",
+      "imagePath": "Image Path",
+      "categories": "Categories",
+      "commands": "Commands"
+    }
+  }
+}

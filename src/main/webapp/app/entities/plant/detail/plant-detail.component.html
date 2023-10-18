@@ -1,0 +1,59 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="plant">
+      <h2 data-cy="plantDetailsHeading"><span jhiTranslate="ecomApp.plant.detail.title">Plant</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ plant.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.name">Name</span></dt>
+        <dd>
+          <span>{{ plant.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.latinName">Latin Name</span></dt>
+        <dd>
+          <span>{{ plant.latinName }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.description">Description</span></dt>
+        <dd>
+          <span>{{ plant.description }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.price">Price</span></dt>
+        <dd>
+          <span>{{ plant.price }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.stock">Stock</span></dt>
+        <dd>
+          <span>{{ plant.stock }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.imagePath">Image Path</span></dt>
+        <dd>
+          <span>{{ plant.imagePath }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.plant.categories">Categories</span></dt>
+        <dd>
+          <span *ngFor="let categories of plant.categories; let last = last">
+            <a [routerLink]="['/category', categories.id, 'view']">{{ categories.id }}</a
+            >{{ last ? '' : ', ' }}
+          </span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/plant', plant.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

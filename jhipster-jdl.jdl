@@ -1,4 +1,4 @@
-entity Plants {
+entity Plant {
 	name String
     latinName String
     description String
@@ -12,45 +12,35 @@ entity Category {
 }
 
 entity Command {
-    address String
     state CommandState
     purchaseDate LocalDate
 }
 
 entity Customer {
+}
 
+entity Address {
+    city String 
+    street String 
+    additionalInfo String
+    zipCode Integer
 }
 
 relationship OneToOne{
 	Customer{user} to User
+    Command{address} to Address
 }
 
 relationship ManyToMany {
-	Plants{categories} to Category{plants}
-  	Command{plants} to Plants{commands}
+	Plant{categories} to Category{plants}
+  	Command{plants} to Plant{commands}
 }
 
 relationship OneToMany{
     Customer{commands} to Command{customer}
+    Customer{address} to Address
 }
 
 enum CommandState {
 	InProgress, Completed, Cancelled
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,45 @@
+{
+  "applications": "*",
+  "changelogDate": "20231018191001",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "command",
+  "fields": [
+    {
+      "fieldName": "state",
+      "fieldType": "CommandState",
+      "fieldValues": "InProgress,Completed,Cancelled"
+    },
+    {
+      "fieldName": "purchaseDate",
+      "fieldType": "LocalDate"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Command",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "address",
+      "ownerSide": true,
+      "relationshipName": "address",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "plant",
+      "otherEntityRelationshipName": "commands",
+      "ownerSide": true,
+      "relationshipName": "plants",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "commands",
+      "relationshipName": "customer",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}

@@ -1,0 +1,11 @@
+id;state;purchase_date
+1;Cancelled;2023-10-18
+2;InProgress;2023-10-18
+3;InProgress;2023-10-18
+4;Cancelled;2023-10-18
+5;InProgress;2023-10-17
+6;InProgress;2023-10-18
+7;Completed;2023-10-18
+8;Cancelled;2023-10-18
+9;Cancelled;2023-10-18
+10;InProgress;2023-10-18
