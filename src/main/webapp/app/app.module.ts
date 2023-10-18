@@ -25,6 +25,12 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
 import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
 import { ErrorComponent } from './layouts/error/error.component';
+import { EditInformationsComponent } from './components/edit-informations/edit-informations.component';
+import { CommandsComponent } from './components/commands/commands.component';
+import { ProductComponent } from './components/product/product.component';
+import { BasketComponent } from './components/basket/basket.component';
+import { CatalogComponent } from './components/catalog/catalog.component';
+import { PaymentComponent } from './components/payment/payment.component';
 
 @NgModule({
   imports: [
@@ -45,7 +51,20 @@ import { ErrorComponent } from './layouts/error/error.component';
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     httpInterceptorProviders,
   ],
-  declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
+  declarations: [
+    MainComponent,
+    NavbarComponent,
+    ErrorComponent,
+    PageRibbonComponent,
+    ActiveMenuDirective,
+    FooterComponent,
+    EditInformationsComponent,
+    CommandsComponent,
+    ProductComponent,
+    BasketComponent,
+    CatalogComponent,
+    PaymentComponent,
+  ],
   bootstrap: [MainComponent],
 })
 export class AppModule {

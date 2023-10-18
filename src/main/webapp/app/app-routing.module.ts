@@ -7,11 +7,41 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 import { Authority } from 'app/config/authority.constants';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { BasketComponent } from './components/basket/basket.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { ProductComponent } from './components/product/product.component';
+import { EditInformationsComponent } from './components/edit-informations/edit-informations.component';
+import { CommandsComponent } from './components/commands/commands.component';
+import { CatalogComponent } from './components/catalog/catalog.component';
 
 @NgModule({
   imports: [
     RouterModule.forRoot(
       [
+        {
+          path: 'basket',
+          component: BasketComponent,
+        },
+        {
+          path: 'catalog',
+          component: CatalogComponent,
+        },
+        {
+          path: 'commands',
+          component: CommandsComponent,
+        },
+        {
+          path: 'editInfos',
+          component: EditInformationsComponent,
+        },
+        {
+          path: 'product',
+          component: ProductComponent,
+        },
+        {
+          path: 'payment',
+          component: PaymentComponent,
+        },
         {
           path: 'admin',
           data: {

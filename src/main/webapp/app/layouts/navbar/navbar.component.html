@@ -27,6 +27,89 @@
             </span>
           </a>
         </li>
+        <li
+          *ngSwitchCase="true"
+          ngbDropdown
+          class="nav-item dropdown pointer"
+          display="dynamic"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);">
+            <span>
+              <fa-icon icon="th-list"></fa-icon>
+              <span>Temporary Menu</span>
+            </span>
+          </a>
+          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="product"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Product</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="basket"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Basket</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="catalog"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Catalog</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="commands"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Commands</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="payment"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Payment</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="editInfos"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <span>Edit Informations</span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         <li
           *ngSwitchCase="true"
