@@ -9,6 +9,7 @@ entity Plant {
 
 entity Category {
     categoryName String
+    categoryType Integer
 }
 
 entity Command {
@@ -20,8 +21,8 @@ entity Customer {
 }
 
 entity Address {
-    city String 
-    street String 
+    city String
+    street String
     additionalInfo String
     zipCode Integer
 }

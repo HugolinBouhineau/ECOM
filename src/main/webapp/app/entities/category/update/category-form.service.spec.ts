@@ -21,6 +21,7 @@ describe('Category Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             categoryName: expect.any(Object),
+            categoryType: expect.any(Object),
             plants: expect.any(Object),
           })
         );
@@ -33,6 +34,7 @@ describe('Category Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             categoryName: expect.any(Object),
+            categoryType: expect.any(Object),
             plants: expect.any(Object),
           })
         );

@@ -32,6 +32,9 @@ class CategoryResourceIT {
     private static final String DEFAULT_CATEGORY_NAME = "AAAAAAAAAA";
     private static final String UPDATED_CATEGORY_NAME = "BBBBBBBBBB";
 
+    private static final Integer DEFAULT_CATEGORY_TYPE = 1;
+    private static final Integer UPDATED_CATEGORY_TYPE = 2;
+
     private static final String ENTITY_API_URL = "/api/categories";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -56,7 +59,7 @@ class CategoryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Category createEntity(EntityManager em) {
-        Category category = new Category().categoryName(DEFAULT_CATEGORY_NAME);
+        Category category = new Category().categoryName(DEFAULT_CATEGORY_NAME).categoryType(DEFAULT_CATEGORY_TYPE);
         return category;
     }
 
@@ -67,7 +70,7 @@ class CategoryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Category createUpdatedEntity(EntityManager em) {
-        Category category = new Category().categoryName(UPDATED_CATEGORY_NAME);
+        Category category = new Category().categoryName(UPDATED_CATEGORY_NAME).categoryType(UPDATED_CATEGORY_TYPE);
         return category;
     }
 
@@ -90,6 +93,7 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeCreate + 1);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getCategoryName()).isEqualTo(DEFAULT_CATEGORY_NAME);
+        assertThat(testCategory.getCategoryType()).isEqualTo(DEFAULT_CATEGORY_TYPE);
     }
 
     @Test
@@ -122,7 +126,8 @@ class CategoryResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))
-            .andExpect(jsonPath("$.[*].categoryName").value(hasItem(DEFAULT_CATEGORY_NAME)));
+            .andExpect(jsonPath("$.[*].categoryName").value(hasItem(DEFAULT_CATEGORY_NAME)))
+            .andExpect(jsonPath("$.[*].categoryType").value(hasItem(DEFAULT_CATEGORY_TYPE)));
     }
 
     @Test
@@ -137,7 +142,8 @@ class CategoryResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(category.getId().intValue()))
-            .andExpect(jsonPath("$.categoryName").value(DEFAULT_CATEGORY_NAME));
+            .andExpect(jsonPath("$.categoryName").value(DEFAULT_CATEGORY_NAME))
+            .andExpect(jsonPath("$.categoryType").value(DEFAULT_CATEGORY_TYPE));
     }
 
     @Test
@@ -159,7 +165,7 @@ class CategoryResourceIT {
         Category updatedCategory = categoryRepository.findById(category.getId()).get();
         // Disconnect from session so that the updates on updatedCategory are not directly saved in db
         em.detach(updatedCategory);
-        updatedCategory.categoryName(UPDATED_CATEGORY_NAME);
+        updatedCategory.categoryName(UPDATED_CATEGORY_NAME).categoryType(UPDATED_CATEGORY_TYPE);
 
         restCategoryMockMvc
             .perform(
@@ -174,6 +180,7 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getCategoryName()).isEqualTo(UPDATED_CATEGORY_NAME);
+        assertThat(testCategory.getCategoryType()).isEqualTo(UPDATED_CATEGORY_TYPE);
     }
 
     @Test
@@ -259,6 +266,7 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getCategoryName()).isEqualTo(UPDATED_CATEGORY_NAME);
+        assertThat(testCategory.getCategoryType()).isEqualTo(DEFAULT_CATEGORY_TYPE);
     }
 
     @Test
@@ -273,7 +281,7 @@ class CategoryResourceIT {
         Category partialUpdatedCategory = new Category();
         partialUpdatedCategory.setId(category.getId());
 
-        partialUpdatedCategory.categoryName(UPDATED_CATEGORY_NAME);
+        partialUpdatedCategory.categoryName(UPDATED_CATEGORY_NAME).categoryType(UPDATED_CATEGORY_TYPE);
 
         restCategoryMockMvc
             .perform(
@@ -288,6 +296,7 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getCategoryName()).isEqualTo(UPDATED_CATEGORY_NAME);
+        assertThat(testCategory.getCategoryType()).isEqualTo(UPDATED_CATEGORY_TYPE);
     }
 
     @Test

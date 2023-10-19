@@ -18,6 +18,10 @@
         <dd>
           <span>{{ category.categoryName }}</span>
         </dd>
+        <dt><span jhiTranslate="ecomApp.category.categoryType">Category Type</span></dt>
+        <dd>
+          <span>{{ category.categoryType }}</span>
+        </dd>
       </dl>
 
       <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

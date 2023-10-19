@@ -19,6 +19,7 @@ type CategoryFormDefaults = Pick<NewCategory, 'id' | 'plants'>;
 type CategoryFormGroupContent = {
   id: FormControl<ICategory['id'] | NewCategory['id']>;
   categoryName: FormControl<ICategory['categoryName']>;
+  categoryType: FormControl<ICategory['categoryType']>;
   plants: FormControl<ICategory['plants']>;
 };
 
@@ -40,6 +41,7 @@ export class CategoryFormService {
         }
       ),
       categoryName: new FormControl(categoryRawValue.categoryName),
+      categoryType: new FormControl(categoryRawValue.categoryType),
       plants: new FormControl(categoryRawValue.plants ?? []),
     });
   }

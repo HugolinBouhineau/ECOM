@@ -28,6 +28,9 @@ public class Category implements Serializable {
     @Column(name = "category_name")
     private String categoryName;
 
+    @Column(name = "category_type")
+    private Integer categoryType;
+
     @ManyToMany(mappedBy = "categories")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "categories", "commands" }, allowSetters = true)
@@ -59,6 +62,19 @@ public class Category implements Serializable {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public Integer getCategoryType() {
+        return this.categoryType;
+    }
+
+    public Category categoryType(Integer categoryType) {
+        this.setCategoryType(categoryType);
+        return this;
+    }
+
+    public void setCategoryType(Integer categoryType) {
+        this.categoryType = categoryType;
     }
 
     public Set<Plant> getPlants() {
@@ -117,6 +133,7 @@ public class Category implements Serializable {
         return "Category{" +
             "id=" + getId() +
             ", categoryName='" + getCategoryName() + "'" +
+            ", categoryType=" + getCategoryType() +
             "}";
     }
 }
