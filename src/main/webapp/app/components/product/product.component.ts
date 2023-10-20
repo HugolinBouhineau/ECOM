@@ -2,6 +2,7 @@ import {Component, OnInit, Query} from '@angular/core';
 import {PlantService} from "../../entities/plant/service/plant.service";
 import {ActivatedRoute, Router, Params} from '@angular/router';
 import {IPlant} from "../../entities/plant/plant.model";
+import {PanierService, Item} from "../../panier.service"
 
 @Component({
   selector: 'jhi-product',
@@ -16,12 +17,13 @@ export class ProductComponent implements OnInit {
   plantID:number = 0;
   imagePath:string = "";
   path:string = "";
-  constructor(private ps:PlantService, private activatedRoute:ActivatedRoute) {}
+  constructor(private ps:PlantService,
+              private activatedRoute:ActivatedRoute,
+              private paniers:PanierService) {}
 
   public AddToCart(){
-    console.log("CLIKED !");
+    this.paniers.addToCart(<IPlant> this.plant);
   }
-
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {
