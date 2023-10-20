@@ -18,6 +18,11 @@ export class ProductComponent implements OnInit {
   path:string = "";
   constructor(private ps:PlantService, private activatedRoute:ActivatedRoute) {}
 
+  public AddToCart(){
+    console.log("CLIKED !");
+  }
+
+
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plantID = params['PlantId'];});
@@ -25,10 +30,8 @@ export class ProductComponent implements OnInit {
     this.ps.find(this.plantID).subscribe(
       plant => {
         this.plant = plant.body;
-        console.log(plant)
         this.stock = this.plant.stock;
         this.imagePath = this.path + "/" + this.plant.imagePath;
-
       }
     );
   }
