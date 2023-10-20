@@ -1,8 +1,30 @@
 <jhi-alert class="float float-end"></jhi-alert>
 <div class="container pt-5">
-  <div class="row justify-content-center">
-    <div class="form-group has-search m-5" style="width: 800px">
+  <div class="row justify-content-center m-5">
+    <div class="form-group has-search col-md-8">
       <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchWord" />
+    </div>
+    <div
+      ngbDropdown
+      class="nav-item dropdown pointer col-md-1 justify-content-center"
+      display="dynamic"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);">
+        <span>
+          <fa-icon icon="th-list"></fa-icon>
+          <span>Trier par</span>
+        </span>
+      </a>
+      <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+        <li class="dropdown-item" (click)="sortByAscendingPrice()">
+          <span>Prix croissant</span>
+        </li>
+        <li class="dropdown-item" (click)="sortByDescendingPrice()">
+          <span>Prix décroissant</span>
+        </li>
+      </ul>
     </div>
   </div>
   <div class="row">

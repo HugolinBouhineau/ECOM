@@ -61,4 +61,24 @@ export class CatalogComponent implements OnInit {
     this.panierService.addToCart(plant);
     this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
   }
+
+  sortByAscendingPrice() {
+    this.plants.sort((a: IPlant, b: IPlant) => this.compare(a, b));
+  }
+
+  sortByDescendingPrice() {
+    this.plants.sort((a: IPlant, b: IPlant) => this.compare(b, a));
+  }
+
+  compare(a: IPlant, b: IPlant) {
+    if (a.price == null || b.price == null) {
+      return 0;
+    }
+    if (a.price < b.price) {
+      return -1;
+    } else if (a.price > b.price) {
+      return 1;
+    }
+    return 0;
+  }
 }
