@@ -35,7 +35,7 @@ import { CatalogComponent } from './components/catalog/catalog.component';
           component: EditInformationsComponent,
         },
         {
-          path: 'product',
+          path: 'plant/:PlantId',
           component: ProductComponent,
         },
         {
