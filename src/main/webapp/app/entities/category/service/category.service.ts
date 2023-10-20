@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -17,6 +17,10 @@ export class CategoryService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/categories');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+
+  all(): Observable<ICategory[]> {
+    return this.http.get(this.resourceUrl).pipe(map((body: any) => body));
+  }
 
   create(category: NewCategory): Observable<EntityResponseType> {
     return this.http.post<ICategory>(this.resourceUrl, category, { observe: 'response' });

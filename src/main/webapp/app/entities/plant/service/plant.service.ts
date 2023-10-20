@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IPlant, NewPlant } from '../plant.model';
+import { ICategory } from '../../category/category.model';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -17,6 +18,10 @@ export class PlantService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/plants');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+
+  all(): Observable<IPlant[]> {
+    return this.http.get(this.resourceUrl).pipe(map((body: any) => body));
+  }
 
   create(plant: NewPlant): Observable<EntityResponseType> {
     return this.http.post<IPlant>(this.resourceUrl, plant, { observe: 'response' });
