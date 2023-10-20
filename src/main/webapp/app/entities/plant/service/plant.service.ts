@@ -20,7 +20,7 @@ export class PlantService {
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   all(): Observable<IPlant[]> {
-    return this.http.get(this.resourceUrl).pipe(map((body: any) => body));
+    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
   }
 
   create(plant: NewPlant): Observable<EntityResponseType> {

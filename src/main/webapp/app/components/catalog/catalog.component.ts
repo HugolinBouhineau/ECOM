@@ -13,6 +13,7 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
+  categoriesSelected: Number[] = [];
 
   constructor(private cs: CategoryService, private ps: PlantService) {}
 
@@ -24,11 +25,25 @@ export class CatalogComponent implements OnInit {
 
     this.ps.all().subscribe(value => {
       this.plants = value;
-      console.log(this.plants);
     });
   }
 
   onlyUnique(value: any, index: any, array: any) {
     return array.indexOf(value) === index;
+  }
+
+  checkCategory(cat: ICategory) {
+    if (this.categoriesSelected.includes(cat.id)) {
+      this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
+    } else {
+      this.categoriesSelected.push(cat.id);
+    }
+  }
+
+  checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {
+    return (
+      this.categoriesSelected.length == 0 ||
+      (cats != null && cats.filter(value => this.categoriesSelected.includes(value.id)).length == this.categoriesSelected.length)
+    );
   }
 }
