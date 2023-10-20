@@ -18,6 +18,7 @@ export class CatalogComponent implements OnInit {
   plants: IPlant[] = [];
   categoriesSelected: Number[] = [];
   searchWord: string = '';
+  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
 
   constructor(
     private cs: CategoryService,
