@@ -3,6 +3,9 @@ import { CategoryService } from '../../entities/category/service/category.servic
 import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
+import { Router } from '@angular/router';
+import { PanierService } from '../../panier.service';
+import { AlertService } from '../../core/util/alert.service';
 
 @Component({
   selector: 'jhi-catalog',
@@ -16,7 +19,13 @@ export class CatalogComponent implements OnInit {
   categoriesSelected: Number[] = [];
   searchWord: string = '';
 
-  constructor(private cs: CategoryService, private ps: PlantService) {}
+  constructor(
+    private cs: CategoryService,
+    private ps: PlantService,
+    private router: Router,
+    private panierService: PanierService,
+    private alertService: AlertService
+  ) {}
 
   ngOnInit(): void {
     this.cs.all().subscribe(value => {
@@ -46,5 +55,10 @@ export class CatalogComponent implements OnInit {
       this.categoriesSelected.length == 0 ||
       (cats != null && cats.filter(value => this.categoriesSelected.includes(value.id)).length == this.categoriesSelected.length)
     );
+  }
+
+  addToCart(plant: IPlant) {
+    this.panierService.addToCart(plant);
+    this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
   }
 }
