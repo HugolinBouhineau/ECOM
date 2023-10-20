@@ -14,6 +14,7 @@ export class CatalogComponent implements OnInit {
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
   categoriesSelected: Number[] = [];
+  searchWord: string = '';
 
   constructor(private cs: CategoryService, private ps: PlantService) {}
 
