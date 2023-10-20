@@ -1,1 +1,46 @@
-<p>product works!</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>eCommerce Product Detail</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+    <div class="container-fliud">
+      <div class="wrapper row">
+        <div class="preview col-md-6">
+
+          <div class="preview-pic tab-content">
+            <div class="tab-pane active" id="pic-1"><img src={{imagePath}} /></div>
+          </div>
+
+        </div>
+        <div class="details col-md-6">
+          <h3 class="product-title"> {{plant.name}} </h3>
+          <h4 class="latin_name"> {{plant.latinName}}</h4>
+          <p class="product-description"><br>
+            <br>{{plant.description}}<br></p>
+          <h4 class="price">
+            price: <span> {{plant.price}}€ </span>
+          </h4>
+          <div *ngIf="stock>0; else elseBlock" class="action">
+            <button class="add-to-cart" (click)="AddToCart()">ajouter au panier</button>
+          </div>
+          <ng-template #elseBlock>
+            Plante en rupture de stock !
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
