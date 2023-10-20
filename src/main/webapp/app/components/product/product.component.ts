@@ -1,6 +1,6 @@
-import {Component, OnInit, Query} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PlantService} from "../../entities/plant/service/plant.service";
-import {ActivatedRoute, Router, Params} from '@angular/router';
+import {ActivatedRoute, Params} from '@angular/router';
 import {IPlant} from "../../entities/plant/plant.model";
 import {PanierService, Item} from "../../panier.service"
 
