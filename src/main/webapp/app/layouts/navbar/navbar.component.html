@@ -2,8 +2,7 @@
   <div class="container-fluid">
     <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
-      <span jhiTranslate="global.title" class="navbar-title">Ecom</span>
-      <span class="navbar-version">{{ version }}</span>
+      <span class="navbar-title">La serre enchantée</span>
     </a>
     <a
       class="navbar-toggler d-lg-none"
@@ -19,16 +18,8 @@
     </a>
     <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed" [ngSwitch]="account !== null">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <a class="nav-link" routerLink="/" (click)="collapseNavbar()">
-            <span>
-              <fa-icon icon="home"></fa-icon>
-              <span jhiTranslate="global.menu.home">Home</span>
-            </span>
-          </a>
-        </li>
         <li
-          *ngSwitchCase="true"
+          *jhiHasAnyAuthority="'ROLE_ADMIN'"
           ngbDropdown
           class="nav-item dropdown pointer"
           display="dynamic"
@@ -112,7 +103,7 @@
         </li>
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         <li
-          *ngSwitchCase="true"
+          *jhiHasAnyAuthority="'ROLE_ADMIN'"
           ngbDropdown
           class="nav-item dropdown pointer"
           display="dynamic"
@@ -249,24 +240,40 @@
             </li>
           </ul>
         </li>
-        <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="languagesnavBarDropdown">
+<!--        <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">-->
+<!--          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="languagesnavBarDropdown">-->
+<!--            <span>-->
+<!--              <fa-icon icon="flag"></fa-icon>-->
+<!--              <span jhiTranslate="global.menu.language">Language</span>-->
+<!--            </span>-->
+<!--          </a>-->
+<!--          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="languagesnavBarDropdown">-->
+<!--            <li *ngFor="let language of languages">-->
+<!--              <a-->
+<!--                class="dropdown-item"-->
+<!--                [jhiActiveMenu]="language"-->
+<!--                href="javascript:void(0);"-->
+<!--                (click)="changeLanguage(language); collapseNavbar()"-->
+<!--                >{{ language | findLanguageFromKey }}</a-->
+<!--              >-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </li>-->
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-link" routerLink="catalog" (click)="collapseNavbar()">
             <span>
-              <fa-icon icon="flag"></fa-icon>
-              <span jhiTranslate="global.menu.language">Language</span>
+              <fa-icon icon="leaf"></fa-icon>
+              <span>Catalogue</span>
             </span>
           </a>
-          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="languagesnavBarDropdown">
-            <li *ngFor="let language of languages">
-              <a
-                class="dropdown-item"
-                [jhiActiveMenu]="language"
-                href="javascript:void(0);"
-                (click)="changeLanguage(language); collapseNavbar()"
-                >{{ language | findLanguageFromKey }}</a
-              >
-            </li>
-          </ul>
+        </li>
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-link" routerLink="basket" (click)="collapseNavbar()">
+            <span>
+              <fa-icon icon="cart-shopping"></fa-icon>
+              <span>Mon panier</span>
+            </span>
+          </a>
         </li>
         <li
           ngbDropdown
@@ -278,7 +285,7 @@
           <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu" data-cy="accountMenu">
             <span *ngIf="!account?.imageUrl">
               <fa-icon icon="user"></fa-icon>
-              <span jhiTranslate="global.menu.account.main">Account</span>
+              <span>Mon compte</span>
             </span>
             <span *ngIf="account?.imageUrl">
               <img [src]="account!.imageUrl" class="profile-image rounded-circle" alt="Avatar" />
@@ -288,31 +295,31 @@
             <li *ngSwitchCase="true">
               <a
                 class="dropdown-item"
-                routerLink="account/settings"
+                routerLink="editInfos"
                 routerLinkActive="active"
                 (click)="collapseNavbar()"
                 data-cy="settings"
               >
                 <fa-icon icon="wrench" [fixedWidth]="true"></fa-icon>
-                <span jhiTranslate="global.menu.account.settings">Settings</span>
+                <span>Changer mes informations personnelles</span>
               </a>
             </li>
             <li *ngSwitchCase="true">
               <a
                 class="dropdown-item"
-                routerLink="account/password"
+                routerLink="commands"
                 routerLinkActive="active"
                 (click)="collapseNavbar()"
                 data-cy="passwordItem"
               >
-                <fa-icon icon="lock" [fixedWidth]="true"></fa-icon>
-                <span jhiTranslate="global.menu.account.password">Password</span>
+                <fa-icon icon="list" [fixedWidth]="true"></fa-icon>
+                <span>Consulter mes commandes</span>
               </a>
             </li>
             <li *ngSwitchCase="true">
               <a class="dropdown-item" (click)="logout()" id="logout" data-cy="logout">
                 <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
-                <span jhiTranslate="global.menu.account.logout">Sign out</span>
+                <span>Se déconnecter</span>
               </a>
             </li>
             <li *ngSwitchCase="false">
