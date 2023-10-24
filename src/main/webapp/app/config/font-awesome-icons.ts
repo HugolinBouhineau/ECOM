@@ -82,6 +82,8 @@ export const fontAwesomeIcons = [
   faUsers,
   faUsersCog,
   faWrench,
+  faLeaf,
+  faCartShopping,
   faCartPlus,
   // jhipster-needle-add-icon-import
 ];
