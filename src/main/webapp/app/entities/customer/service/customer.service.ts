@@ -47,6 +47,10 @@ export class CustomerService {
     return customer.id;
   }
 
+  getCurrentCustomer(login: string | undefined): Observable<ICustomer | undefined> {
+    return this.http.get<ICustomer | undefined>(this.applicationConfigService.getEndpointFor('api/current-customer'));
+  }
+
   compareCustomer(o1: Pick<ICustomer, 'id'> | null, o2: Pick<ICustomer, 'id'> | null): boolean {
     return o1 && o2 ? this.getCustomerIdentifier(o1) === this.getCustomerIdentifier(o2) : o1 === o2;
   }

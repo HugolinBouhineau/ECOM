@@ -2,6 +2,7 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Customer;
 import com.mycompany.myapp.repository.CustomerRepository;
+import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -155,6 +156,19 @@ public class CustomerResource {
         log.debug("REST request to get Customer : {}", id);
         Optional<Customer> customer = customerRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(customer);
+    }
+
+    /**
+     * {@code GET /current-customer} : get the current customer (last authenticated)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the customer, or with status {@code 404 (Not Found)}
+     */
+    @GetMapping("/current-customer")
+    public ResponseEntity<Customer> getCurrentCustomer() {
+        log.debug("REST request to get current Customer");
+        Optional<Customer> currentCustomer = customerRepository.findCustomerByLogin(SecurityUtils.getCurrentUserLogin());
+        log.debug("REST current customer is {}", currentCustomer);
+        return ResponseUtil.wrapOrNotFound(currentCustomer);
     }
 
     /**
