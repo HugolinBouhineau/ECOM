@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Item, PanierService } from '../../panier.service';
 import { IPlant } from '../../entities/plant/plant.model';
+import { AlertService } from '../../core/util/alert.service';
 
 @Component({
   selector: 'jhi-basket',
@@ -8,22 +9,26 @@ import { IPlant } from '../../entities/plant/plant.model';
   styleUrls: ['./basket.component.scss'],
 })
 export class BasketComponent implements OnInit {
-  items: Item[] = [];
-  total: number = 0;
+  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
 
-  constructor(private ps: PanierService) {}
+  constructor(private ps: PanierService, private alertService: AlertService) {}
 
-  ngOnInit(): void {
-    this.items = this.ps.getItems();
-    this.total = this.ps.getTotal();
-  }
+  ngOnInit(): void {}
 
   getTotal() {
     return this.ps.getTotal();
   }
 
-  addItem(plant: IPlant): void {
-    this.ps.addToCart(plant);
+  getItems() {
+    return this.ps.getItems();
+  }
+
+  addItem(item: Item): void {
+    if (item.plant.stock && item.plant.stock > item.get_quantity()) {
+      this.ps.addToCart(item.plant);
+    } else {
+      this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée" });
+    }
   }
 
   lessItem(plant: IPlant): void {
@@ -32,11 +37,9 @@ export class BasketComponent implements OnInit {
 
   Clear(): void {
     this.ps.clearCart();
-    window.location.reload();
   }
 
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
-    window.location.reload();
   }
 }
