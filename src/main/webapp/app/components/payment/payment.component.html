@@ -1,1 +1,64 @@
-<p>payment works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <form (ngSubmit)="submit()">
+        <div class="form-delivery">
+          <h3>Informations pour la livraison</h3>
+          <!-- Information pour la livraison -->
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="Adresse" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="Code postal" />
+            </div>
+            <div class="col">
+              <input type="text" placeholder="Ville" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="Informations complémentaires" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="checkbox" id="saveCheck" />
+              <label for="saveCheck">Enregistrer adresse</label>
+            </div>
+          </div>
+        </div>
+        <!-- FIN Information pour la livraison -->
+        <!-- Information pour le paiment -->
+        <div class="form-payment">
+          <h3>Informations pour le paiement</h3>
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="Numéro carte" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="mm/aaaa" />
+            </div>
+            <div class="col">
+              <input type="text" placeholder="Code secret" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <input type="text" placeholder="Nom et prénom propriétaire" />
+            </div>
+          </div>
+        </div>
+        <!-- Information pour le paiment -->
+        <button type="submit">Payer</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div *ngIf="authenticatedUser && customer">
+  <h3>Customer ID, Login : {{ customer.id }}, {{ authenticatedUser.login }}</h3>
+</div>
