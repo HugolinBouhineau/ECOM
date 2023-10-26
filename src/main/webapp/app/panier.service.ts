@@ -56,6 +56,7 @@ export class PanierService {
 
   clearCart(): Item[] {
     this.items = [];
+    this.list_nom = [];
     this.total = 0;
     return this.items;
   }
@@ -69,5 +70,6 @@ export class PanierService {
     this.total = this.total - this.items[index].quantity * <number>plant.price;
     delete this.items[index];
     delete this.list_nom[index];
+    this.items = this.items.filter(Boolean);
   }
 }
