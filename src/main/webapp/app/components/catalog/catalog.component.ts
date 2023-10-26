@@ -32,6 +32,11 @@ export class CatalogComponent implements OnInit {
     this.cs.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
+      this.categories.map(cat => {
+        if (cat.categoryName) {
+          cat.categoryName = cat.categoryName.charAt(0).toUpperCase() + cat.categoryName.slice(1).toLowerCase();
+        }
+      });
     });
 
     this.ps.all().subscribe(value => {
