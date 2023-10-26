@@ -36,7 +36,7 @@
               *ngIf="checkArrayIntersect(plant.categories) && plant.name && plant.name.toLowerCase().includes(searchWord.toLowerCase())"
               class="col-6 col-md-6 col-lg-4 mb-3"
             >
-              <div class="card h-100 border-0">
+              <div class="card h-100 border-0" [ngStyle]="{ filter: !plant.stock || plant.stock <= 0 ? 'grayscale(1)' : '' }">
                 <div class="card-img-top">
                   <img src="{{ imgUrl + plant.imagePath }}" class="img-fluid mx-auto d-block" alt="Card image cap" />
                 </div>
@@ -51,10 +51,11 @@
                   </h5>
                   <div>
                     <h5 class="card-price small text-warning">{{ plant.price }}€</h5>
-                    <button type="button" class="btn btn-default btn-sm" (click)="addToCart(plant)">
+                    <button *ngIf="plant.stock && plant.stock > 0" type="button" class="btn btn-default btn-sm" (click)="addToCart(plant)">
                       <fa-icon icon="cart-plus"></fa-icon>
                       Ajouter au panier
                     </button>
+                    <p *ngIf="!plant.stock || plant.stock <= 0">Pas en stock</p>
                   </div>
                 </div>
               </div>
