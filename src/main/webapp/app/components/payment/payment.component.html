@@ -62,3 +62,6 @@
 <div *ngIf="authenticatedUser && customer">
   <h3>Customer ID, Login : {{ customer.id }}, {{ authenticatedUser.login }}</h3>
 </div>
+<div *ngIf="addresses">
+  <h3>{{ addresses.length}}</h3>
+</div>
