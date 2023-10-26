@@ -44,6 +44,12 @@
               <fa-icon class="p-1" icon="sort"></fa-icon>
             </div>
           </th>
+          <th scope="col" jhiSortBy="categoryType">
+            <div class="d-flex">
+              <span jhiTranslate="ecomApp.category.categoryType">Category Type</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -53,6 +59,7 @@
             <a [routerLink]="['/category', category.id, 'view']">{{ category.id }}</a>
           </td>
           <td>{{ category.categoryName }}</td>
+          <td>{{ category.categoryType }}</td>
           <td class="text-end">
             <div class="btn-group">
               <button

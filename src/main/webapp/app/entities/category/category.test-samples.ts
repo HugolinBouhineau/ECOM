@@ -5,13 +5,15 @@ export const sampleWithRequiredData: ICategory = {
 };
 
 export const sampleWithPartialData: ICategory = {
-  id: 67522,
-  categoryName: 'Car uniform up',
+  id: 98520,
+  categoryName: 'Sausages',
+  categoryType: 77300,
 };
 
 export const sampleWithFullData: ICategory = {
-  id: 87066,
-  categoryName: 'one-to-one programming PCI',
+  id: 554,
+  categoryName: 'USB Down-sized Principal',
+  categoryType: 35731,
 };
 
 export const sampleWithNewData: NewCategory = {

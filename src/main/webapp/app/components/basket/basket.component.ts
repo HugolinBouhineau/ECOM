@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Item, PanierService} from '../../panier.service'
-import {IPlant} from "../../entities/plant/plant.model";
+import { Item, PanierService } from '../../panier.service';
+import { IPlant } from '../../entities/plant/plant.model';
 
 @Component({
   selector: 'jhi-basket',
@@ -8,29 +8,29 @@ import {IPlant} from "../../entities/plant/plant.model";
   styleUrls: ['./basket.component.scss'],
 })
 export class BasketComponent implements OnInit {
-  items:Item[] = [];
-  total:number = 0;
+  items: Item[] = [];
+  total: number = 0;
 
-  constructor(private ps:PanierService) {}
+  constructor(private ps: PanierService) {}
 
   ngOnInit(): void {
     this.items = this.ps.getItems();
     this.total = this.ps.getTotal();
   }
 
-  addItem(plant:IPlant):void{
+  addItem(plant: IPlant): void {
     this.ps.addToCart(plant);
   }
 
-  lessItem(plant:IPlant):void{
+  lessItem(plant: IPlant): void {
     this.ps.LessToCart(plant);
   }
 
-  Clear():void{
+  Clear(): void {
     this.ps.clearCart();
   }
 
-  removeItem(plant:IPlant):void{
+  removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
   }
 }

@@ -1,1 +1,81 @@
-<p>catalog works!</p>
+<jhi-alert class="float float-end"></jhi-alert>
+<div class="container pt-5">
+  <div class="row justify-content-end m-5">
+    <div class="form-group has-search col-md-8">
+      <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchWord" />
+    </div>
+    <div
+      ngbDropdown
+      class="nav-item dropdown pointer col-md-1 justify-content-center"
+      display="dynamic"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);">
+        <span>
+          <fa-icon icon="th-list"></fa-icon>
+          <span>Trier par</span>
+        </span>
+      </a>
+      <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+        <li class="dropdown-item" (click)="sortByAscendingPrice()">
+          <span>Prix croissant</span>
+        </li>
+        <li class="dropdown-item" (click)="sortByDescendingPrice()">
+          <span>Prix décroissant</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 order-md-2 col-lg-9">
+      <div class="container-fluid">
+        <div class="row">
+          <ng-container *ngFor="let plant of plants">
+            <div
+              *ngIf="checkArrayIntersect(plant.categories) && plant.name && plant.name.toLowerCase().includes(searchWord.toLowerCase())"
+              class="col-6 col-md-6 col-lg-4 mb-3"
+            >
+              <div class="card h-100 border-0">
+                <div class="card-img-top">
+                  <img src="{{ imgUrl + plant.imagePath }}" class="img-fluid mx-auto d-block" alt="Card image cap" />
+                </div>
+                <div class="card-body text-center">
+                  <h4 class="card-title">
+                    <a routerLink="/plant/{{ plant.id }}" class="no-underline font-weight-bold text-dark text-uppercase small">
+                      {{ plant.name }}</a
+                    >
+                  </h4>
+                  <h5>
+                    <p class="font-italic">{{ plant.latinName }}</p>
+                  </h5>
+                  <div>
+                    <h5 class="card-price small text-warning">{{ plant.price }}€</h5>
+                    <button type="button" class="btn btn-default btn-sm" (click)="addToCart(plant)">
+                      <fa-icon icon="cart-plus"></fa-icon>
+                      Ajouter au panier
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 order-md-1 col-lg-3 sidebar-filter">
+      <h6 class="text-uppercase font-weight-bold mb-3">Categories</h6>
+      <div *ngFor="let type of categoryTypes">
+        <div class="divider mt-3 mb-3 border-bottom border-secondary"></div>
+        <div *ngFor="let cat of categories">
+          <div *ngIf="cat.categoryType == type" class="mt-2 mb-2 pl-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" (change)="checkCategory(cat)" />
+              <label class="custom-control-label">{{ cat.categoryName }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

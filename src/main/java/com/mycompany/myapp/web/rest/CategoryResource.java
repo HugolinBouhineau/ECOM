@@ -126,6 +126,9 @@ public class CategoryResource {
                 if (category.getCategoryName() != null) {
                     existingCategory.setCategoryName(category.getCategoryName());
                 }
+                if (category.getCategoryType() != null) {
+                    existingCategory.setCategoryType(category.getCategoryType());
+                }
 
                 return existingCategory;
             })

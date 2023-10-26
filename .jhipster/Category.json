@@ -8,6 +8,10 @@
     {
       "fieldName": "categoryName",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "categoryType",
+      "fieldType": "Integer"
     }
   ],
   "fluentMethods": true,
