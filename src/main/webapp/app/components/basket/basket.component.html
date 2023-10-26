@@ -1,3 +1,4 @@
+<jhi-alert class="toaster float-end"></jhi-alert>
 <div class="container">
   <div class="row">
     <div class="col-xs-8">
@@ -34,7 +35,7 @@
                   {{ item.get_quantity() }}
                 </div>
                 <div class="child">
-                  <button type="button" class="btn btn-link btn-xs" (click)="addItem(item.plant)">
+                  <button type="button" class="btn btn-link btn-xs" (click)="addItem(item)">
                     <fa-icon icon="plus"></fa-icon>
                   </button>
                 </div>
@@ -42,6 +43,10 @@
                   <button type="button" class="btn btn-link btn-xs" (click)="removeItem(item.plant)">
                     <fa-icon icon="trash-alt"></fa-icon>
                   </button>
+                </div>
+                <div *ngIf="item.plant.stock && item.plant.stock < 10" class="child">
+                  <fa-icon icon="exclamation-triangle"></fa-icon>
+                  Stock faible : {{ item.plant.stock }} objets restants
                 </div>
               </div>
             </div>
