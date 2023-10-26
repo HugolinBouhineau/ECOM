@@ -18,6 +18,10 @@ export class BasketComponent implements OnInit {
     this.total = this.ps.getTotal();
   }
 
+  getTotal(){
+    return this.ps.getTotal();
+  }
+
   addItem(plant: IPlant): void {
     this.ps.addToCart(plant);
   }
@@ -28,9 +32,11 @@ export class BasketComponent implements OnInit {
 
   Clear(): void {
     this.ps.clearCart();
+    window.location.reload();
   }
 
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
+    window.location.reload();
   }
 }
