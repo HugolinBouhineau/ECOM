@@ -12,7 +12,7 @@ import { Account } from 'app/core/auth/account.model';
 })
 export class PaymentComponent implements OnInit {
   authenticatedUser: Account | undefined;
-  customer!: ICustomer;
+  customer: ICustomer | undefined;
 
   constructor(private accountService: AccountService, private customerService: CustomerService) {}
 
@@ -24,6 +24,9 @@ export class PaymentComponent implements OnInit {
         this.authenticatedUser = undefined;
       }
     });
+    this.customerService.getCurrentCustomer().subscribe((customer: ICustomer | undefined) => {
+      this.customer = customer
+    })
   }
 
   submit() {}

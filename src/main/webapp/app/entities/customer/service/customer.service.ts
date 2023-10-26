@@ -47,7 +47,7 @@ export class CustomerService {
     return customer.id;
   }
 
-  getCurrentCustomer(login: string | undefined): Observable<ICustomer | undefined> {
+  getCurrentCustomer(): Observable<ICustomer | undefined> {
     return this.http.get<ICustomer | undefined>(this.applicationConfigService.getEndpointFor('api/current-customer'));
   }
 

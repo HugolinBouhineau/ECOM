@@ -59,6 +59,6 @@
     </div>
   </div>
 </div>
-<div *ngIf="authenticatedUser">
-  <h3>{{ authenticatedUser.login }}</h3>
+<div *ngIf="authenticatedUser && customer">
+  <h3>Customer ID, Login : {{ customer.id }}, {{ authenticatedUser.login }}</h3>
 </div>
