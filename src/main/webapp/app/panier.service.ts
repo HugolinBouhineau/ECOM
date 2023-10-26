@@ -68,5 +68,6 @@ export class PanierService {
     let index: number = this.list_nom.indexOf(<string>plant.name);
     this.total = this.total - this.items[index].quantity * <number>plant.price;
     delete this.items[index];
+    delete this.list_nom[index];
   }
 }
