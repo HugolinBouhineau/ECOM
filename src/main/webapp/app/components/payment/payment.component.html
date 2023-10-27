@@ -1,5 +1,13 @@
 <div class="container">
   <div class="row">
+    <div *ngIf="addresses && addresses.length > 0">
+      <label>Ecrire une addresse</label>
+      <br>
+      <select #addrdropdown [(ngModel)]='selectedAddrIndex' (change)="test()">
+        <option [value]='-1' selected>Sélectionner une addresse</option>
+        <option *ngFor="let addr of addresses; let i = index" [value]="i">{{ addr.street}}, {{ addr.zipCode }} {{ addr.street }}</option>
+      </select>
+    </div>
     <div class="col">
       <form (ngSubmit)="submit()">
         <div class="form-delivery">
@@ -7,20 +15,20 @@
           <!-- Information pour la livraison -->
           <div class="row">
             <div class="col">
-              <input type="text" placeholder="Adresse" />
+              <input type="text" placeholder="Adresse" [ngModel]="inputAddr" name="inputAddress"/>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <input type="text" placeholder="Code postal" />
+              <input type="text" placeholder="Code postal" [ngModel]="inputZipcode" name="inputZipCode"/>
             </div>
             <div class="col">
-              <input type="text" placeholder="Ville" />
+              <input type="text" placeholder="Ville" [(ngModel)]="inputCity" name="inputCity"/>
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <input type="text" placeholder="Informations complémentaires" />
+              <input type="text" placeholder="Informations complémentaires" [(ngModel)]="inputAddInfo" name="inputAdditionalInfo"/>
             </div>
           </div>
           <div class="row">
@@ -58,10 +66,4 @@
       </form>
     </div>
   </div>
-</div>
-<div *ngIf="authenticatedUser && customer">
-  <h3>Customer ID, Login : {{ customer.id }}, {{ authenticatedUser.login }}</h3>
-</div>
-<div *ngIf="addresses">
-  <h3>{{ addresses.length}}</h3>
 </div>

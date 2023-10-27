@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomerComponent } from '../../entities/customer/list/customer.component';
-import { AccountService } from '../../core/auth/account.service';
 import { CustomerService } from '../../entities/customer/service/customer.service';
 import { ICustomer } from '../../entities/customer/customer.model';
-import { Account } from 'app/core/auth/account.model';
-import {AddressService} from "../../entities/address/service/address.service";
 import {IAddress} from "../../entities/address/address.model";
+import { FormGroup, FormControl, Validators, FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: 'jhi-payment',
@@ -13,37 +10,58 @@ import {IAddress} from "../../entities/address/address.model";
   styleUrls: ['./payment.component.scss'],
 })
 export class PaymentComponent implements OnInit {
-  authenticatedUser: Account | undefined;
-  customer: ICustomer | undefined;
-  addresses: IAddress[] | undefined;
+  customer: ICustomer | null;
+  addresses: IAddress[] | null | undefined;
+  selectedAddrIndex: number;
+  inputAddr: string;
+  inputCity: string;
+  inputZipcode: string;
+  inputAddInfo: string;
 
   constructor(
-    private accountService: AccountService,
     private customerService: CustomerService,
-    private addressService: AddressService
-  ) {}
+  ) {
+    this.customer = null;
+    this.addresses = null;
+    this.selectedAddrIndex = -1;
+    this.inputAddr = "";
+    this.inputCity = "";
+    this.inputZipcode = "";
+    this.inputAddInfo = "";
+  }
 
   ngOnInit(): void {
-    this.accountService.identity().subscribe((user: Account | null) => {
-      if (user != null) {
-        this.authenticatedUser = user;
-      } else {
-        this.authenticatedUser = undefined;
-      }
-    });
-    this.customerService.getCurrentCustomer().subscribe((customer: ICustomer | undefined) => {
-      this.customer = customer
-    });
-    if (this.customer != undefined) {
-      this.addressService.findByCustomerId(this.customer.id).subscribe((addresses: IAddress[] | null) => {
-        if (addresses != null) {
-          this.addresses = addresses;
-        } else {
-          this.addresses = undefined;
+    this.customerService.getCurrentCustomer().subscribe(
+      value => {
+        this.customer = value;
+        if (this.customer != null) {
+          this.addresses = this.customer.addresses;
         }
-      })
-    }
+      }
+    )
   }
 
   submit() {}
+
+  test() {
+    if (this.addresses == null) {
+      return;
+    }
+    if (this.selectedAddrIndex == -1) {
+      this.clearAddressInput();
+    } else {
+      let selectedAddr = this.addresses[this.selectedAddrIndex];
+      this.inputAddr = (typeof selectedAddr.street === "string" ? selectedAddr.street : "");
+      this.inputZipcode = (typeof selectedAddr.zipCode === "number" ? selectedAddr.zipCode.toString() : "");
+      this.inputCity = (typeof selectedAddr.city === "string" ? selectedAddr.city : "");
+      this.inputAddInfo = (typeof selectedAddr.additionalInfo === "string" ? selectedAddr.additionalInfo : "");
+    }
+  }
+
+  clearAddressInput(): void {
+    this.inputAddr = "";
+    this.inputCity = "";
+    this.inputZipcode = "";
+    this.inputAddInfo = "";
+  }
 }
