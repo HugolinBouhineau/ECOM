@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Item, PanierService } from '../../panier.service';
 import { IPlant } from '../../entities/plant/plant.model';
 import { AlertService } from '../../core/util/alert.service';
+import { Account } from '../../core/auth/account.model';
+import { AccountService } from '../../core/auth/account.service';
+import { Router } from '@angular/router';
+import { StateStorageService } from '../../core/auth/state-storage.service';
 
 @Component({
   selector: 'jhi-basket',
@@ -10,11 +14,21 @@ import { AlertService } from '../../core/util/alert.service';
 })
 export class BasketComponent implements OnInit {
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
+  account: Account | null = null;
 
-  constructor(private ps: PanierService, private alertService: AlertService) {}
+  constructor(
+    private ps: PanierService,
+    private alertService: AlertService,
+    private accountService: AccountService,
+    private router: Router,
+    private stateStorageService: StateStorageService
+  ) {}
 
   ngOnInit(): void {
     this.ps.restore();
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.account = account;
+    });
   }
 
   getTotal() {
@@ -43,5 +57,14 @@ export class BasketComponent implements OnInit {
 
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
+  }
+
+  goToPayement() {
+    if (this.account != null) {
+      this.router.navigate(['/payment']);
+    } else {
+      this.stateStorageService.storeUrl('payment');
+      this.router.navigate(['/login']);
+    }
   }
 }
