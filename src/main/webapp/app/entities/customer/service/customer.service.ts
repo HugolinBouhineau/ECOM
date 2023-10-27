@@ -6,6 +6,7 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICustomer, NewCustomer } from '../customer.model';
+import {map} from "rxjs/operators";
 
 export type PartialUpdateCustomer = Partial<ICustomer> & Pick<ICustomer, 'id'>;
 
@@ -47,8 +48,10 @@ export class CustomerService {
     return customer.id;
   }
 
-  getCurrentCustomer(): Observable<ICustomer | undefined> {
-    return this.http.get<ICustomer | undefined>(this.applicationConfigService.getEndpointFor('api/current-customer'));
+  getCurrentCustomer(): Observable<ICustomer> {
+    return this.http.get<ICustomer>('/api/customers/current').pipe(
+      map((body: any) => body)
+    );
   }
 
   compareCustomer(o1: Pick<ICustomer, 'id'> | null, o2: Pick<ICustomer, 'id'> | null): boolean {
