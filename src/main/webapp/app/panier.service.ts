@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { IPlant } from './entities/plant/plant.model';
 
-export class Item {
-  quantity: number = 1;
+export class Item implements ItemInterface {
+  quantity: number;
+  plant: IPlant;
 
-  constructor(public plant: IPlant) {}
+  constructor(private init: ItemInterface) {
+    this.quantity = init.quantity;
+    this.plant = init.plant;
+  }
 
   public add_item(): void {
     this.quantity++;
@@ -23,23 +27,31 @@ export class Item {
   }
 }
 
+export interface ItemInterface {
+  quantity: number;
+  plant: IPlant;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class PanierService {
   items: Item[] = [];
-  total: number = 0;
-  list_nom: string[] = [];
   constructor() {}
 
+  ngOnInit(): void {
+    this.restore();
+  }
+
   addToCart(plant: IPlant): void {
-    if (this.list_nom.includes(<string>plant.name)) {
-      this.items[this.list_nom.indexOf(<string>plant.name)].add_item();
+    let item = this.items.find(value => value.plant === plant);
+    if (item) {
+      item.add_item();
     } else {
-      this.items.push(new Item(plant));
-      this.list_nom.push(<string>plant.name);
+      this.items.push(new Item({ quantity: 1, plant: plant }));
     }
-    this.total = this.total + <number>plant.price;
+
+    this.save();
   }
 
   getItems(): Item[] {
@@ -47,29 +59,47 @@ export class PanierService {
   }
 
   LessToCart(plant: IPlant): void {
-    let item: Item = this.items[this.list_nom.indexOf(<string>plant.name)];
-    if (item.get_quantity() > 1) {
+    let item = this.items.find(value => value.plant === plant);
+    if (item && item.get_quantity() > 1) {
       item.remove_item();
-      this.total = this.total - <number>plant.price;
     }
+
+    this.save();
   }
 
   clearCart(): Item[] {
     this.items = [];
-    this.list_nom = [];
-    this.total = 0;
+    this.save();
     return this.items;
   }
 
   getTotal(): number {
-    return this.total;
+    let total: number = 0;
+    for (let item of this.items) {
+      total += item.get_price();
+    }
+    return total;
   }
 
   removeItem(plant: IPlant): void {
-    let index: number = this.list_nom.indexOf(<string>plant.name);
-    this.total = this.total - this.items[index].quantity * <number>plant.price;
-    delete this.items[index];
-    delete this.list_nom[index];
-    this.items = this.items.filter(Boolean);
+    this.items = this.items.filter(value => value.plant !== plant);
+    this.save();
+  }
+
+  save() {
+    localStorage.setItem('cart', JSON.stringify(this.items));
+  }
+
+  restore() {
+    let value = localStorage.getItem('cart');
+    if (value != '' && value != null && typeof value != 'undefined') {
+      let results = JSON.parse(value!);
+      this.items = [];
+      for (let result of results) {
+        this.items.push(new Item(result));
+      }
+      console.log(results);
+      console.log(this.items);
+    }
   }
 }

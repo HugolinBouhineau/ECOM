@@ -13,7 +13,9 @@ export class BasketComponent implements OnInit {
 
   constructor(private ps: PanierService, private alertService: AlertService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.ps.restore();
+  }
 
   getTotal() {
     return this.ps.getTotal();
