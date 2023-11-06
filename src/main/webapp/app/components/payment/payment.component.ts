@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../../entities/customer/service/customer.service';
 import { ICustomer } from '../../entities/customer/customer.model';
-import {IAddress} from "../../entities/address/address.model";
-import { FormGroup, FormControl, Validators, FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { IAddress } from '../../entities/address/address.model';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'jhi-payment',
@@ -13,55 +13,87 @@ export class PaymentComponent implements OnInit {
   customer: ICustomer | null;
   addresses: IAddress[] | null | undefined;
   selectedAddrIndex: number;
-  inputAddr: string;
-  inputCity: string;
-  inputZipcode: string;
-  inputAddInfo: string;
 
-  constructor(
-    private customerService: CustomerService,
-  ) {
+  success: boolean = false;
+  error: boolean = false;
+
+  paymentForm = new FormGroup({
+    street: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(254)],
+    }),
+    zipCode: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('^\\d{5}$')],
+    }),
+    city: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
+    }),
+    additionalInfo: new FormControl(''),
+    numberCard: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('^[0-9]{16}$')],
+    }),
+    expirationCard: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('^[0-9]{2}/[0-9]{2}$')],
+    }),
+    secretCode: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('^[0-9]{3}$')],
+    }),
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
+    }),
+  });
+
+  constructor(private customerService: CustomerService) {
     this.customer = null;
     this.addresses = null;
     this.selectedAddrIndex = -1;
-    this.inputAddr = "";
-    this.inputCity = "";
-    this.inputZipcode = "";
-    this.inputAddInfo = "";
   }
 
   ngOnInit(): void {
-    this.customerService.getCurrentCustomer().subscribe(
-      value => {
-        this.customer = value;
-        if (this.customer != null) {
-          this.addresses = this.customer.addresses;
-        }
+    this.customerService.getCurrentCustomer().subscribe(value => {
+      this.customer = value;
+      if (this.customer != null) {
+        this.addresses = this.customer.addresses;
       }
-    )
+    });
   }
 
-  submit() {}
+  /*
+  Creer des fonctions pour enlever les caractères pour le zip code, le numéro de la carte et la date d'expiration
+   */
+  private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
+    this.paymentForm.patchValue({
+      street: street,
+      zipCode: zipCode,
+      city: city,
+      additionalInfo: additionalInfo,
+    });
+  }
 
-  test() {
+  changeInputAddress(): void {
     if (this.addresses == null) {
       return;
     }
+
     if (this.selectedAddrIndex == -1) {
-      this.clearAddressInput();
+      this.patchValueAddresses('', '', '', '');
     } else {
-      let selectedAddr = this.addresses[this.selectedAddrIndex];
-      this.inputAddr = (typeof selectedAddr.street === "string" ? selectedAddr.street : "");
-      this.inputZipcode = (typeof selectedAddr.zipCode === "number" ? selectedAddr.zipCode.toString() : "");
-      this.inputCity = (typeof selectedAddr.city === "string" ? selectedAddr.city : "");
-      this.inputAddInfo = (typeof selectedAddr.additionalInfo === "string" ? selectedAddr.additionalInfo : "");
+      let selectedAddresse = this.addresses[this.selectedAddrIndex];
+      console.log(this.selectedAddrIndex);
+      this.patchValueAddresses(
+        typeof selectedAddresse.street === 'string' ? selectedAddresse.street : '',
+        typeof selectedAddresse.zipCode === 'number' ? selectedAddresse.zipCode.toString() : '',
+        typeof selectedAddresse.city === 'string' ? selectedAddresse.city : '',
+        typeof selectedAddresse.additionalInfo === 'string' ? selectedAddresse.additionalInfo : ''
+      );
     }
   }
 
-  clearAddressInput(): void {
-    this.inputAddr = "";
-    this.inputCity = "";
-    this.inputZipcode = "";
-    this.inputAddInfo = "";
-  }
+  submit(): void {}
 }

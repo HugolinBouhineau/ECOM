@@ -1,68 +1,218 @@
-<div class="container">
-  <div class="row">
-    <div *ngIf="addresses && addresses.length > 0">
-      <label>Ecrire une addresse</label>
-      <br>
-      <select #addrdropdown [(ngModel)]='selectedAddrIndex' (change)="test()">
-        <option [value]='-1' selected>Sélectionner une addresse</option>
-        <option *ngFor="let addr of addresses; let i = index" [value]="i">{{ addr.street}}, {{ addr.zipCode }} {{ addr.street }}</option>
-      </select>
+<div>
+  <div class="d-flex justify-content-center">
+    <div class="alert alert-success" *ngIf="success">
+      <strong>Le paiement a été effectué</strong>
     </div>
-    <div class="col">
-      <form (ngSubmit)="submit()">
-        <div class="form-delivery">
-          <h3>Informations pour la livraison</h3>
-          <!-- Information pour la livraison -->
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="Adresse" [ngModel]="inputAddr" name="inputAddress"/>
+  </div>
+</div>
+
+<div>
+  <div class="d-flex justify-content-center" *ngIf="!success">
+    <div class="col-md-4 order-md-2 mb-4">
+      <!-- Récapitulatif du panier -->
+    </div>
+
+    <!-- Entrée pour l'addresse de livraison et la carte de crédit-->
+    <div class="col-md-8 order-md-1">
+      <div class="mb-3 text-center">
+        <h4>Informations pour la livraison</h4>
+      </div>
+
+      <div class="mb-3" *ngIf="addresses && addresses.length > 0">
+        <label>Ecrire une addresse</label><br />
+        <select [(ngModel)]="selectedAddrIndex" (change)="changeInputAddress()">
+          <option value="-1" selected>Sélectionner une addresse</option>
+          <option *ngFor="let address of addresses; let i = index" value="{{ i }}">
+            {{ address.street }}, {{ address.zipCode }} {{ address.city }}
+          </option>
+        </select>
+      </div>
+
+      <form name="form" role="form" (ngSubmit)="submit()" [formGroup]="paymentForm">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="street"
+            name="street"
+            placeholder="Addresse"
+            formControlName="street"
+            data-cy="street"
+          />
+
+          <div *ngIf="paymentForm.get('street')!.invalid && (paymentForm.get('street')!.dirty || paymentForm.get('street')!.touched)">
+            <small class="form-text text-danger" *ngIf="paymentForm.get('street')?.errors?.required"> Addresse requise. </small>
+
+            <small class="form-text text-danger" *ngIf="paymentForm.get('street')?.errors?.minlength">
+              L'addresse requière au moins 1 caractère.
+            </small>
+
+            <small class="form-text text-danger" *ngIf="paymentForm.get('street')?.errors?.maxlength">
+              La taille de l'addresse ne doit pas dépasser 254 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="zipCode"
+              name="zipCode"
+              placeholder="Code Postal"
+              formControlName="zipCode"
+              data-cy="zipCode"
+            />
+
+            <div *ngIf="paymentForm.get('zipCode')!.invalid && (paymentForm.get('zipCode')!.dirty || paymentForm.get('zipCode')!.touched)">
+              <small class="form-text text-danger" *ngIf="paymentForm.get('zipCode')?.errors?.required"> Code postal requis. </small>
+
+              <small class="form-text text-danger" *ngIf="paymentForm.get('zipCode')?.errors?.pattern"> Code postal invalide. </small>
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="Code postal" [ngModel]="inputZipcode" name="inputZipCode"/>
-            </div>
-            <div class="col">
-              <input type="text" placeholder="Ville" [(ngModel)]="inputCity" name="inputCity"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="Informations complémentaires" [(ngModel)]="inputAddInfo" name="inputAdditionalInfo"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <input type="checkbox" id="saveCheck" />
-              <label for="saveCheck">Enregistrer adresse</label>
+
+          <div class="col-md-6 mb-3">
+            <input type="text" class="form-control" id="city" name="city" placeholder="Ville" formControlName="city" data-cy="city" />
+
+            <div *ngIf="paymentForm.get('city')!.invalid && (paymentForm.get('city')!.dirty || paymentForm.get('city')!.touched)">
+              <small class="form-text text-danger" *ngIf="paymentForm.get('city')?.errors?.required"> Ville requise. </small>
+
+              <small class="form-text text-danger" *ngIf="paymentForm.get('city')?.errors?.minlength">
+                La ville requière au moins 1 caractère.
+              </small>
+
+              <small class="form-text text-danger" *ngIf="paymentForm.get('city')?.errors?.maxlength">
+                La taille de la ville ne doit pas dépasser 50 caractères.
+              </small>
             </div>
           </div>
         </div>
-        <!-- FIN Information pour la livraison -->
-        <!-- Information pour le paiment -->
-        <div class="form-payment">
-          <h3>Informations pour le paiement</h3>
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="Numéro carte" />
+
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="additionalInfo"
+            name="additionalInfo"
+            placeholder="Information complémentaire"
+            formControlName="additionalInfo"
+            data-cy="additionalInfo"
+          />
+        </div>
+
+        <hr class="mb-4" />
+
+        <div class="mb-3 text-center">
+          <h4>Informations de paiement</h4>
+        </div>
+
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="numberCard"
+            name="numberCard"
+            placeholder="Numéro carte"
+            formControlName="numberCard"
+            data-cy="numberCard"
+          />
+
+          <div
+            *ngIf="
+              paymentForm.get('numberCard')!.invalid && (paymentForm.get('numberCard')!.dirty || paymentForm.get('numberCard')!.touched)
+            "
+          >
+            <small class="form-text text-danger" *ngIf="paymentForm.get('numberCard')?.errors?.required"> Numéro de carte requis. </small>
+
+            <small class="form-text text-danger" *ngIf="paymentForm.get('numberCard')?.errors?.pattern"> Numéro de carte invalide. </small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="expirationCard"
+              name="expirationCard"
+              placeholder="mm/aa"
+              formControlName="expirationCard"
+              data-cy="expirationCard"
+            />
+
+            <div
+              *ngIf="
+                paymentForm.get('expirationCard')!.invalid &&
+                (paymentForm.get('expirationCard')!.dirty || paymentForm.get('expirationCard')!.touched)
+              "
+            >
+              <small class="form-text text-danger" *ngIf="paymentForm.get('expirationCard')?.errors?.required">
+                Date d'expiration requis.
+              </small>
+
+              <small class="form-text text-danger" *ngIf="paymentForm.get('expirationCard')?.errors?.pattern">
+                Date d'expiration invalide.
+              </small>
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="mm/aaaa" />
-            </div>
-            <div class="col">
-              <input type="text" placeholder="Code secret" />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <input type="text" placeholder="Nom et prénom propriétaire" />
+
+          <div class="col-md-6 mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="secretCode"
+              name="secretCode"
+              placeholder="Code secret"
+              formControlName="secretCode"
+              data-cy="secretCode"
+            />
+
+            <div
+              *ngIf="
+                paymentForm.get('secretCode')!.invalid && (paymentForm.get('secretCode')!.dirty || paymentForm.get('secretCode')!.touched)
+              "
+            >
+              <small class="form-text text-danger" *ngIf="paymentForm.get('secretCode')?.errors?.required">
+                Code de sécurité requis.
+              </small>
+
+              <small class="form-text text-danger" *ngIf="paymentForm.get('secretCode')?.errors?.pattern">
+                Code de sécurité invalide.
+              </small>
             </div>
           </div>
         </div>
-        <!-- Information pour le paiment -->
-        <button type="submit">Payer</button>
+
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="nameCard"
+            name="nameCard"
+            placeholder="Nom et prénom propriétaire"
+            formControlName="name"
+            data-cy="nameCard"
+          />
+
+          <div *ngIf="paymentForm.get('name')!.invalid && (paymentForm.get('name')!.dirty || paymentForm.get('name')!.touched)">
+            <small class="form-text text-danger" *ngIf="paymentForm.get('name')?.errors?.required"> Nom requis. </small>
+
+            <small class="form-text text-danger" *ngIf="paymentForm.get('name')?.errors?.minlength">
+              Le nom requière au moins 1 caractère.
+            </small>
+
+            <small class="form-text text-danger" *ngIf="paymentForm.get('name')?.errors?.maxlength">
+              La taille du nom ne doit pas dépasser 50 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="mb-4 text-center">
+          <button type="submit" [disabled]="paymentForm.invalid" class="btn btn-primary align-content-center center" data-cy="submit">
+            Payer
+          </button>
+        </div>
       </form>
     </div>
   </div>
