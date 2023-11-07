@@ -101,6 +101,18 @@
           />
         </div>
 
+        <div class="mb-4">
+          <input
+            type="checkbox"
+            class="checkbox"
+            id="saveAddresse"
+            name="saveAddresse"
+            [(ngModel)]="saveAddress"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <label for="saveAddresse">Enregistrer l'addresse</label>
+        </div>
+
         <hr class="mb-4" />
 
         <div class="mb-3 text-center">

@@ -16,7 +16,11 @@ export class PaymentComponent implements OnInit {
 
   success: boolean = false;
   error: boolean = false;
+  saveAddress: boolean = false;
 
+  /*
+    Modifier les regex des patterns pour ne pas prendre en compte les espaces et les tirets (num carte)
+   */
   paymentForm = new FormGroup({
     street: new FormControl('', {
       nonNullable: true,
@@ -24,7 +28,7 @@ export class PaymentComponent implements OnInit {
     }),
     zipCode: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^\\d{5}$')],
+      validators: [Validators.required, Validators.pattern('^( *\\d){5} *$')],
     }),
     city: new FormControl('', {
       nonNullable: true,
@@ -33,7 +37,7 @@ export class PaymentComponent implements OnInit {
     additionalInfo: new FormControl(''),
     numberCard: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^[0-9]{16}$')],
+      validators: [Validators.required, Validators.pattern('^( *\\d){16} *$')],
     }),
     expirationCard: new FormControl('', {
       nonNullable: true,
@@ -64,9 +68,6 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  /*
-  Creer des fonctions pour enlever les caractères pour le zip code, le numéro de la carte et la date d'expiration
-   */
   private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
     this.paymentForm.patchValue({
       street: street,
