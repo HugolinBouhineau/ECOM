@@ -29,7 +29,7 @@ export class PaymentComponent implements OnInit {
     }),
     zipCode: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^( *\\d){5} *$')],
+      validators: [Validators.required, Validators.pattern('^ *[0-9]{2}( *|)[0-9]{3} *$')],
     }),
     city: new FormControl('', {
       nonNullable: true,
@@ -42,11 +42,11 @@ export class PaymentComponent implements OnInit {
     }),
     expirationCard: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^[0-9]{2}/[0-9]{2}$')],
+      validators: [Validators.required, Validators.pattern('^ *[0-9]{2} */ *[0-9]{2} *$')],
     }),
     secretCode: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^[0-9]{3}$')],
+      validators: [Validators.required, Validators.pattern('^ *[0-9]{3} *$')],
     }),
     name: new FormControl('', {
       nonNullable: true,
