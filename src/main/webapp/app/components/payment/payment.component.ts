@@ -3,6 +3,7 @@ import { CustomerService } from '../../entities/customer/service/customer.servic
 import { ICustomer } from '../../entities/customer/customer.model';
 import { IAddress } from '../../entities/address/address.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Item, PanierService } from '../../panier.service';
 
 @Component({
   selector: 'jhi-payment',
@@ -53,7 +54,7 @@ export class PaymentComponent implements OnInit {
     }),
   });
 
-  constructor(private customerService: CustomerService) {
+  constructor(private customerService: CustomerService, private panierService: PanierService) {
     this.customer = null;
     this.addresses = null;
     this.selectedAddrIndex = -1;
@@ -94,6 +95,14 @@ export class PaymentComponent implements OnInit {
         typeof selectedAddresse.additionalInfo === 'string' ? selectedAddresse.additionalInfo : ''
       );
     }
+  }
+
+  getTotal(): number {
+    return this.panierService.getTotal();
+  }
+
+  getItems(): Item[] {
+    return this.panierService.getItems();
   }
 
   submit(): void {}
