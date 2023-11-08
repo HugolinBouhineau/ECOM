@@ -11,9 +11,9 @@ import { Item, PanierService } from '../../panier.service';
   styleUrls: ['./payment.component.scss'],
 })
 export class PaymentComponent implements OnInit {
-  customer: ICustomer | null;
-  addresses: IAddress[] | null | undefined;
-  selectedAddrIndex: number;
+  customer: ICustomer | null = null;
+  addresses: IAddress[] | null = null;
+  selectedAddrIndex: number = -1;
 
   success: boolean = false;
   error: boolean = false;
@@ -54,19 +54,15 @@ export class PaymentComponent implements OnInit {
     }),
   });
 
-  constructor(private customerService: CustomerService, private panierService: PanierService) {
-    this.customer = null;
-    this.addresses = null;
-    this.selectedAddrIndex = -1;
-  }
+  constructor(private customerService: CustomerService, private panierService: PanierService) {}
 
   ngOnInit(): void {
-    this.customerService.getCurrentCustomer().subscribe(value => {
-      this.customer = value;
-      if (this.customer != null) {
-        this.addresses = this.customer.addresses;
-      }
-    });
+    this.customer = this.customerService.getCurrentCustomer();
+    if (this.customer && this.customer.addresses) {
+      this.addresses = this.customer.addresses;
+    } else {
+      this.addresses = null;
+    }
   }
 
   private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
@@ -87,7 +83,6 @@ export class PaymentComponent implements OnInit {
       this.patchValueAddresses('', '', '', '');
     } else {
       let selectedAddresse = this.addresses[this.selectedAddrIndex];
-      console.log(this.selectedAddrIndex);
       this.patchValueAddresses(
         typeof selectedAddresse.street === 'string' ? selectedAddresse.street : '',
         typeof selectedAddresse.zipCode === 'number' ? selectedAddresse.zipCode.toString() : '',
