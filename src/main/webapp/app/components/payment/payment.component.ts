@@ -4,6 +4,7 @@ import { ICustomer } from '../../entities/customer/customer.model';
 import { IAddress } from '../../entities/address/address.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Item, PanierService } from '../../panier.service';
+import { AddressService, EntityResponseType } from '../../entities/address/service/address.service';
 
 @Component({
   selector: 'jhi-payment',
@@ -17,6 +18,8 @@ export class PaymentComponent implements OnInit {
 
   success: boolean = false;
   error: boolean = false;
+  errorAddressAlreadySave: boolean = false;
+
   saveAddress: boolean = false;
 
   /*
@@ -54,7 +57,7 @@ export class PaymentComponent implements OnInit {
     }),
   });
 
-  constructor(private customerService: CustomerService, private panierService: PanierService) {}
+  constructor(private customerService: CustomerService, private panierService: PanierService, private addressService: AddressService) {}
 
   ngOnInit(): void {
     this.customer = this.customerService.getCurrentCustomer();
@@ -100,5 +103,30 @@ export class PaymentComponent implements OnInit {
     return this.panierService.getItems();
   }
 
-  submit(): void {}
+  submit(): void {
+    // Save the address
+    const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+    if (this.saveAddress) {
+      if (this.selectedAddrIndex == -1) {
+        this.addressService
+          .create({
+            id: null,
+            additionalInfo: additionalInfo,
+            city: city,
+            customer: this.customer,
+            street: street,
+            zipCode: +zipCode.replace(/\s/g, ''),
+          })
+          .subscribe({
+            error: response => this.processError(response),
+          });
+      }
+    }
+  }
+
+  private processError(response: EntityResponseType) {
+    if (response.status === 400) {
+      this.errorAddressAlreadySave = true;
+    }
+  }
 }
