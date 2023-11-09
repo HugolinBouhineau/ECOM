@@ -51,7 +51,13 @@
                   </h5>
                   <div>
                     <h5 class="card-price small text-warning">{{ plant.price }}€</h5>
-                    <button *ngIf="plant.stock && plant.stock > 0" type="button" class="btn btn-default btn-sm" (click)="addToCart(plant)">
+                    <button
+                      *ngIf="plant.stock && plant.stock > 0"
+                      onClick="this.blur()"
+                      type="button"
+                      class="btn btn-default btn-sm"
+                      (click)="addToCart(plant)"
+                    >
                       <fa-icon icon="cart-plus"></fa-icon>
                       Ajouter au panier
                     </button>
