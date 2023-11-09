@@ -73,7 +73,7 @@
               <button type="button" class="btn btn-default btn-sm btn-block" (click)="Clear()">Vider le panier</button>
             </div>
             <div class="col-xs-3">
-              <button type="button" class="btn btn-success btn-block" routerLink="/payment">Payement</button>
+              <button type="button" class="btn btn-success btn-block" [disabled]="getItems().length==0" routerLink="/payment">Payement</button>
             </div>
           </div>
         </div>
