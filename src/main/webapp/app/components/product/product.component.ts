@@ -38,7 +38,7 @@ export class ProductComponent implements OnInit {
     this.ps.find(this.plantID).subscribe(plant => {
       this.plant = plant.body;
       this.stock = this.plant.stock;
-      this.imagePath = this.plant.imagePath.split("**");
+      this.imagePath = this.plant.imagePath.split('**');
     });
   }
 }

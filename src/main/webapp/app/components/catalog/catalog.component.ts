@@ -65,7 +65,6 @@ export class CatalogComponent implements OnInit {
 
   addToCart(plant: IPlant) {
     this.panierService.addToCart(plant);
-    this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
   }
 
   sortByAscendingPrice() {
@@ -88,10 +87,10 @@ export class CatalogComponent implements OnInit {
     return 0;
   }
 
-  getPath(a: IPlant):string{
-    if (a.imagePath){
+  getPath(a: IPlant): string {
+    if (a.imagePath) {
       return this.imgUrl + a.imagePath.split('**')[0];
     }
-    return "";
+    return '';
   }
 }

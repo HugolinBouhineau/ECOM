@@ -26,7 +26,7 @@
               <tr *ngFor="let item of getItems()">
                 <ng-container *ngIf="item">
                   <td>
-                    <img class="child" src="{{ this.imgUrl + item.plant.imagePath }}" width="96px" height="96px" alt="" />
+                    <img class="child" src="{{ this.imgUrl + getImageUrl(item) }}" width="96px" height="96px" alt="" />
                     <h3 class="child mx-3">
                       <strong>{{ item.plant.name }}</strong>
                     </h3>
@@ -70,7 +70,9 @@
               </h4>
             </div>
             <div class="col-xs-3">
-              <button type="button" class="btn btn-default btn-sm btn-block" (click)="Clear()">Vider le panier</button>
+              <button type="button" class="btn btn-default btn-sm btn-block" onClick="this.blur()" (click)="Clear()">
+                Vider le panier
+              </button>
             </div>
             <div class="col-xs-3">
               <button type="button" class="btn btn-success btn-block" (click)="goToPayement()">Payement</button>

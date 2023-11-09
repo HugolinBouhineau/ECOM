@@ -21,7 +21,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="address_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_command__address_id" />
+                <constraints nullable="true" uniqueConstraintName="ux_command__address_id" />
             </column>
             <column name="customer_id" type="bigint">
                 <constraints nullable="true" />
