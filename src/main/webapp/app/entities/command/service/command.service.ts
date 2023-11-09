@@ -9,7 +9,6 @@ import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICommand, NewCommand } from '../command.model';
-import {IPlant} from "../../plant/plant.model";
 
 export type PartialUpdateCommand = Partial<ICommand> & Pick<ICommand, 'id'>;
 
