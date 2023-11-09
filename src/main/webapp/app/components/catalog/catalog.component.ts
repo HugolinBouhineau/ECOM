@@ -86,4 +86,11 @@ export class CatalogComponent implements OnInit {
     }
     return 0;
   }
+
+  getPath(a: IPlant): string {
+    if (a.imagePath) {
+      return this.imgUrl + a.imagePath.split('**')[0];
+    }
+    return '';
+  }
 }

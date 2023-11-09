@@ -1,1 +1,83 @@
-<p>commands works!</p>
+<div>En Cours</div>
+
+<div>
+  <div class="panel-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Date D'achat</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let command of progress_command">
+          <ng-container *ngIf="command">
+            <td>
+              <h3 class="child mx-3">
+                <strong>{{ command.id }}</strong>
+              </h3>
+            </td>
+            <td>
+              <h4 class="child">
+                {{ command.purchaseDate }}
+              </h4>
+            </td>
+            <td>Commande en cours !</td>
+            <td>
+              <h4 class="child">
+                <strong> {{ getPrice(command) }} <span class="text-muted">€</span> </strong>
+              </h4>
+              <button type="button" class="btn btn-link child" (click)="openConfirmationDialog(command)">
+                <fa-icon icon="xmark" style="color: red"></fa-icon>
+              </button>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div>Terminées</div>
+
+<div>
+  <div class="panel-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Date D'achat</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let command of list_command_passed">
+          <ng-container *ngIf="command">
+            <td>
+              <h3 class="child mx-3">
+                <strong>{{ command.id }}</strong>
+              </h3>
+            </td>
+            <td>
+              <h4 class="child">
+                {{ command.purchaseDate }}
+              </h4>
+            </td>
+            <td>
+              <div *ngIf="command.state == CommandState.Completed; else annul">Commande terminée</div>
+              <ng-template #annul> Commande Annulée </ng-template>
+            </td>
+            <td>
+              <h4 class="child">
+                <strong> {{ getPrice(command) }} <span class="text-muted">€</span> </strong>
+              </h4>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
