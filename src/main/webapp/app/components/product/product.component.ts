@@ -15,7 +15,7 @@ export class ProductComponent implements OnInit {
   href: string = '';
   stock: number = 0;
   plantID: number = 0;
-  imagePath: string = '';
+  imagePath: string[] = [];
   path: string = 'https://ecom1465.blob.core.windows.net/test/';
   constructor(
     private ps: PlantService,
@@ -38,7 +38,7 @@ export class ProductComponent implements OnInit {
     this.ps.find(this.plantID).subscribe(plant => {
       this.plant = plant.body;
       this.stock = this.plant.stock;
-      this.imagePath = this.path + this.plant.imagePath;
+      this.imagePath = this.plant.imagePath.split("**");
     });
   }
 }

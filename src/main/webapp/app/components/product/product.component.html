@@ -5,7 +5,15 @@
       <div class="wrapper row">
         <div class="preview col-md-6">
           <div class="preview-pic tab-content">
-            <div class="tab-pane active" id="pic-1"><img src="{{ imagePath }}" /></div>
+
+
+            <ngb-carousel *ngIf="imagePath">
+              <ng-template ngbSlide *ngFor="let image of imagePath">
+                <div class="picsum-img-wrapper">
+                  <img [src]="path + image" alt="Random first slide" />
+                </div>
+              </ng-template>
+            </ngb-carousel>
           </div>
         </div>
         <ng-container *ngIf="plant">
