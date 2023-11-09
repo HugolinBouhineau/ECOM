@@ -64,10 +64,8 @@ export class CommandUpdateComponent implements OnInit {
     this.isSaving = true;
     const command = this.commandFormService.getCommand(this.editForm);
     if (command.id !== null) {
-      console.log("null");
       this.subscribeToSaveResponse(this.commandService.update(command));
     } else {
-      console.log("not null");
       this.subscribeToSaveResponse(this.commandService.create(command));
     }
   }
