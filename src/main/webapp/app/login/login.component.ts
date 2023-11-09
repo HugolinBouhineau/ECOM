@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { LoginService } from 'app/login/login.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { StateStorageService } from '../core/auth/state-storage.service';
 
 @Component({
   selector: 'jhi-login',
@@ -21,9 +22,20 @@ export class LoginComponent implements OnInit, AfterViewInit {
     rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  constructor(private accountService: AccountService, private loginService: LoginService, private router: Router) {}
+  redirectToPayment: boolean = false;
+
+  constructor(
+    private accountService: AccountService,
+    private loginService: LoginService,
+    private router: Router,
+    private stateStorageService: StateStorageService
+  ) {}
 
   ngOnInit(): void {
+    if (this.stateStorageService.getUrl() === 'payment') {
+      this.redirectToPayment = true;
+    }
+    this.stateStorageService.clearUrl();
     // if already authenticated then navigate to home page
     this.accountService.identity().subscribe(() => {
       if (this.accountService.isAuthenticated()) {
@@ -42,7 +54,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.authenticationError = false;
         if (!this.router.getCurrentNavigation()) {
           // There were no routing during login (eg from navigationToStoredUrl)
-          this.router.navigate(['']);
+          if (this.redirectToPayment) {
+            this.router.navigate(['/payment']);
+          } else {
+            this.router.navigate(['']);
+          }
         }
       },
       error: () => (this.authenticationError = true),

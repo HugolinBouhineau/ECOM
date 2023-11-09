@@ -20,7 +20,7 @@
             <column name="latin_name" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="description" type="varchar(255)">
+            <column name="description" type="varchar(600)">
                 <constraints nullable="true" />
             </column>
             <column name="price" type="integer">
