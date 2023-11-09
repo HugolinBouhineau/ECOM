@@ -31,7 +31,7 @@ import { ProductComponent } from './components/product/product.component';
 import { BasketComponent } from './components/basket/basket.component';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { PaymentComponent } from './components/payment/payment.component';
-
+import {CommandDialogComponent} from './command-dialog/command-dialog.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -64,6 +64,7 @@ import { PaymentComponent } from './components/payment/payment.component';
     BasketComponent,
     CatalogComponent,
     PaymentComponent,
+    CommandDialogComponent,
   ],
   bootstrap: [MainComponent],
 })

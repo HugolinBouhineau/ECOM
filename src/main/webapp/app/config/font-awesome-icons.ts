@@ -42,6 +42,7 @@ import {
   faCartPlus,
   faMinus,
   faExclamationTriangle,
+  faXmark,
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -89,5 +90,6 @@ export const fontAwesomeIcons = [
   faCartPlus,
   faMinus,
   faExclamationTriangle,
+  faXmark,
   // jhipster-needle-add-icon-import
 ];
