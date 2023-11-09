@@ -63,4 +63,12 @@ export class BasketComponent implements OnInit {
       this.router.navigate(['/login']);
     }
   }
+
+  getImageUrl(item: Item): string {
+    if (item && item.plant && item.plant.imagePath) {
+      return item.plant.imagePath.split('**')[0];
+    } else {
+      return '';
+    }
+  }
 }
