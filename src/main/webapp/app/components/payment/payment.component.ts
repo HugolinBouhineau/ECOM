@@ -90,7 +90,7 @@ export class PaymentComponent implements OnInit {
       let selectedAddresse = this.addresses[this.selectedAddrIndex];
       this.patchValueAddresses(
         typeof selectedAddresse.street === 'string' ? selectedAddresse.street : '',
-        typeof selectedAddresse.zipCode === 'number' ? selectedAddresse.zipCode.toString() : '',
+        typeof selectedAddresse.zipCode === 'string' ? selectedAddresse.zipCode: '',
         typeof selectedAddresse.city === 'string' ? selectedAddresse.city : '',
         typeof selectedAddresse.additionalInfo === 'string' ? selectedAddresse.additionalInfo : ''
       );
@@ -105,11 +105,6 @@ export class PaymentComponent implements OnInit {
     return this.panierService.getItems();
   }
 
-  private zipCodeToNumber(oldZipCode: string): number | null {
-    oldZipCode = oldZipCode.replace(/\s/g, "");
-    return parseInt(oldZipCode);
-  }
-
   submit(): void {
     // Save the address
     const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
@@ -119,7 +114,7 @@ export class PaymentComponent implements OnInit {
       customer: this.customer,
       id: null,
       street: street,
-      zipCode: this.zipCodeToNumber(zipCode)
+      zipCode: zipCode.replace(/\s/g, "")
     };
     if (this.saveAddress) {
       if (this.selectedAddrIndex != -1) {
@@ -130,15 +125,23 @@ export class PaymentComponent implements OnInit {
               newAddress.zipCode != selectedAddress.zipCode ||
               newAddress.additionalInfo != selectedAddress.additionalInfo
           ) {
-            this.addressService.create(newAddress);
+            this.sendNewAaddress(newAddress);
           } // else nothing
         } else {
-          this.addressService.create(newAddress);
+          this.sendNewAaddress(newAddress);
         }
       } else {
-        this.addressService.create(newAddress);
+        this.sendNewAaddress(newAddress);
       }
     }
   }
+
+  sendNewAaddress(address: NewAddress): void {
+    this.addressService.create(address).subscribe({
+      next: () => (this.success = true),
+      error: () => (this.error = true),
+      }
+    )
+}
 }
 

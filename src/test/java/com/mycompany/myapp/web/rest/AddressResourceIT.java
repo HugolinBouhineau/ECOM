@@ -38,8 +38,8 @@ class AddressResourceIT {
     private static final String DEFAULT_ADDITIONAL_INFO = "AAAAAAAAAA";
     private static final String UPDATED_ADDITIONAL_INFO = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_ZIP_CODE = 1;
-    private static final Integer UPDATED_ZIP_CODE = 2;
+    private static final String DEFAULT_ZIP_CODE = "AAAAA";
+    private static final String UPDATED_ZIP_CODE = "BBBBB";
 
     private static final String ENTITY_API_URL = "/api/addresses";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";

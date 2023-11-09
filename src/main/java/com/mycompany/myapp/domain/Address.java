@@ -33,7 +33,7 @@ public class Address implements Serializable {
     private String additionalInfo;
 
     @Column(name = "zip_code")
-    private Integer zipCode;
+    private String zipCode;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "user", "commands", "addresses" }, allowSetters = true)
@@ -93,16 +93,16 @@ public class Address implements Serializable {
         this.additionalInfo = additionalInfo;
     }
 
-    public Integer getZipCode() {
+    public String getZipCode() {
         return this.zipCode;
     }
 
-    public Address zipCode(Integer zipCode) {
+    public Address zipCode(String zipCode) {
         this.setZipCode(zipCode);
         return this;
     }
 
-    public void setZipCode(Integer zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
