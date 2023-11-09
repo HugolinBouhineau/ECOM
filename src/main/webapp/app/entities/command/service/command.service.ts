@@ -40,6 +40,7 @@ export class CommandService {
 
   update(command: ICommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
+    console.log("id: "+this.getCommandIdentifier(command));
     return this.http
       .put<RestCommand>(`${this.resourceUrl}/${this.getCommandIdentifier(command)}`, copy, { observe: 'response' })
       .pipe(map(res => this.convertResponseFromServer(res)));
