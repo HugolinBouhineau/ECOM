@@ -9,7 +9,7 @@ export interface ICommand {
   state?: CommandState | null;
   purchaseDate?: dayjs.Dayjs | null;
   address?: Pick<IAddress, 'id'> | null;
-  plants?: Pick<IPlant, 'id'>[] | null;
+  plants?: Pick<IPlant, 'id' | 'price'>[] | null;
   customer?: Pick<ICustomer, 'id'> | null;
 }
 

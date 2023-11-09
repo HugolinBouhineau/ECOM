@@ -31,6 +31,10 @@ export class CommandService {
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  all(): Observable<ICommand[]> {
+    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+  }
+
   create(command: NewCommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
     return this.http
@@ -39,6 +43,13 @@ export class CommandService {
   }
 
   update(command: ICommand): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(command);
+    return this.http
+      .put<RestCommand>(`${this.resourceUrl}/${this.getCommandIdentifier(command)}`, copy, { observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
+  }
+
+  updateNoDate(command: ICommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
     return this.http
       .put<RestCommand>(`${this.resourceUrl}/${this.getCommandIdentifier(command)}`, copy, { observe: 'response' })
