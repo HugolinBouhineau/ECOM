@@ -7,7 +7,6 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICustomer, NewCustomer } from '../customer.model';
 import { map } from 'rxjs/operators';
-import { Account } from '../../../core/auth/account.model';
 
 export type PartialUpdateCustomer = Partial<ICustomer> & Pick<ICustomer, 'id'>;
 
@@ -17,19 +16,8 @@ export type EntityArrayResponseType = HttpResponse<ICustomer[]>;
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/customers');
-  customerIdentity: ICustomer | null = null;
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
-
-  authenticate(account: Account | null) {
-    if (account) {
-      this.getCustomer().subscribe(customer => {
-        this.customerIdentity = customer;
-      });
-    } else {
-      this.customerIdentity = null;
-    }
-  }
 
   create(customer: NewCustomer): Observable<EntityResponseType> {
     return this.http.post<ICustomer>(this.resourceUrl, customer, { observe: 'response' });
@@ -60,11 +48,7 @@ export class CustomerService {
     return customer.id;
   }
 
-  getCurrentCustomer(): ICustomer | null {
-    return this.customerIdentity;
-  }
-
-  private getCustomer(): Observable<ICustomer> {
+  getCustomer(): Observable<ICustomer> {
     return this.http.get<ICustomer>('/api/customers/current').pipe(map((body: any) => body));
   }
 

@@ -9,7 +9,6 @@ import { shareReplay, tap, catchError } from 'rxjs/operators';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { ApplicationConfigService } from '../config/application-config.service';
 import { Account } from 'app/core/auth/account.model';
-import { CustomerService } from '../../entities/customer/service/customer.service';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
@@ -24,7 +23,6 @@ export class AccountService {
     private stateStorageService: StateStorageService,
     private router: Router,
     private applicationConfigService: ApplicationConfigService,
-    private customerService: CustomerService
   ) {}
 
   save(account: Account): Observable<{}> {
@@ -32,7 +30,6 @@ export class AccountService {
   }
 
   authenticate(identity: Account | null): void {
-    this.customerService.authenticate(identity);
     this.userIdentity = identity;
     this.authenticationState.next(this.userIdentity);
     if (!identity) {

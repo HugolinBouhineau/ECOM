@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../../entities/customer/service/customer.service';
 import { ICustomer } from '../../entities/customer/customer.model';
-import { IAddress } from '../../entities/address/address.model';
+import {IAddress, NewAddress} from '../../entities/address/address.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Item, PanierService } from '../../panier.service';
-import { AddressService, EntityResponseType } from '../../entities/address/service/address.service';
+import { AddressService } from '../../entities/address/service/address.service';
 
 @Component({
   selector: 'jhi-payment',
@@ -60,12 +60,14 @@ export class PaymentComponent implements OnInit {
   constructor(private customerService: CustomerService, private panierService: PanierService, private addressService: AddressService) {}
 
   ngOnInit(): void {
-    this.customer = this.customerService.getCurrentCustomer();
-    if (this.customer && this.customer.addresses) {
-      this.addresses = this.customer.addresses;
-    } else {
-      this.addresses = null;
-    }
+    this.customerService.getCustomer().subscribe(customer => {
+      this.customer = customer;
+      if (this.customer && this.customer.addresses) {
+        this.addresses = this.customer.addresses;
+      } else {
+        this.addresses = null;
+      }
+    });
   }
 
   private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
@@ -103,30 +105,40 @@ export class PaymentComponent implements OnInit {
     return this.panierService.getItems();
   }
 
+  private zipCodeToNumber(oldZipCode: string): number | null {
+    oldZipCode = oldZipCode.replace(/\s/g, "");
+    return parseInt(oldZipCode);
+  }
+
   submit(): void {
     // Save the address
     const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+    let newAddress: NewAddress = {
+      additionalInfo: additionalInfo,
+      city: city,
+      customer: this.customer,
+      id: null,
+      street: street,
+      zipCode: this.zipCodeToNumber(zipCode)
+    };
     if (this.saveAddress) {
-      if (this.selectedAddrIndex == -1) {
-        this.addressService
-          .create({
-            id: null,
-            additionalInfo: additionalInfo,
-            city: city,
-            customer: this.customer,
-            street: street,
-            zipCode: +zipCode.replace(/\s/g, ''),
-          })
-          .subscribe({
-            error: response => this.processError(response),
-          });
+      if (this.selectedAddrIndex != -1) {
+        if (this.addresses) {
+          let selectedAddress = this.addresses[this.selectedAddrIndex];
+          if (newAddress.city != selectedAddress.city ||
+              newAddress.street != selectedAddress.street ||
+              newAddress.zipCode != selectedAddress.zipCode ||
+              newAddress.additionalInfo != selectedAddress.additionalInfo
+          ) {
+            this.addressService.create(newAddress);
+          } // else nothing
+        } else {
+          this.addressService.create(newAddress);
+        }
+      } else {
+        this.addressService.create(newAddress);
       }
     }
   }
-
-  private processError(response: EntityResponseType) {
-    if (response.status === 400) {
-      this.errorAddressAlreadySave = true;
-    }
-  }
 }
+
