@@ -65,7 +65,6 @@ export class CatalogComponent implements OnInit {
 
   addToCart(plant: IPlant) {
     this.panierService.addToCart(plant);
-    this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
   }
 
   sortByAscendingPrice() {

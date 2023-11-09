@@ -40,11 +40,7 @@ export class BasketComponent implements OnInit {
   }
 
   addItem(item: Item): void {
-    if (item.plant.stock && item.plant.stock > item.get_quantity()) {
-      this.ps.addToCart(item.plant);
-    } else {
-      this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée" });
-    }
+    this.ps.addToCart(item.plant);
   }
 
   lessItem(plant: IPlant): void {

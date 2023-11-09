@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IPlant } from './entities/plant/plant.model';
+import { AlertService } from './core/util/alert.service';
 
 export class Item implements ItemInterface {
   quantity: number;
@@ -37,20 +38,25 @@ export interface ItemInterface {
 })
 export class PanierService {
   items: Item[] = [];
-  constructor() {}
+  constructor(private alertService: AlertService) {}
 
   ngOnInit(): void {
     this.restore();
   }
 
   addToCart(plant: IPlant): void {
-    let item = this.items.find(value => value.plant === plant);
+    let item = this.items.find(value => value.plant.latinName === plant.latinName);
     if (item) {
-      item.add_item();
+      if (item.plant.stock && item.plant.stock > item.get_quantity()) {
+        item.add_item();
+        this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
+      } else {
+        this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée" });
+      }
     } else {
       this.items.push(new Item({ quantity: 1, plant: plant }));
+      this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
     }
-
     this.save();
   }
 
