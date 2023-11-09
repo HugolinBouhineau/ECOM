@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { CustomerService } from '../../entities/customer/service/customer.service';
-import { ICustomer } from '../../entities/customer/customer.model';
+import {Component, OnInit} from '@angular/core';
+import {CustomerService} from '../../entities/customer/service/customer.service';
+import {ICustomer} from '../../entities/customer/customer.model';
 import {IAddress, NewAddress} from '../../entities/address/address.model';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Item, PanierService } from '../../panier.service';
-import { AddressService } from '../../entities/address/service/address.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Item, PanierService} from '../../panier.service';
+import {AddressService} from '../../entities/address/service/address.service';
+import {NewCommand} from "../../entities/command/command.model";
+import {CommandState} from "../../entities/enumerations/command-state.model";
+import {IPlant} from "../../entities/plant/plant.model";
+import dayjs from "dayjs/esm";
+import {CommandService} from "../../entities/command/service/command.service";
 
 @Component({
   selector: 'jhi-payment',
@@ -17,8 +22,9 @@ export class PaymentComponent implements OnInit {
   selectedAddrIndex: number = -1;
 
   success: boolean = false;
-  error: boolean = false;
-  errorAddressAlreadySave: boolean = false;
+  errorSaveAddress: boolean = false;
+  errorCreateCommand: boolean = false;
+  addressFound: boolean = false;
 
   saveAddress: boolean = false;
 
@@ -57,7 +63,12 @@ export class PaymentComponent implements OnInit {
     }),
   });
 
-  constructor(private customerService: CustomerService, private panierService: PanierService, private addressService: AddressService) {}
+  constructor(
+    private customerService: CustomerService,
+    private panierService: PanierService,
+    private addressService: AddressService,
+    private commandService: CommandService
+  ) {}
 
   ngOnInit(): void {
     this.customerService.getCustomer().subscribe(customer => {
@@ -105,43 +116,73 @@ export class PaymentComponent implements OnInit {
     return this.panierService.getItems();
   }
 
+  getListPlants(): IPlant[] {
+    let listPlants: IPlant[] = [];
+    for (let item of this.getItems()) {
+      listPlants.push(item.plant);
+    }
+    return listPlants;
+  }
+
+  sendNewAaddress(address: NewAddress): void {
+    this.addressService.create(address).subscribe({
+        next: (addresse) => {
+          this.errorSaveAddress = false;
+          this.sendNewCommand(addresse.body);
+        },
+        error: () => (this.errorSaveAddress = true),
+      }
+    );
+  }
+
+  sendNewCommand(address: IAddress | null) {
+    let newCommand: NewCommand = {
+      address: address,
+      customer: this.customer,
+      id: null,
+      plants: this.getListPlants(),
+      purchaseDate: dayjs(new Date()),
+      state: CommandState.InProgress
+    };
+    this.commandService.create(newCommand).subscribe({
+      next: () => {
+        if (!this.errorCreateCommand && !this.errorSaveAddress) {
+          this.panierService.clearCart();
+          this.success = true;
+        }
+      },
+      error: () => (this.errorCreateCommand = true)
+    });
+  }
+
   submit(): void {
     // Save the address
     const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
     let newAddress: NewAddress = {
       additionalInfo: additionalInfo,
       city: city,
-      customer: this.customer,
+      customer: (this.saveAddress ? this.customer : null),
       id: null,
       street: street,
       zipCode: zipCode.replace(/\s/g, "")
     };
-    if (this.saveAddress) {
-      if (this.selectedAddrIndex != -1) {
-        if (this.addresses) {
-          let selectedAddress = this.addresses[this.selectedAddrIndex];
-          if (newAddress.city != selectedAddress.city ||
-              newAddress.street != selectedAddress.street ||
-              newAddress.zipCode != selectedAddress.zipCode ||
-              newAddress.additionalInfo != selectedAddress.additionalInfo
-          ) {
-            this.sendNewAaddress(newAddress);
-          } // else nothing
-        } else {
-          this.sendNewAaddress(newAddress);
+    if (this.addresses) {
+      for (let address of this.addresses) {
+        if (address.city === newAddress.city &&
+            address.zipCode === newAddress.zipCode &&
+            address.street === newAddress.street
+        ) {
+          this.sendNewCommand(address);
+          this.addressFound = true;
+          break;
         }
-      } else {
-        this.sendNewAaddress(newAddress);
       }
     }
-  }
 
-  sendNewAaddress(address: NewAddress): void {
-    this.addressService.create(address).subscribe({
-      next: () => (this.success = true),
-      error: () => (this.error = true),
-      }
-    )
-}
+    if (!this.addressFound) {
+      this.sendNewAaddress(newAddress);
+      return;
+    }
+  }
 }
 

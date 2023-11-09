@@ -5,8 +5,12 @@
         <strong>Le paiement a été effectué</strong>
       </div>
 
-      <div class="alert alert-danger" *ngIf="error">
-        <strong>L'enregistrement a échoué</strong>
+      <div class="alert alert-danger" *ngIf="errorSaveAddress">
+        <strong>L'enregistrement de l'adresse</strong> a échoué
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorCreateCommand">
+        <strong>L'enregistrement de la command</strong> a échoué
       </div>
     </div>
   </div>

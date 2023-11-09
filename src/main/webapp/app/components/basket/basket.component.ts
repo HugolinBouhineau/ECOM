@@ -58,13 +58,4 @@ export class BasketComponent implements OnInit {
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
   }
-
-  goToPayement() {
-    if (this.account != null) {
-      this.router.navigate(['/payment']);
-    } else {
-      this.stateStorageService.storeUrl('payment');
-      this.router.navigate(['/login']);
-    }
-  }
 }
