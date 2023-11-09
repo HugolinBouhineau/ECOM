@@ -9,6 +9,7 @@ import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICommand, NewCommand } from '../command.model';
+import {IPlant} from "../../plant/plant.model";
 
 export type PartialUpdateCommand = Partial<ICommand> & Pick<ICommand, 'id'>;
 
@@ -31,6 +32,10 @@ export class CommandService {
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  all(): Observable<ICommand[]> {
+    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+  }
+
   create(command: NewCommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
     return this.http
@@ -39,6 +44,13 @@ export class CommandService {
   }
 
   update(command: ICommand): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(command);
+    return this.http
+      .put<RestCommand>(`${this.resourceUrl}/${this.getCommandIdentifier(command)}`, copy, { observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
+  }
+
+  updateNoDate(command: ICommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
     return this.http
       .put<RestCommand>(`${this.resourceUrl}/${this.getCommandIdentifier(command)}`, copy, { observe: 'response' })
