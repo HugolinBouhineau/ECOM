@@ -189,6 +189,13 @@
               <small class="form-text text-danger" *ngIf="paymentForm.get('expirationCard')?.errors?.pattern">
                 Date d'expiration invalide.
               </small>
+
+              <small class="form-text text-danger"
+                     *ngIf="!paymentForm.get('expirationCard')?.errors?.required &&
+                            !paymentForm.get('expirationCard')?.errors?.pattern &&
+                            paymentForm.get('expirationCard')?.errors?.expiredCard">
+                Carte expirée.
+              </small>
             </div>
           </div>
 

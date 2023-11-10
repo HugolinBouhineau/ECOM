@@ -11,6 +11,66 @@ import {IPlant} from "../../entities/plant/plant.model";
 import dayjs from "dayjs/esm";
 import {CommandService} from "../../entities/command/service/command.service";
 
+
+/* Compare year : if expiration Year > current Year => OK
+                  if expiration Year = current Year => MAYBE (Check Month)
+                  if expiration Year < current Year => NOK
+*/
+function compareYear(currentYear: string, expiredYear: string) {
+  let diff: number = currentYear.localeCompare(expiredYear);
+  if (diff < 0) {
+    console.log("cY =", currentYear, "< eY =", expiredYear);
+    return "OK";
+  } else if (diff === 0) {
+    console.log("cY =", currentYear, "= eY =", expiredYear);
+    return "MAYBE";
+  } else {
+    console.log("cY =", currentYear, "> eY =", expiredYear);
+    return "NOK";
+  }
+}
+
+/* Compare month : if expiration Month > current Month => OK
+                   if expiration Month = current Month => OK (Expire at the end of the month)
+                   if expiration Month < current Month => NOK
+*/
+function compareMonth(currentMonth: string, expiredMonth: string) {
+  if (currentMonth.localeCompare(expiredMonth) <= 0) {
+    return "OK";
+  }
+  return "NOK";
+}
+
+
+function creditCardValidator(control: FormControl) {
+  let currentDate: string[] = dayjs(new Date()).format('MM/YYYY').split('/');
+  let expiredDate: string[] = control.value.replace(/\s/g, "").split('/');
+  if (expiredDate.length === 2) {
+    if (expiredDate[1].length === 2) {
+      // Remove the first 2 digit
+      currentDate[1] = currentDate[1].substring(2, 4);
+    }
+    if (expiredDate[1].length === 2 || expiredDate[1].length === 4) {
+      switch (compareYear(currentDate[1], expiredDate[1])) {
+        case "OK":
+          return null;
+        case "MAYBE":
+          if (compareMonth(currentDate[0], expiredDate[0]) === "OK") {
+            return null;
+          }
+          break;
+        case "NOK":
+          break;
+      }
+    }
+  }
+  return {
+    expiredCard: {
+      expiredDate: true,
+    }
+  }
+}
+
 @Component({
   selector: 'jhi-payment',
   templateUrl: './payment.component.html',
@@ -51,7 +111,7 @@ export class PaymentComponent implements OnInit {
     }),
     expirationCard: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('^ *[0-9]{2} */ *[0-9]{2} *$')],
+      validators: [Validators.required, Validators.pattern('^ *(0[1-9]|1[0-2]) */ *([0-9]{4}|[0-9]{2}) *$'), creditCardValidator],
     }),
     secretCode: new FormControl('', {
       nonNullable: true,
