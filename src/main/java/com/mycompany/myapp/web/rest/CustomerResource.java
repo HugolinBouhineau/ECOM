@@ -159,16 +159,17 @@ public class CustomerResource {
     }
 
     /**
-     * {@code GET /current-customer} : get the current customer (last authenticated)
+     * {@code GET /customers/current} : get the current customer (last authenticated)
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
      *         the customer, or with status {@code 404 (Not Found)}
      */
-    @GetMapping("/current-customer")
+    @GetMapping("/customers/current")
     public ResponseEntity<Customer> getCurrentCustomer() {
         log.debug("REST request to get current Customer");
-        Optional<Customer> currentCustomer = customerRepository.findCustomerByLogin(SecurityUtils.getCurrentUserLogin());
-        log.debug("REST current customer is {}", currentCustomer);
-        return ResponseUtil.wrapOrNotFound(currentCustomer);
+        Optional<String> currentLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<Customer> customer = customerRepository.findOneWithEagerRelationships(currentLogin);
+        log.debug("REST current customer is {}", customer);
+        return ResponseUtil.wrapOrNotFound(customer);
     }
 
     /**

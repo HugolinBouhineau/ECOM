@@ -156,6 +156,19 @@ public class AddressResource {
     }
 
     /**
+     * {@code GET  /addresses/customer/:id} : get the adress from a customer id
+     *
+     * @param id the id of the customer
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the address, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/addresses/customer/{id}")
+    public ResponseEntity<List<Address>> getAddressFromCustomer(@PathVariable Long id) {
+        log.debug("REST request to get Address of Custome {}", id);
+        Optional<List<Address>> addressesCustomer = addressRepository.findByCustomerId(id);
+        return ResponseUtil.wrapOrNotFound(addressesCustomer);
+    }
+
+    /**
      * {@code GET  /addresses/:id} : get the "id" address.
      *
      * @param id the id of the address to retrieve.

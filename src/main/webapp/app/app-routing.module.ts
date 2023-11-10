@@ -13,6 +13,7 @@ import { ProductComponent } from './components/product/product.component';
 import { EditInformationsComponent } from './components/edit-informations/edit-informations.component';
 import { CommandsComponent } from './components/commands/commands.component';
 import { CatalogComponent } from './components/catalog/catalog.component';
+import { AuthGuard } from './auth.guard';
 
 @NgModule({
   imports: [
@@ -41,6 +42,7 @@ import { CatalogComponent } from './components/catalog/catalog.component';
         {
           path: 'payment',
           component: PaymentComponent,
+          canActivate: [AuthGuard],
         },
         {
           path: 'admin',
