@@ -40,11 +40,7 @@ export class BasketComponent implements OnInit {
   }
 
   addItem(item: Item): void {
-    if (item.plant.stock && item.plant.stock > item.get_quantity()) {
-      this.ps.addToCart(item.plant);
-    } else {
-      this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée" });
-    }
+    this.ps.addToCart(item.plant);
   }
 
   lessItem(plant: IPlant): void {
@@ -57,5 +53,13 @@ export class BasketComponent implements OnInit {
 
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
+  }
+
+  getImageUrl(item: Item): string {
+    if (item && item.plant && item.plant.imagePath) {
+      return item.plant.imagePath.split('**')[0];
+    } else {
+      return '';
+    }
   }
 }

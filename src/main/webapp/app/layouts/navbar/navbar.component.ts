@@ -50,6 +50,7 @@ export class NavbarComponent implements OnInit {
     this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
     });
+    this.panierService.restore();
   }
 
   changeLanguage(languageKey: string): void {

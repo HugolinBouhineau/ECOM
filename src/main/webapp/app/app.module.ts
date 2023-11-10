@@ -18,7 +18,7 @@ import { HomeModule } from './home/home.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { fontAwesomeIcons } from './config/font-awesome-icons';
-import { httpInterceptorProviders } from 'app/core/interceptor/index';
+import { httpInterceptorProviders } from './core/interceptor';
 import { MainComponent } from './layouts/main/main.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
@@ -31,7 +31,7 @@ import { ProductComponent } from './components/product/product.component';
 import { BasketComponent } from './components/basket/basket.component';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { PaymentComponent } from './components/payment/payment.component';
-
+import { CommandDialogComponent } from './command-dialog/command-dialog.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -64,6 +64,7 @@ import { PaymentComponent } from './components/payment/payment.component';
     BasketComponent,
     CatalogComponent,
     PaymentComponent,
+    CommandDialogComponent,
   ],
   bootstrap: [MainComponent],
 })
