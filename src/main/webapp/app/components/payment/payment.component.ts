@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CustomerService} from '../../entities/customer/service/customer.service';
 import {ICustomer} from '../../entities/customer/customer.model';
 import {IAddress, NewAddress} from '../../entities/address/address.model';
@@ -10,6 +10,8 @@ import {CommandState} from "../../entities/enumerations/command-state.model";
 import {IPlant} from "../../entities/plant/plant.model";
 import dayjs from "dayjs/esm";
 import {CommandService} from "../../entities/command/service/command.service";
+import {Observable, Subscription, timer} from "rxjs";
+import {PlantService} from "../../entities/plant/service/plant.service";
 
 
 /* Compare year : if expiration Year > current Year => OK
@@ -76,16 +78,20 @@ function creditCardValidator(control: FormControl) {
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss'],
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnInit, OnDestroy {
   customer: ICustomer | null = null;
   addresses: IAddress[] | null = null;
   selectedAddrIndex: number = -1;
+  timerObs: Observable<number>;
+  timerSub: Subscription | null = null;
+  private timerEnd: number = 3; // seconds
 
   success: boolean = false;
   errorSaveAddress: boolean = false;
   errorCreateCommand: boolean = false;
-  addressFound: boolean = false;
+  errorTimerEnd: boolean = false;
 
+  addressFound: boolean = false;
   saveAddress: boolean = false;
 
   /*
@@ -127,8 +133,11 @@ export class PaymentComponent implements OnInit {
     private customerService: CustomerService,
     private panierService: PanierService,
     private addressService: AddressService,
-    private commandService: CommandService
-  ) {}
+    private commandService: CommandService,
+    private plantService: PlantService
+  ) {
+    this.timerObs = timer(0, 1000);
+  }
 
   ngOnInit(): void {
     this.customerService.getCustomer().subscribe(customer => {
@@ -139,6 +148,22 @@ export class PaymentComponent implements OnInit {
         this.addresses = null;
       }
     });
+    this.timerSub = this.timerObs.subscribe(
+      value => {
+        if (value > this.timerEnd) {
+          this.errorTimerEnd = true;
+          this.restoreStockPlants()
+          this.timerSub?.unsubscribe();
+        }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (!this.success) {
+      this.restoreStockPlants();
+    }
+    this.timerSub?.unsubscribe();
   }
 
   private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
@@ -176,12 +201,25 @@ export class PaymentComponent implements OnInit {
     return this.panierService.getItems();
   }
 
-  getListPlants(): IPlant[] {
+  getListPlants(restore: boolean): IPlant[] {
     let listPlants: IPlant[] = [];
     for (let item of this.getItems()) {
+      let plant = item.plant;
+      if (restore) {
+        if (plant.stock) {
+            plant.stock += item.get_quantity();
+        }
+      }
       listPlants.push(item.plant);
     }
     return listPlants;
+  }
+
+  private restoreStockPlants(): void {
+    let listPlantRestore = this.getListPlants(true);
+    for (let plant of listPlantRestore) {
+      this.plantService.update(plant).subscribe();
+    }
   }
 
   sendNewAaddress(address: NewAddress): void {
@@ -200,7 +238,7 @@ export class PaymentComponent implements OnInit {
       address: address,
       customer: this.customer,
       id: null,
-      plants: this.getListPlants(),
+      plants: this.getListPlants(false),
       purchaseDate: dayjs(new Date()),
       state: CommandState.InProgress
     };
@@ -244,5 +282,6 @@ export class PaymentComponent implements OnInit {
       return;
     }
   }
+
 }
 
