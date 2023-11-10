@@ -37,7 +37,7 @@ export class CommandsComponent implements OnInit {
         this.authenticatedUser = undefined;
       }
     });
-    this.customerService.getCurrentCustomer().subscribe((customer: ICustomer | undefined) => {
+    this.customerService.getCustomer().subscribe((customer: ICustomer | undefined) => {
       this.customer = customer;
       if (customer) {
         this.id = customer.id;

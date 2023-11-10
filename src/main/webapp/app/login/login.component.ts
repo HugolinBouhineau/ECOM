@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.stateStorageService.getUrl() === 'payment') {
+    if (this.stateStorageService.getUrl() === '/payment') {
       this.redirectToPayment = true;
     }
     this.stateStorageService.clearUrl();
