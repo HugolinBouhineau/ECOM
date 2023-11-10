@@ -24,13 +24,13 @@ export class NotificationInterceptor implements HttpInterceptor {
             }
           }
 
-          if (alert) {
-            this.alertService.addAlert({
-              type: 'success',
-              translationKey: alert,
-              translationParams: { param: alertParams },
-            });
-          }
+          // if (alert) {
+          //   this.alertService.addAlert({
+          //     type: 'success',
+          //     translationKey: alert,
+          //     translationParams: { param: alertParams },
+          //   });
+          // }
         }
       })
     );

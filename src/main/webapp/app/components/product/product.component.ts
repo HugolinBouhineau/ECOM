@@ -26,8 +26,6 @@ export class ProductComponent implements OnInit {
 
   public AddToCart() {
     this.paniers.addToCart(<IPlant>this.plant);
-    console.log('added');
-    this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
   }
 
   ngOnInit(): void {
