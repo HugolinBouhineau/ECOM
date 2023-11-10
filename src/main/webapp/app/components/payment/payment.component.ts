@@ -1,18 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {CustomerService} from '../../entities/customer/service/customer.service';
-import {ICustomer} from '../../entities/customer/customer.model';
-import {IAddress, NewAddress} from '../../entities/address/address.model';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Item, PanierService} from '../../panier.service';
-import {AddressService} from '../../entities/address/service/address.service';
-import {NewCommand} from "../../entities/command/command.model";
-import {CommandState} from "../../entities/enumerations/command-state.model";
-import {IPlant} from "../../entities/plant/plant.model";
-import dayjs from "dayjs/esm";
-import {CommandService} from "../../entities/command/service/command.service";
-import {Observable, Subscription, timer} from "rxjs";
-import {PlantService} from "../../entities/plant/service/plant.service";
-
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CustomerService } from '../../entities/customer/service/customer.service';
+import { ICustomer } from '../../entities/customer/customer.model';
+import { IAddress, NewAddress } from '../../entities/address/address.model';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Item, PanierService } from '../../panier.service';
+import { AddressService } from '../../entities/address/service/address.service';
+import { NewCommand } from '../../entities/command/command.model';
+import { CommandState } from '../../entities/enumerations/command-state.model';
+import { IPlant } from '../../entities/plant/plant.model';
+import dayjs from 'dayjs/esm';
+import { CommandService } from '../../entities/command/service/command.service';
+import { Observable, Subscription, timer } from 'rxjs';
+import { PlantService } from '../../entities/plant/service/plant.service';
 
 /* Compare year : if expiration Year > current Year => OK
                   if expiration Year = current Year => MAYBE (Check Month)
@@ -21,14 +20,14 @@ import {PlantService} from "../../entities/plant/service/plant.service";
 function compareYear(currentYear: string, expiredYear: string) {
   let diff: number = currentYear.localeCompare(expiredYear);
   if (diff < 0) {
-    console.log("cY =", currentYear, "< eY =", expiredYear);
-    return "OK";
+    console.log('cY =', currentYear, '< eY =', expiredYear);
+    return 'OK';
   } else if (diff === 0) {
-    console.log("cY =", currentYear, "= eY =", expiredYear);
-    return "MAYBE";
+    console.log('cY =', currentYear, '= eY =', expiredYear);
+    return 'MAYBE';
   } else {
-    console.log("cY =", currentYear, "> eY =", expiredYear);
-    return "NOK";
+    console.log('cY =', currentYear, '> eY =', expiredYear);
+    return 'NOK';
   }
 }
 
@@ -38,15 +37,14 @@ function compareYear(currentYear: string, expiredYear: string) {
 */
 function compareMonth(currentMonth: string, expiredMonth: string) {
   if (currentMonth.localeCompare(expiredMonth) <= 0) {
-    return "OK";
+    return 'OK';
   }
-  return "NOK";
+  return 'NOK';
 }
-
 
 function creditCardValidator(control: FormControl) {
   let currentDate: string[] = dayjs(new Date()).format('MM/YYYY').split('/');
-  let expiredDate: string[] = control.value.replace(/\s/g, "").split('/');
+  let expiredDate: string[] = control.value.replace(/\s/g, '').split('/');
   if (expiredDate.length === 2) {
     if (expiredDate[1].length === 2) {
       // Remove the first 2 digit
@@ -54,14 +52,14 @@ function creditCardValidator(control: FormControl) {
     }
     if (expiredDate[1].length === 2 || expiredDate[1].length === 4) {
       switch (compareYear(currentDate[1], expiredDate[1])) {
-        case "OK":
+        case 'OK':
           return null;
-        case "MAYBE":
-          if (compareMonth(currentDate[0], expiredDate[0]) === "OK") {
+        case 'MAYBE':
+          if (compareMonth(currentDate[0], expiredDate[0]) === 'OK') {
             return null;
           }
           break;
-        case "NOK":
+        case 'NOK':
           break;
       }
     }
@@ -69,8 +67,8 @@ function creditCardValidator(control: FormControl) {
   return {
     expiredCard: {
       expiredDate: true,
-    }
-  }
+    },
+  };
 }
 
 @Component({
@@ -148,19 +146,19 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.addresses = null;
       }
     });
-    this.timerSub = this.timerObs.subscribe(
-      value => {
-        if (value > this.timerEnd) {
-          this.errorTimerEnd = true;
-          this.restoreStockPlants()
-          this.timerSub?.unsubscribe();
-        }
+    this.timerSub = this.timerObs.subscribe(value => {
+      if (value > this.timerEnd) {
+        this.errorTimerEnd = true;
+        console.log('Restore (subscribe timer)');
+        this.restoreStockPlants();
+        this.timerSub?.unsubscribe();
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {
-    if (!this.success) {
+    if (!(this.success || this.errorTimerEnd)) {
+      console.log('Restore (ngOnDestroy)');
       this.restoreStockPlants();
     }
     this.timerSub?.unsubscribe();
@@ -186,7 +184,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
       let selectedAddresse = this.addresses[this.selectedAddrIndex];
       this.patchValueAddresses(
         typeof selectedAddresse.street === 'string' ? selectedAddresse.street : '',
-        typeof selectedAddresse.zipCode === 'string' ? selectedAddresse.zipCode: '',
+        typeof selectedAddresse.zipCode === 'string' ? selectedAddresse.zipCode : '',
         typeof selectedAddresse.city === 'string' ? selectedAddresse.city : '',
         typeof selectedAddresse.additionalInfo === 'string' ? selectedAddresse.additionalInfo : ''
       );
@@ -207,11 +205,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
       let plant = item.plant;
       if (restore) {
         if (plant.stock) {
-            plant.stock += item.get_quantity();
+          console.log(item.get_quantity());
+          plant.stock += item.get_quantity();
+          console.log(plant.stock);
         }
       }
       listPlants.push(item.plant);
     }
+    console.log(listPlants);
     return listPlants;
   }
 
@@ -224,13 +225,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   sendNewAaddress(address: NewAddress): void {
     this.addressService.create(address).subscribe({
-        next: (addresse) => {
-          this.errorSaveAddress = false;
-          this.sendNewCommand(addresse.body);
-        },
-        error: () => (this.errorSaveAddress = true),
-      }
-    );
+      next: addresse => {
+        this.errorSaveAddress = false;
+        this.sendNewCommand(addresse.body);
+      },
+      error: () => (this.errorSaveAddress = true),
+    });
   }
 
   sendNewCommand(address: IAddress | null) {
@@ -240,7 +240,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
       id: null,
       plants: this.getListPlants(false),
       purchaseDate: dayjs(new Date()),
-      state: CommandState.InProgress
+      state: CommandState.InProgress,
     };
     this.commandService.create(newCommand).subscribe({
       next: () => {
@@ -249,7 +249,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           this.success = true;
         }
       },
-      error: () => (this.errorCreateCommand = true)
+      error: () => (this.errorCreateCommand = true),
     });
   }
 
@@ -259,17 +259,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
     let newAddress: NewAddress = {
       additionalInfo: additionalInfo,
       city: city,
-      customer: (this.saveAddress ? this.customer : null),
+      customer: this.saveAddress ? this.customer : null,
       id: null,
       street: street,
-      zipCode: zipCode.replace(/\s/g, "")
+      zipCode: zipCode.replace(/\s/g, ''),
     };
     if (this.addresses) {
       for (let address of this.addresses) {
-        if (address.city === newAddress.city &&
-            address.zipCode === newAddress.zipCode &&
-            address.street === newAddress.street
-        ) {
+        if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
           this.sendNewCommand(address);
           this.addressFound = true;
           break;
@@ -282,6 +279,4 @@ export class PaymentComponent implements OnInit, OnDestroy {
       return;
     }
   }
-
 }
-
