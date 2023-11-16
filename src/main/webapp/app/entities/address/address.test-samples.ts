@@ -15,7 +15,7 @@ export const sampleWithFullData: IAddress = {
   city: 'Port Robynside',
   street: 'Klocko Viaduct',
   additionalInfo: 'Colorado Buckinghamshire',
-  zipCode: 42632,
+  zipCode: "42632",
 };
 
 export const sampleWithNewData: NewAddress = {

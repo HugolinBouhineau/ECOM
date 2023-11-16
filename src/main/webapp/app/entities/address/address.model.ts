@@ -5,7 +5,7 @@ export interface IAddress {
   city?: string | null;
   street?: string | null;
   additionalInfo?: string | null;
-  zipCode?: number | null;
+  zipCode?: string | null;
   customer?: Pick<ICustomer, 'id'> | null;
 }
 

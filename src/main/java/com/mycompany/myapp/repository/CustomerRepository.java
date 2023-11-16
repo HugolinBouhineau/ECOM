@@ -11,7 +11,11 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface CustomerRepository extends CustomerRepositoryWithBagRelationships, JpaRepository<Customer, Long> {
     @Query("SELECT customer from Customer customer WHERE customer.user.login = :login")
     Optional<Customer> findCustomerByLogin(@Param("login") Optional<String> login);
+
+    default Optional<Customer> findOneWithEagerRelationships(Optional<String> currentLogin) {
+        return this.fetchBagRelationships(this.findCustomerByLogin(currentLogin));
+    }
 }

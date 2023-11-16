@@ -1,0 +1,22 @@
+.rounded {
+  border-radius: 1rem !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-item-start {
+  flex-basis: 100%;
+  text-align: start;
+}
+
+.flex-item-center {
+  flex-basis: 100%;
+  text-align: center;
+}
+
+.flex-item-end {
+  flex-basis: 100%;
+  text-align: end;
+}

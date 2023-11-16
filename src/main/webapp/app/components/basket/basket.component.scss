@@ -18,3 +18,8 @@ h4 {
   right: 50px;
   z-index: 99;
 }
+
+.btn:disabled {
+  background-color: #808080;
+  border-color: #000000;
+}

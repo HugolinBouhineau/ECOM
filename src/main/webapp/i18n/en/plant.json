@@ -2,7 +2,7 @@
   "ecomApp": {
     "plant": {
       "home": {
-        "title": "Plants",
+        "title": "La Serre enchantée",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Plant",
         "createOrEditLabel": "Create or edit a Plant",
@@ -15,7 +15,7 @@
         "question": "Are you sure you want to delete Plant {{ id }}?"
       },
       "detail": {
-        "title": "Plant"
+        "title": "La Serre enchantée"
       },
       "id": "ID",
       "name": "Name",
