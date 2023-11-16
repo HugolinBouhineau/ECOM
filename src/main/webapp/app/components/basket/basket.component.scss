@@ -12,3 +12,9 @@ td {
 h4 {
   margin-bottom: 0;
 }
+
+.toaster {
+  position: fixed;
+  right: 50px;
+  z-index: 99;
+}
