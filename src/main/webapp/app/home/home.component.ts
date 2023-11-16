@@ -1,36 +1,42 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import {PlantService} from "../entities/plant/service/plant.service";
+import {IPlant} from "../entities/plant/plant.model";
 
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   account: Account | null = null;
-
-  private readonly destroy$ = new Subject<void>();
-
-  constructor(private accountService: AccountService, private router: Router) {}
+  public img_link:string = "";
+  plants:IPlant[] = [];
+  selected:IPlant|undefined = undefined;
+  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
+  constructor(private router: Router, private ps: PlantService,) {
+  }
 
   ngOnInit(): void {
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(account => (this.account = account));
+    this.ps.all().subscribe(value => {
+      this.plants = value;
+      let index:number = Math.floor(Math.random() * this.plants.length);
+      this.selected = this.plants[index];
+    })
+  };
+
+  getPath(): string {
+    if (this.selected && this.selected.imagePath) {
+      return this.imgUrl + this.selected.imagePath.split('**')[0];
+    }
+    return '';
   }
 
-  login(): void {
-    this.router.navigate(['/login']);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  getName():string{
+    if (this.selected){
+      return <string> this.selected.name;
+    }
+    return '';
   }
 }
