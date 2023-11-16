@@ -1,23 +1,46 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
-
-.hipster {
-  display: inline-block;
-  width: 347px;
-  height: 497px;
-  background: url('../../content/images/jhipster_family_member_0.svg') no-repeat center top;
-  background-size: contain;
+body{
+  height:250vh;
 }
 
-/* wait autoprefixer update to allow simple generation of high pixel density media query */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-  only screen and (-moz-min-device-pixel-ratio: 2),
-  only screen and (-o-min-device-pixel-ratio: 2/1),
-  only screen and (min-resolution: 192dpi),
-  only screen and (min-resolution: 2dppx) {
-  .hipster {
-    background: url('../../content/images/jhipster_family_member_0.svg') no-repeat center top;
-    background-size: contain;
-  }
+
+.header{
+  display:flex;
+  height: 1000px;
+  width: 100%;
+  background-image: url("https://ecom1465.blob.core.windows.net/test/serre.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.title{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  padding:40px;
+  box-sizing: border-box;
+}
+
+
+.content{
+  padding:40px;
+  box-sizing: border-box;
+}
+
+.burton{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+.flower{
+  background:#487526;
+  height:50px;
+  width:70px;
+  font-size:35px;
+}
+
+.img_az{
+  height:50em;
+  width: auto;
 }
