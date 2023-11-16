@@ -3,9 +3,7 @@ import { CategoryService } from '../../entities/category/service/category.servic
 import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
-import { Router } from '@angular/router';
 import { PanierService } from '../../panier.service';
-import { AlertService } from '../../core/util/alert.service';
 
 @Component({
   selector: 'jhi-catalog',
@@ -21,15 +19,13 @@ export class CatalogComponent implements OnInit {
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
 
   constructor(
-    private cs: CategoryService,
-    private ps: PlantService,
-    private router: Router,
+    private categoryService: CategoryService,
+    private plantService: PlantService,
     private panierService: PanierService,
-    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
-    this.cs.all().subscribe(value => {
+    this.categoryService.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
       this.categories.map(cat => {
@@ -39,7 +35,7 @@ export class CatalogComponent implements OnInit {
       });
     });
 
-    this.ps.all().subscribe(value => {
+    this.plantService.all().subscribe(value => {
       this.plants = value;
     });
   }
@@ -48,12 +44,15 @@ export class CatalogComponent implements OnInit {
     return array.indexOf(value) === index;
   }
 
-  checkCategory(cat: ICategory) {
+  filterPlantsFromCategory(cat: ICategory) {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
       this.categoriesSelected.push(cat.id);
     }
+    this.plantService.filterPlantWithCategories(this.categoriesSelected).subscribe(value => {
+      this.plants = value;
+    })
   }
 
   checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {

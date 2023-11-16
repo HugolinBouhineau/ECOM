@@ -5,9 +5,9 @@ import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -175,6 +175,28 @@ public class PlantResource {
         log.debug("REST request to get Plant : {}", id);
         Optional<Plant> plant = plantRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(plant);
+    }
+
+    @GetMapping("/plants/filter/categories")
+    public List<Plant> filterPlantWithCategories(
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload,
+        @RequestParam List<Long> categoriesId) {
+        log.debug("REST request to get all Plants with these categories : {}", categoriesId);
+        List<Plant> plants;
+        if (eagerload) {
+            plants = plantRepository.findAllWithEagerRelationships();
+        } else {
+            plants = plantRepository.findAll();
+        }
+
+        List<Plant> res = new ArrayList<>();
+        for (Plant plant: plants) {
+            List<Long> categoriesIDPlant = plant.getCategories().stream().map(category -> category.getId()).collect(Collectors.toList());
+            if (categoriesIDPlant.containsAll(categoriesId)) {
+                res.add(plant);
+            }
+        }
+        return res;
     }
 
     /**

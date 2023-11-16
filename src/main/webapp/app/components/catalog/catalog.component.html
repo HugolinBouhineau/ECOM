@@ -77,7 +77,7 @@
         <div *ngFor="let cat of categories">
           <div *ngIf="cat.categoryType == type" class="mt-2 mb-2 pl-2">
             <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" (change)="checkCategory(cat)" />
+              <input type="checkbox" class="custom-control-input" (change)="filterPlantsFromCategory(cat)" />
               <label class="custom-control-label">{{ cat.categoryName }}</label>
             </div>
           </div>
