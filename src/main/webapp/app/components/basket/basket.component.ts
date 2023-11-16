@@ -6,6 +6,9 @@ import { Account } from '../../core/auth/account.model';
 import { AccountService } from '../../core/auth/account.service';
 import { Router } from '@angular/router';
 import { StateStorageService } from '../../core/auth/state-storage.service';
+import {ITEM_DELETED_EVENT} from "../../config/navigation.constants";
+import {CommandDialogServiceService} from "../../command-dialog/command-dialog-service.service";
+import {ICommand} from "../../entities/command/command.model";
 
 @Component({
   selector: 'jhi-basket',
@@ -21,7 +24,8 @@ export class BasketComponent implements OnInit {
     private alertService: AlertService,
     private accountService: AccountService,
     private router: Router,
-    private stateStorageService: StateStorageService
+    private stateStorageService: StateStorageService,
+    private cds: CommandDialogServiceService
   ) {}
 
   ngOnInit(): void {
@@ -62,4 +66,16 @@ export class BasketComponent implements OnInit {
       return '';
     }
   }
+
+  public openConfirmationDialog(): void {
+    this.cds
+      .confirm('Veuillez confirmer', 'Voulez-vous vraiment vider votre panier ?')
+      .then((confirmed: boolean): void => {
+        if (confirmed) {
+          this.Clear();
+        }
+      })
+      .catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+  }
+
 }
