@@ -51,7 +51,7 @@ export class PanierService {
         item.add_item();
         this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
       } else {
-        this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée" });
+        this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée (stock insuffisant)" });
       }
     } else {
       this.items.push(new Item({ quantity: 1, plant: plant }));
