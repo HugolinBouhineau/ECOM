@@ -20,13 +20,10 @@ import { PlantService } from '../../entities/plant/service/plant.service';
 function compareYear(currentYear: string, expiredYear: string) {
   let diff: number = currentYear.localeCompare(expiredYear);
   if (diff < 0) {
-    console.log('cY =', currentYear, '< eY =', expiredYear);
     return 'OK';
   } else if (diff === 0) {
-    console.log('cY =', currentYear, '= eY =', expiredYear);
     return 'MAYBE';
   } else {
-    console.log('cY =', currentYear, '> eY =', expiredYear);
     return 'NOK';
   }
 }
@@ -82,7 +79,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   selectedAddrIndex: number = -1;
   timerObs: Observable<number>;
   timerSub: Subscription | null = null;
-  private timerEnd: number = 3; // seconds
+  private timerEnd: number = 300; // seconds
 
   success: boolean = false;
   errorSaveAddress: boolean = false;
@@ -149,7 +146,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.timerSub = this.timerObs.subscribe(value => {
       if (value > this.timerEnd) {
         this.errorTimerEnd = true;
-        console.log('Restore (subscribe timer)');
         this.restoreStockPlants();
         this.timerSub?.unsubscribe();
       }
@@ -158,7 +154,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (!(this.success || this.errorTimerEnd)) {
-      console.log('Restore (ngOnDestroy)');
       this.restoreStockPlants();
     }
     this.timerSub?.unsubscribe();
@@ -205,14 +200,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
       let plant = item.plant;
       if (restore) {
         if (plant.stock) {
-          console.log(item.get_quantity());
           plant.stock += item.get_quantity();
-          console.log(plant.stock);
         }
       }
       listPlants.push(item.plant);
     }
-    console.log(listPlants);
     return listPlants;
   }
 
