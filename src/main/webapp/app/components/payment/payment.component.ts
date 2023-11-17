@@ -7,9 +7,11 @@ import { Item, PanierService } from '../../panier.service';
 import { AddressService } from '../../entities/address/service/address.service';
 import { NewCommand } from '../../entities/command/command.model';
 import { CommandState } from '../../entities/enumerations/command-state.model';
-import { IPlant } from '../../entities/plant/plant.model';
+import {IPlant, PlantQuantity} from '../../entities/plant/plant.model';
 import dayjs from 'dayjs/esm';
 import { CommandService } from '../../entities/command/service/command.service';
+import {PlantService} from "../../entities/plant/service/plant.service";
+import {Router} from "@angular/router";
 
 /* Compare year : if expiration Year > current Year => OK
                   if expiration Year = current Year => MAYBE (Check Month)
@@ -122,7 +124,9 @@ export class PaymentComponent implements OnInit {
     private customerService: CustomerService,
     private panierService: PanierService,
     private addressService: AddressService,
-    private commandService: CommandService
+    private commandService: CommandService,
+    private plantService: PlantService,
+    private router: Router,
   ) {
   }
 
@@ -211,29 +215,43 @@ export class PaymentComponent implements OnInit {
   }
 
   submit(): void {
-    // Save the address
-    const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
-    let newAddress: NewAddress = {
-      additionalInfo: additionalInfo,
-      city: city,
-      customer: this.saveAddress ? this.customer : null,
-      id: null,
-      street: street,
-      zipCode: zipCode.replace(/\s/g, ''),
-    };
-    if (this.addresses) {
-      for (let address of this.addresses) {
-        if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
-          this.sendNewCommand(address);
-          this.addressFound = true;
-          break;
-        }
-      }
+    let quantitiesAsked: PlantQuantity[] = [];
+    for (let item of this.panierService.getItems()) {
+      quantitiesAsked.push({plantId: item.plant.id, plantQuantity: item.quantity});
     }
 
-    if (!this.addressFound) {
-      this.sendNewAaddress(newAddress);
-      return;
-    }
+    // Verify that the plants are still in stock
+    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe(value => {
+      if (value.body === true){
+        // Plants are still in stock and stock was decremented
+        // Save the address
+        const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+        let newAddress: NewAddress = {
+          additionalInfo: additionalInfo,
+          city: city,
+          customer: this.saveAddress ? this.customer : null,
+          id: null,
+          street: street,
+          zipCode: zipCode.replace(/\s/g, ''),
+        };
+        if (this.addresses) {
+          for (let address of this.addresses) {
+            if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
+              this.sendNewCommand(address);
+              this.addressFound = true;
+              break;
+            }
+          }
+        }
+
+        if (!this.addressFound) {
+          this.sendNewAaddress(newAddress);
+          return;
+        }
+      }else{
+        // Plants are no longer available and stock wasn't decremented
+        this.router.navigate(['/basket']);
+      }
+    })
   }
 }

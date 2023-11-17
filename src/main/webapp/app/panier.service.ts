@@ -45,7 +45,7 @@ export class PanierService {
   }
 
   addToCart(plant: IPlant): void {
-    let item = this.items.find(value => value.plant.latinName === plant.latinName);
+    let item = this.items.find(value => value.plant.id === plant.id);
     if (item) {
       if (item.plant.stock && item.plant.stock > item.get_quantity()) {
         item.add_item();
@@ -65,12 +65,26 @@ export class PanierService {
   }
 
   LessToCart(plant: IPlant): void {
-    let item = this.items.find(value => value.plant === plant);
+    let item = this.items.find(value => value.plant.id === plant.id);
     if (item && item.get_quantity() > 1) {
       item.remove_item();
     }
 
     this.save();
+  }
+
+  setStock(stock : number, plant: IPlant) : boolean{
+    let item = this.items.find(value => value.plant.id == plant.id);
+    let quantityChanged : boolean = false;
+    if(item){
+      item.plant.stock = stock;
+      if(item.quantity> item.plant.stock){
+        item.quantity = item.plant.stock;
+        quantityChanged = true;
+      }
+    }
+    this.save();
+    return quantityChanged;
   }
 
   clearCart(): Item[] {
@@ -88,7 +102,7 @@ export class PanierService {
   }
 
   removeItem(plant: IPlant): void {
-    this.items = this.items.filter(value => value.plant !== plant);
+    this.items = this.items.filter(value => value.plant.id !== plant.id);
     this.save();
   }
 
@@ -104,8 +118,6 @@ export class PanierService {
       for (let result of results) {
         this.items.push(new Item(result));
       }
-      console.log(results);
-      console.log(this.items);
     }
   }
 }
