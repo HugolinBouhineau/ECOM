@@ -1,6 +1,7 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Plant;
+import com.mycompany.myapp.domain.PlantQuantity;
 import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -16,6 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Plant}.
@@ -33,6 +38,9 @@ public class PlantResource {
     private String applicationName;
 
     private final PlantRepository plantRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public PlantResource(PlantRepository plantRepository) {
         this.plantRepository = plantRepository;
@@ -56,6 +64,33 @@ public class PlantResource {
             .created(new URI("/api/plants/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    @Transactional
+    @PostMapping("/plants/verifyAndUpdateStock")
+    public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked){
+        log.debug("REST request to verifyStock :");
+        boolean inStock = true;
+        for (PlantQuantity quantityAsked : quantitiesAsked) {
+            Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
+            log.debug("PLANT : {}",plant);
+            int remainingStock = plant.getStock() - quantityAsked.getPlantQuantity();
+            if(remainingStock < 0){
+                log.debug("plante {} pas en stock, asked: {}, stock: {}", quantityAsked.getPlantId(), quantityAsked.getPlantQuantity(), plant.getStock());
+                inStock = false;
+            } else {
+                log.debug("plante {} en stock, asked: {}, stock: {}, remaining: {}",quantityAsked.getPlantId() ,quantityAsked.getPlantQuantity(), plant.getStock(), remainingStock);
+            }
+        }
+        if(inStock){
+            for (PlantQuantity quantityAsked : quantitiesAsked) {
+                Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
+                plant.setStock(plant.getStock() - quantityAsked.getPlantQuantity());
+            }
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**

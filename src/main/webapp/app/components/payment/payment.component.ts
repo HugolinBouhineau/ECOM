@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../../entities/customer/service/customer.service';
 import { ICustomer } from '../../entities/customer/customer.model';
 import { IAddress, NewAddress } from '../../entities/address/address.model';
@@ -7,11 +7,11 @@ import { Item, PanierService } from '../../panier.service';
 import { AddressService } from '../../entities/address/service/address.service';
 import { NewCommand } from '../../entities/command/command.model';
 import { CommandState } from '../../entities/enumerations/command-state.model';
-import { IPlant } from '../../entities/plant/plant.model';
+import {IPlant, PlantQuantity} from '../../entities/plant/plant.model';
 import dayjs from 'dayjs/esm';
 import { CommandService } from '../../entities/command/service/command.service';
-import { Observable, Subscription, timer } from 'rxjs';
-import { PlantService } from '../../entities/plant/service/plant.service';
+import {PlantService} from "../../entities/plant/service/plant.service";
+import {Router} from "@angular/router";
 
 /* Compare year : if expiration Year > current Year => OK
                   if expiration Year = current Year => MAYBE (Check Month)
@@ -73,18 +73,14 @@ function creditCardValidator(control: FormControl) {
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss'],
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentComponent implements OnInit {
   customer: ICustomer | null = null;
   addresses: IAddress[] | null = null;
   selectedAddrIndex: number = -1;
-  timerObs: Observable<number>;
-  timerSub: Subscription | null = null;
-  private timerEnd: number = 300; // seconds
 
   success: boolean = false;
   errorSaveAddress: boolean = false;
   errorCreateCommand: boolean = false;
-  errorTimerEnd: boolean = false;
 
   addressFound: boolean = false;
   saveAddress: boolean = false;
@@ -129,9 +125,9 @@ export class PaymentComponent implements OnInit, OnDestroy {
     private panierService: PanierService,
     private addressService: AddressService,
     private commandService: CommandService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private router: Router,
   ) {
-    this.timerObs = timer(0, 1000);
   }
 
   ngOnInit(): void {
@@ -143,20 +139,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.addresses = null;
       }
     });
-    this.timerSub = this.timerObs.subscribe(value => {
-      if (value > this.timerEnd) {
-        this.errorTimerEnd = true;
-        this.restoreStockPlants();
-        this.timerSub?.unsubscribe();
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (!(this.success || this.errorTimerEnd)) {
-      this.restoreStockPlants();
-    }
-    this.timerSub?.unsubscribe();
   }
 
   private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
@@ -194,25 +176,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return this.panierService.getItems();
   }
 
-  getListPlants(restore: boolean): IPlant[] {
+  getListPlants(): IPlant[] {
     let listPlants: IPlant[] = [];
     for (let item of this.getItems()) {
-      let plant = item.plant;
-      if (restore) {
-        if (plant.stock) {
-          plant.stock += item.get_quantity();
-        }
-      }
       listPlants.push(item.plant);
     }
     return listPlants;
-  }
-
-  private restoreStockPlants(): void {
-    let listPlantRestore = this.getListPlants(true);
-    for (let plant of listPlantRestore) {
-      this.plantService.update(plant).subscribe();
-    }
   }
 
   sendNewAaddress(address: NewAddress): void {
@@ -230,7 +199,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
       address: address,
       customer: this.customer,
       id: null,
-      plants: this.getListPlants(false),
+      plants: this.getListPlants(),
       purchaseDate: dayjs(new Date()),
       state: CommandState.InProgress,
     };
@@ -246,29 +215,43 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    // Save the address
-    const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
-    let newAddress: NewAddress = {
-      additionalInfo: additionalInfo,
-      city: city,
-      customer: this.saveAddress ? this.customer : null,
-      id: null,
-      street: street,
-      zipCode: zipCode.replace(/\s/g, ''),
-    };
-    if (this.addresses) {
-      for (let address of this.addresses) {
-        if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
-          this.sendNewCommand(address);
-          this.addressFound = true;
-          break;
-        }
-      }
+    let quantitiesAsked: PlantQuantity[] = [];
+    for (let item of this.panierService.getItems()) {
+      quantitiesAsked.push({plantId: item.plant.id, plantQuantity: item.quantity});
     }
 
-    if (!this.addressFound) {
-      this.sendNewAaddress(newAddress);
-      return;
-    }
+    // Verify that the plants are still in stock
+    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe(value => {
+      if (value.body === true){
+        // Plants are still in stock and stock was decremented
+        // Save the address
+        const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+        let newAddress: NewAddress = {
+          additionalInfo: additionalInfo,
+          city: city,
+          customer: this.saveAddress ? this.customer : null,
+          id: null,
+          street: street,
+          zipCode: zipCode.replace(/\s/g, ''),
+        };
+        if (this.addresses) {
+          for (let address of this.addresses) {
+            if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
+              this.sendNewCommand(address);
+              this.addressFound = true;
+              break;
+            }
+          }
+        }
+
+        if (!this.addressFound) {
+          this.sendNewAaddress(newAddress);
+          return;
+        }
+      }else{
+        // Plants are no longer available and stock wasn't decremented
+        this.router.navigate(['/basket']);
+      }
+    })
   }
 }

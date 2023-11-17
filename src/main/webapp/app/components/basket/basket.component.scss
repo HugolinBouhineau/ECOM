@@ -13,6 +13,12 @@ h4 {
   margin-bottom: 0;
 }
 
+.toaster {
+  position: fixed;
+  right: 50px;
+  z-index: 99;
+}
+
 .btn:disabled {
   background-color: #808080;
   border-color: #000000;
