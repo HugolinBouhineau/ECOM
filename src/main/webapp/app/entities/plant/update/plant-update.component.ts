@@ -9,6 +9,7 @@ import { IPlant } from '../plant.model';
 import { PlantService } from '../service/plant.service';
 import { ICategory } from 'app/entities/category/category.model';
 import { CategoryService } from 'app/entities/category/service/category.service';
+import {FileHandle} from "../../../drag-ndrop.directive";
 
 @Component({
   selector: 'jhi-plant-update',
@@ -17,6 +18,9 @@ import { CategoryService } from 'app/entities/category/service/category.service'
 export class PlantUpdateComponent implements OnInit {
   isSaving = false;
   plant: IPlant | null = null;
+  files: FileHandle[] = [];
+  files_names: string[] = [];
+  saved_files:FileHandle[] = [];
 
   categoriesSharedCollection: ICategory[] = [];
 
@@ -49,6 +53,18 @@ export class PlantUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const plant = this.plantFormService.getPlant(this.editForm);
+    let pathname:string = ""
+    for(let i = 0;i < this.files_names.length;i++){
+      let file = this.files_names[i];
+      pathname = pathname + file;
+     /*TODO : Hugolin -> réussir à mettre le "file" sur le blob
+      Si jamais, il y a un liste appellée : saved_files qui sont les handler des files (je sais pas comment ça peut marcher
+      GLHF */
+      if (i != (this.files_names.length-1)){
+        pathname = pathname + "**";
+      }
+    }
+    plant.imagePath = pathname;
     if (plant.id !== null) {
       this.subscribeToSaveResponse(this.plantService.update(plant));
     } else {
@@ -95,5 +111,22 @@ export class PlantUpdateComponent implements OnInit {
         )
       )
       .subscribe((categories: ICategory[]) => (this.categoriesSharedCollection = categories));
+  }
+  filesDropped(files: FileHandle[]): void {
+    this.files = files;
+  }
+
+  upload(): void {
+    for (let i = 0; i < this.files.length; i++) {
+      this.files_names.push(this.files[i].file.name);
+      this.saved_files.push(this.files[i]);
+    }
+    this.files = [];
+  }
+
+  clean_files():void{
+    this.files = [];
+    this.files_names = [];
+    this.saved_files = [];
   }
 }
