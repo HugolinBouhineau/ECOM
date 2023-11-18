@@ -61,14 +61,13 @@ export class PlantUpdateComponent implements OnInit {
     for (let i = 0; i < this.files_names.length; i++) {
       let file = this.files_names[i];
       pathname = pathname + file;
-      /*TODO : Hugolin -> réussir à mettre le "file" sur le blob
-      Si jamais, il y a un liste appellée : saved_files qui sont les handler des files (je sais pas comment ça peut marcher
-      GLHF */
+
       if (i != this.files_names.length - 1) {
         pathname = pathname + '**';
       }
     }
 
+    // Upload images to azure using blobServicce
     for (let savedFile of this.saved_files) {
       this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name, () => {});
     }
