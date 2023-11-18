@@ -26,7 +26,7 @@ const plantRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
-    path: 'new',
+    path: 'new/create',
     component: PlantUpdateComponent,
     resolve: {
       plant: PlantRoutingResolveService,
