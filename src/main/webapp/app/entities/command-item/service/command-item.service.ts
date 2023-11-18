@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -17,6 +17,10 @@ export class CommandItemService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/command-items');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+
+  all(): Observable<ICommandItem[]> {
+    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+  }
 
   create(commandItem: NewCommandItem): Observable<EntityResponseType> {
     return this.http.post<ICommandItem>(this.resourceUrl, commandItem, { observe: 'response' });

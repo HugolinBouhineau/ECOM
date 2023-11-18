@@ -5,13 +5,15 @@ import { IAddress, NewAddress } from '../../entities/address/address.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Item, PanierService } from '../../panier.service';
 import { AddressService } from '../../entities/address/service/address.service';
-import { NewCommand } from '../../entities/command/command.model';
+import { ICommand, NewCommand } from '../../entities/command/command.model';
 import { CommandState } from '../../entities/enumerations/command-state.model';
-import {IPlant, PlantQuantity} from '../../entities/plant/plant.model';
+import { IPlant, PlantQuantity } from '../../entities/plant/plant.model';
 import dayjs from 'dayjs/esm';
 import { CommandService } from '../../entities/command/service/command.service';
-import {PlantService} from "../../entities/plant/service/plant.service";
-import {Router} from "@angular/router";
+import { PlantService } from '../../entities/plant/service/plant.service';
+import { Router } from '@angular/router';
+import { NewCommandItem } from 'app/entities/command-item/command-item.model';
+import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 
 /* Compare year : if expiration Year > current Year => OK
                   if expiration Year = current Year => MAYBE (Check Month)
@@ -126,9 +128,9 @@ export class PaymentComponent implements OnInit {
     private addressService: AddressService,
     private commandService: CommandService,
     private plantService: PlantService,
-    private router: Router,
-  ) {
-  }
+    private commandItemService: CommandItemService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.customerService.getCustomer().subscribe(customer => {
@@ -199,13 +201,25 @@ export class PaymentComponent implements OnInit {
       address: address,
       customer: this.customer,
       id: null,
-      plants: this.getListPlants(),
       purchaseDate: dayjs(new Date()),
       state: CommandState.InProgress,
+      commandItems: null,
     };
     this.commandService.create(newCommand).subscribe({
-      next: () => {
+      next: value => {
         if (!this.errorCreateCommand && !this.errorSaveAddress) {
+          if (value.body) {
+            let command: ICommand = value.body;
+            for (let item of this.getItems()) {
+              let commandItem: NewCommandItem = {
+                id: null,
+                quantity: item.quantity,
+                command: command,
+                plant: item.plant,
+              };
+              this.commandItemService.create(commandItem).subscribe();
+            }
+          }
           this.panierService.clearCart();
           this.success = true;
         }
@@ -217,12 +231,12 @@ export class PaymentComponent implements OnInit {
   submit(): void {
     let quantitiesAsked: PlantQuantity[] = [];
     for (let item of this.panierService.getItems()) {
-      quantitiesAsked.push({plantId: item.plant.id, plantQuantity: item.quantity});
+      quantitiesAsked.push({ plantId: item.plant.id, plantQuantity: item.quantity });
     }
 
     // Verify that the plants are still in stock
     this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe(value => {
-      if (value.body === true){
+      if (value.body === true) {
         // Plants are still in stock and stock was decremented
         // Save the address
         const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
@@ -248,10 +262,10 @@ export class PaymentComponent implements OnInit {
           this.sendNewAaddress(newAddress);
           return;
         }
-      }else{
+      } else {
         // Plants are no longer available and stock wasn't decremented
         this.router.navigate(['/basket']);
       }
-    })
+    });
   }
 }
