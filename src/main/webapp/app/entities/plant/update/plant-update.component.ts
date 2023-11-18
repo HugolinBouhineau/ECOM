@@ -9,7 +9,8 @@ import { IPlant } from '../plant.model';
 import { PlantService } from '../service/plant.service';
 import { ICategory } from 'app/entities/category/category.model';
 import { CategoryService } from 'app/entities/category/service/category.service';
-import {FileHandle} from "../../../drag-ndrop.directive";
+import { FileHandle } from '../../../drag-ndrop.directive';
+import { AzureBlobStorageService } from '../../../azure-blob-storage.service';
 
 @Component({
   selector: 'jhi-plant-update',
@@ -20,7 +21,9 @@ export class PlantUpdateComponent implements OnInit {
   plant: IPlant | null = null;
   files: FileHandle[] = [];
   files_names: string[] = [];
-  saved_files:FileHandle[] = [];
+  saved_files: FileHandle[] = [];
+  sas =
+    'sp=racwdli&st=2023-11-18T13:43:30Z&se=2024-01-01T21:43:30Z&spr=https&sv=2022-11-02&sr=c&sig=7az5ERRS2B0gz%2F72aHTdDAQgSWu4g53NJDqxPUWiB5Q%3D';
 
   categoriesSharedCollection: ICategory[] = [];
 
@@ -30,7 +33,8 @@ export class PlantUpdateComponent implements OnInit {
     protected plantService: PlantService,
     protected plantFormService: PlantFormService,
     protected categoryService: CategoryService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
+    private blobService: AzureBlobStorageService
   ) {}
 
   compareCategory = (o1: ICategory | null, o2: ICategory | null): boolean => this.categoryService.compareCategory(o1, o2);
@@ -53,17 +57,22 @@ export class PlantUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const plant = this.plantFormService.getPlant(this.editForm);
-    let pathname:string = ""
-    for(let i = 0;i < this.files_names.length;i++){
+    let pathname: string = '';
+    for (let i = 0; i < this.files_names.length; i++) {
       let file = this.files_names[i];
       pathname = pathname + file;
-     /*TODO : Hugolin -> réussir à mettre le "file" sur le blob
+      /*TODO : Hugolin -> réussir à mettre le "file" sur le blob
       Si jamais, il y a un liste appellée : saved_files qui sont les handler des files (je sais pas comment ça peut marcher
       GLHF */
-      if (i != (this.files_names.length-1)){
-        pathname = pathname + "**";
+      if (i != this.files_names.length - 1) {
+        pathname = pathname + '**';
       }
     }
+
+    for (let savedFile of this.saved_files) {
+      this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name, () => {});
+    }
+
     plant.imagePath = pathname;
     if (plant.id !== null) {
       this.subscribeToSaveResponse(this.plantService.update(plant));
@@ -112,6 +121,7 @@ export class PlantUpdateComponent implements OnInit {
       )
       .subscribe((categories: ICategory[]) => (this.categoriesSharedCollection = categories));
   }
+
   filesDropped(files: FileHandle[]): void {
     this.files = files;
   }
@@ -124,7 +134,7 @@ export class PlantUpdateComponent implements OnInit {
     this.files = [];
   }
 
-  clean_files():void{
+  clean_files(): void {
     this.files = [];
     this.files_names = [];
     this.saved_files = [];

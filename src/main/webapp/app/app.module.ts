@@ -32,7 +32,6 @@ import { BasketComponent } from './components/basket/basket.component';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { PaymentComponent } from './components/payment/payment.component';
 import { CommandDialogComponent } from './command-dialog/command-dialog.component';
-import { DragNDropDirective } from './drag-ndrop.directive';
 @NgModule({
   imports: [
     BrowserModule,
@@ -66,7 +65,6 @@ import { DragNDropDirective } from './drag-ndrop.directive';
     CatalogComponent,
     PaymentComponent,
     CommandDialogComponent,
-    DragNDropDirective,
   ],
   bootstrap: [MainComponent],
 })
