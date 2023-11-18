@@ -14,15 +14,14 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type CommandFormGroupInput = ICommand | PartialWithRequiredKeyOf<NewCommand>;
 
-type CommandFormDefaults = Pick<NewCommand, 'id' | 'plants'>;
+type CommandFormDefaults = Pick<NewCommand, 'id'>;
 
 type CommandFormGroupContent = {
   id: FormControl<ICommand['id'] | NewCommand['id']>;
   state: FormControl<ICommand['state']>;
   purchaseDate: FormControl<ICommand['purchaseDate']>;
-  address: FormControl<ICommand['address']>;
-  plants: FormControl<ICommand['plants']>;
   customer: FormControl<ICommand['customer']>;
+  address: FormControl<ICommand['address']>;
 };
 
 export type CommandFormGroup = FormGroup<CommandFormGroupContent>;
@@ -44,9 +43,8 @@ export class CommandFormService {
       ),
       state: new FormControl(commandRawValue.state),
       purchaseDate: new FormControl(commandRawValue.purchaseDate),
-      address: new FormControl(commandRawValue.address),
-      plants: new FormControl(commandRawValue.plants ?? []),
       customer: new FormControl(commandRawValue.customer),
+      address: new FormControl(commandRawValue.address),
     });
   }
 
@@ -67,7 +65,6 @@ export class CommandFormService {
   private getFormDefaults(): CommandFormDefaults {
     return {
       id: null,
-      plants: [],
     };
   }
 }

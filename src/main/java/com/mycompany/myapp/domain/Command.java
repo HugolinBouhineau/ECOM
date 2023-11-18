@@ -34,24 +34,18 @@ public class Command implements Serializable {
     @Column(name = "purchase_date")
     private LocalDate purchaseDate;
 
-    @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
-    @OneToOne
-    @JoinColumn(unique = true)
-    private Address address;
-
-    @ManyToMany
-    @JoinTable(
-        name = "rel_command__plants",
-        joinColumns = @JoinColumn(name = "command_id"),
-        inverseJoinColumns = @JoinColumn(name = "plants_id")
-    )
+    @OneToMany(mappedBy = "command")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "categories", "commands" }, allowSetters = true)
-    private Set<Plant> plants = new HashSet<>();
+    @JsonIgnoreProperties(value = { "command", "plant" }, allowSetters = true)
+    private Set<CommandItem> commandItems = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "user", "commands", "addresses" }, allowSetters = true)
     private Customer customer;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "commands", "customer" }, allowSetters = true)
+    private Address address;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -94,41 +88,34 @@ public class Command implements Serializable {
         this.purchaseDate = purchaseDate;
     }
 
-    public Address getAddress() {
-        return this.address;
+    public Set<CommandItem> getCommandItems() {
+        return this.commandItems;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setCommandItems(Set<CommandItem> commandItems) {
+        if (this.commandItems != null) {
+            this.commandItems.forEach(i -> i.setCommand(null));
+        }
+        if (commandItems != null) {
+            commandItems.forEach(i -> i.setCommand(this));
+        }
+        this.commandItems = commandItems;
     }
 
-    public Command address(Address address) {
-        this.setAddress(address);
+    public Command commandItems(Set<CommandItem> commandItems) {
+        this.setCommandItems(commandItems);
         return this;
     }
 
-    public Set<Plant> getPlants() {
-        return this.plants;
-    }
-
-    public void setPlants(Set<Plant> plants) {
-        this.plants = plants;
-    }
-
-    public Command plants(Set<Plant> plants) {
-        this.setPlants(plants);
+    public Command addCommandItems(CommandItem commandItem) {
+        this.commandItems.add(commandItem);
+        commandItem.setCommand(this);
         return this;
     }
 
-    public Command addPlants(Plant plant) {
-        this.plants.add(plant);
-        plant.getCommands().add(this);
-        return this;
-    }
-
-    public Command removePlants(Plant plant) {
-        this.plants.remove(plant);
-        plant.getCommands().remove(this);
+    public Command removeCommandItems(CommandItem commandItem) {
+        this.commandItems.remove(commandItem);
+        commandItem.setCommand(null);
         return this;
     }
 
@@ -142,6 +129,19 @@ public class Command implements Serializable {
 
     public Command customer(Customer customer) {
         this.setCustomer(customer);
+        return this;
+    }
+
+    public Address getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Command address(Address address) {
+        this.setAddress(address);
         return this;
     }
 

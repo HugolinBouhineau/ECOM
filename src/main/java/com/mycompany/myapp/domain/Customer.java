@@ -31,12 +31,12 @@ public class Customer implements Serializable {
 
     @OneToMany(mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "address", "plants", "customer" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "commandItems", "customer", "address" }, allowSetters = true)
     private Set<Command> commands = new HashSet<>();
 
     @OneToMany(mappedBy = "customer")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "customer" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "commands", "customer" }, allowSetters = true)
     private Set<Address> addresses = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -117,13 +117,13 @@ public class Customer implements Serializable {
         return this;
     }
 
-    public Customer addAddress(Address address) {
+    public Customer addAddresses(Address address) {
         this.addresses.add(address);
         address.setCustomer(this);
         return this;
     }
 
-    public Customer removeAddress(Address address) {
+    public Customer removeAddresses(Address address) {
         this.addresses.remove(address);
         address.setCustomer(null);
         return this;

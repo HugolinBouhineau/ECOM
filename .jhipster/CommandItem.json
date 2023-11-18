@@ -1,0 +1,33 @@
+{
+  "applications": "*",
+  "changelogDate": "20231118102029",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "command_item",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "CommandItem",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "command",
+      "otherEntityRelationshipName": "commandItems",
+      "relationshipName": "command",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "plant",
+      "otherEntityRelationshipName": "commandItems",
+      "relationshipName": "plant",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}

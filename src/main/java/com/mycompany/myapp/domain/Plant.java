@@ -43,6 +43,11 @@ public class Plant implements Serializable {
     @Column(name = "image_path")
     private String imagePath;
 
+    @OneToMany(mappedBy = "plant")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "command", "plant" }, allowSetters = true)
+    private Set<CommandItem> commandItems = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
         name = "rel_plant__categories",
@@ -52,11 +57,6 @@ public class Plant implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "plants" }, allowSetters = true)
     private Set<Category> categories = new HashSet<>();
-
-    @ManyToMany(mappedBy = "plants")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "address", "plants", "customer" }, allowSetters = true)
-    private Set<Command> commands = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -151,6 +151,37 @@ public class Plant implements Serializable {
         this.imagePath = imagePath;
     }
 
+    public Set<CommandItem> getCommandItems() {
+        return this.commandItems;
+    }
+
+    public void setCommandItems(Set<CommandItem> commandItems) {
+        if (this.commandItems != null) {
+            this.commandItems.forEach(i -> i.setPlant(null));
+        }
+        if (commandItems != null) {
+            commandItems.forEach(i -> i.setPlant(this));
+        }
+        this.commandItems = commandItems;
+    }
+
+    public Plant commandItems(Set<CommandItem> commandItems) {
+        this.setCommandItems(commandItems);
+        return this;
+    }
+
+    public Plant addCommandItems(CommandItem commandItem) {
+        this.commandItems.add(commandItem);
+        commandItem.setPlant(this);
+        return this;
+    }
+
+    public Plant removeCommandItems(CommandItem commandItem) {
+        this.commandItems.remove(commandItem);
+        commandItem.setPlant(null);
+        return this;
+    }
+
     public Set<Category> getCategories() {
         return this.categories;
     }
@@ -173,37 +204,6 @@ public class Plant implements Serializable {
     public Plant removeCategories(Category category) {
         this.categories.remove(category);
         category.getPlants().remove(this);
-        return this;
-    }
-
-    public Set<Command> getCommands() {
-        return this.commands;
-    }
-
-    public void setCommands(Set<Command> commands) {
-        if (this.commands != null) {
-            this.commands.forEach(i -> i.removePlants(this));
-        }
-        if (commands != null) {
-            commands.forEach(i -> i.addPlants(this));
-        }
-        this.commands = commands;
-    }
-
-    public Plant commands(Set<Command> commands) {
-        this.setCommands(commands);
-        return this;
-    }
-
-    public Plant addCommands(Command command) {
-        this.commands.add(command);
-        command.getPlants().add(this);
-        return this;
-    }
-
-    public Plant removeCommands(Command command) {
-        this.commands.remove(command);
-        command.getPlants().remove(this);
         return this;
     }
 

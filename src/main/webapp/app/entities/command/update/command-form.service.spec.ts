@@ -22,9 +22,8 @@ describe('Command Form Service', () => {
             id: expect.any(Object),
             state: expect.any(Object),
             purchaseDate: expect.any(Object),
-            address: expect.any(Object),
-            plants: expect.any(Object),
             customer: expect.any(Object),
+            address: expect.any(Object),
           })
         );
       });
@@ -37,9 +36,8 @@ describe('Command Form Service', () => {
             id: expect.any(Object),
             state: expect.any(Object),
             purchaseDate: expect.any(Object),
-            address: expect.any(Object),
-            plants: expect.any(Object),
             customer: expect.any(Object),
+            address: expect.any(Object),
           })
         );
       });

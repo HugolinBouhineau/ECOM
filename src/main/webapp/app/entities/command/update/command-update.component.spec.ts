@@ -9,12 +9,10 @@ import { of, Subject, from } from 'rxjs';
 import { CommandFormService } from './command-form.service';
 import { CommandService } from '../service/command.service';
 import { ICommand } from '../command.model';
-import { IAddress } from 'app/entities/address/address.model';
-import { AddressService } from 'app/entities/address/service/address.service';
-import { IPlant } from 'app/entities/plant/plant.model';
-import { PlantService } from 'app/entities/plant/service/plant.service';
 import { ICustomer } from 'app/entities/customer/customer.model';
 import { CustomerService } from 'app/entities/customer/service/customer.service';
+import { IAddress } from 'app/entities/address/address.model';
+import { AddressService } from 'app/entities/address/service/address.service';
 
 import { CommandUpdateComponent } from './command-update.component';
 
@@ -24,9 +22,8 @@ describe('Command Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let commandFormService: CommandFormService;
   let commandService: CommandService;
-  let addressService: AddressService;
-  let plantService: PlantService;
   let customerService: CustomerService;
+  let addressService: AddressService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -49,58 +46,13 @@ describe('Command Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     commandFormService = TestBed.inject(CommandFormService);
     commandService = TestBed.inject(CommandService);
-    addressService = TestBed.inject(AddressService);
-    plantService = TestBed.inject(PlantService);
     customerService = TestBed.inject(CustomerService);
+    addressService = TestBed.inject(AddressService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('Should call Address query and add missing value', () => {
-      const command: ICommand = { id: 456 };
-      const address: IAddress = { id: 76799 };
-      command.address = address;
-
-      const addressCollection: IAddress[] = [{ id: 76029 }];
-      jest.spyOn(addressService, 'query').mockReturnValue(of(new HttpResponse({ body: addressCollection })));
-      const additionalAddresses = [address];
-      const expectedCollection: IAddress[] = [...additionalAddresses, ...addressCollection];
-      jest.spyOn(addressService, 'addAddressToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ command });
-      comp.ngOnInit();
-
-      expect(addressService.query).toHaveBeenCalled();
-      expect(addressService.addAddressToCollectionIfMissing).toHaveBeenCalledWith(
-        addressCollection,
-        ...additionalAddresses.map(expect.objectContaining)
-      );
-      expect(comp.addressesSharedCollection).toEqual(expectedCollection);
-    });
-
-    it('Should call Plant query and add missing value', () => {
-      const command: ICommand = { id: 456 };
-      const plants: IPlant[] = [{ id: 93384 }];
-      command.plants = plants;
-
-      const plantCollection: IPlant[] = [{ id: 60260 }];
-      jest.spyOn(plantService, 'query').mockReturnValue(of(new HttpResponse({ body: plantCollection })));
-      const additionalPlants = [...plants];
-      const expectedCollection: IPlant[] = [...additionalPlants, ...plantCollection];
-      jest.spyOn(plantService, 'addPlantToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ command });
-      comp.ngOnInit();
-
-      expect(plantService.query).toHaveBeenCalled();
-      expect(plantService.addPlantToCollectionIfMissing).toHaveBeenCalledWith(
-        plantCollection,
-        ...additionalPlants.map(expect.objectContaining)
-      );
-      expect(comp.plantsSharedCollection).toEqual(expectedCollection);
-    });
-
     it('Should call Customer query and add missing value', () => {
       const command: ICommand = { id: 456 };
       const customer: ICustomer = { id: 11706 };
@@ -123,21 +75,40 @@ describe('Command Management Update Component', () => {
       expect(comp.customersSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should update editForm', () => {
+    it('Should call Address query and add missing value', () => {
       const command: ICommand = { id: 456 };
-      const address: IAddress = { id: 19182 };
+      const address: IAddress = { id: 76799 };
       command.address = address;
-      const plants: IPlant = { id: 78984 };
-      command.plants = [plants];
-      const customer: ICustomer = { id: 74412 };
-      command.customer = customer;
+
+      const addressCollection: IAddress[] = [{ id: 76029 }];
+      jest.spyOn(addressService, 'query').mockReturnValue(of(new HttpResponse({ body: addressCollection })));
+      const additionalAddresses = [address];
+      const expectedCollection: IAddress[] = [...additionalAddresses, ...addressCollection];
+      jest.spyOn(addressService, 'addAddressToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ command });
       comp.ngOnInit();
 
-      expect(comp.addressesSharedCollection).toContain(address);
-      expect(comp.plantsSharedCollection).toContain(plants);
+      expect(addressService.query).toHaveBeenCalled();
+      expect(addressService.addAddressToCollectionIfMissing).toHaveBeenCalledWith(
+        addressCollection,
+        ...additionalAddresses.map(expect.objectContaining)
+      );
+      expect(comp.addressesSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('Should update editForm', () => {
+      const command: ICommand = { id: 456 };
+      const customer: ICustomer = { id: 74412 };
+      command.customer = customer;
+      const address: IAddress = { id: 19182 };
+      command.address = address;
+
+      activatedRoute.data = of({ command });
+      comp.ngOnInit();
+
       expect(comp.customersSharedCollection).toContain(customer);
+      expect(comp.addressesSharedCollection).toContain(address);
       expect(comp.command).toEqual(command);
     });
   });
@@ -211,26 +182,6 @@ describe('Command Management Update Component', () => {
   });
 
   describe('Compare relationships', () => {
-    describe('compareAddress', () => {
-      it('Should forward to addressService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(addressService, 'compareAddress');
-        comp.compareAddress(entity, entity2);
-        expect(addressService.compareAddress).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
-    describe('comparePlant', () => {
-      it('Should forward to plantService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(plantService, 'comparePlant');
-        comp.comparePlant(entity, entity2);
-        expect(plantService.comparePlant).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
     describe('compareCustomer', () => {
       it('Should forward to customerService', () => {
         const entity = { id: 123 };
@@ -238,6 +189,16 @@ describe('Command Management Update Component', () => {
         jest.spyOn(customerService, 'compareCustomer');
         comp.compareCustomer(entity, entity2);
         expect(customerService.compareCustomer).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
+    describe('compareAddress', () => {
+      it('Should forward to addressService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(addressService, 'compareAddress');
+        comp.compareAddress(entity, entity2);
+        expect(addressService.compareAddress).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });
