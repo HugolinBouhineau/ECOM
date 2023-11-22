@@ -6,7 +6,6 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IPlant, NewPlant } from '../plant.model';
-import { ICategory } from '../../category/category.model';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -39,8 +38,10 @@ export class PlantService {
     return this.http.get<IPlant>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  filterPlantWithCategories(categories: Number[]): Observable<IPlant[]> {
-    return this.http.get(this.resourceUrl + "/filter/categories?eagerload=true&categoriesId=" + categories.toString()).pipe(map((body: any) => body));
+  filterPlant(searchPlant: string, categories: Number[]): Observable<IPlant[]> {
+    return this.http
+      .get(this.resourceUrl + '/filter/categories?name=' + searchPlant + '&categoriesId=' + categories.toString())
+      .pipe(map((body: any) => body));
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

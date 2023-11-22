@@ -18,11 +18,7 @@ export class CatalogComponent implements OnInit {
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
 
-  constructor(
-    private categoryService: CategoryService,
-    private plantService: PlantService,
-    private panierService: PanierService,
-  ) {}
+  constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
   ngOnInit(): void {
     this.categoryService.all().subscribe(value => {
@@ -50,9 +46,9 @@ export class CatalogComponent implements OnInit {
     } else {
       this.categoriesSelected.push(cat.id);
     }
-    this.plantService.filterPlantWithCategories(this.categoriesSelected).subscribe(value => {
+    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(value => {
       this.plants = value;
-    })
+    });
   }
 
   checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {

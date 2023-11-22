@@ -1,13 +1,12 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Plant;
+import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +33,11 @@ public class PlantResource {
 
     private final PlantRepository plantRepository;
 
-    public PlantResource(PlantRepository plantRepository) {
+    private final CategoryRepository categoryRepository;
+
+    public PlantResource(PlantRepository plantRepository, CategoryRepository categoryRepository) {
         this.plantRepository = plantRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     /**
@@ -178,25 +180,27 @@ public class PlantResource {
     }
 
     @GetMapping("/plants/filter/categories")
-    public List<Plant> filterPlantWithCategories(
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload,
-        @RequestParam List<Long> categoriesId) {
-        log.debug("REST request to get all Plants with these categories : {}", categoriesId);
-        List<Plant> plants;
-        if (eagerload) {
-            plants = plantRepository.findAllWithEagerRelationships();
-        } else {
-            plants = plantRepository.findAll();
+    public List<Plant> filterPlant(
+        @RequestParam(required = false, defaultValue = "") String name,
+        @RequestParam(required = false, defaultValue = "") List<Long> categoriesId
+    ) {
+        log.debug("REST request to get Plants containing '{}' and with these categories {}", name, categoriesId);
+        if (name.isEmpty() && categoriesId.isEmpty()) {
+            return plantRepository.findAll();
         }
 
-        List<Plant> res = new ArrayList<>();
-        for (Plant plant: plants) {
-            List<Long> categoriesIDPlant = plant.getCategories().stream().map(category -> category.getId()).collect(Collectors.toList());
-            if (categoriesIDPlant.containsAll(categoriesId)) {
-                res.add(plant);
-            }
+        if (!name.isEmpty() && categoriesId.isEmpty()) {
+            return plantRepository.findPlantsByName(name);
         }
-        return res;
+
+        //        if (name.isEmpty() && !categoriesId.isEmpty()) {
+        //            // Get Categories from list of ids
+        //            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+        //            Set<Category> c = categories.stream().collect(Collectors.toSet());
+        //            List<Plant> a = plantRepository.findPlantsByCategories(c);
+        //            log.debug("Plant from categories : {}", a);
+        //        }
+        return plantRepository.findAll();
     }
 
     /**
