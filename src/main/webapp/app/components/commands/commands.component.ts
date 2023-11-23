@@ -9,6 +9,8 @@ import { CommandState } from '../../entities/enumerations/command-state.model';
 import dayjs from 'dayjs/esm';
 import { IPlant } from '../../entities/plant/plant.model';
 import { CommandDialogServiceService } from '../../command-dialog/command-dialog-service.service';
+import { CommandItemService } from '../../entities/command-item/service/command-item.service';
+import { ICommandItem } from '../../entities/command-item/command-item.model';
 
 @Component({
   selector: 'jhi-commands',
@@ -26,6 +28,7 @@ export class CommandsComponent implements OnInit {
     private accountService: AccountService,
     private customerService: CustomerService,
     private commandService: CommandService,
+    private commandItemService: CommandItemService,
     private cds: CommandDialogServiceService
   ) {}
 
@@ -41,9 +44,9 @@ export class CommandsComponent implements OnInit {
       this.customer = customer;
       if (customer) {
         this.id = customer.id;
+        this.load();
       }
     });
-    this.load();
   }
 
   load(): void {
@@ -65,24 +68,35 @@ export class CommandsComponent implements OnInit {
   }
 
   parce(commandz: ICommand[]) {
-    for (let i = 0; i < commandz.length; i++) {
-      let customer: ICustomer = <ICustomer>commandz[i].customer;
-      if (customer.id == this.id) {
-        if (commandz[i].state == CommandState.InProgress) {
-          this.progress_command.push(commandz[i]);
-        } else {
-          this.list_command_passed.push(commandz[i]);
+    this.commandItemService.all().subscribe(value => {
+      let commandItems: ICommandItem[] = value;
+      for (let i = 0; i < commandz.length; i++) {
+        // Add command items to command
+        commandz[i].commandItems = commandItems.filter(value1 => value1.command?.id === commandz[i].id);
+        // Chek if command is passed or in progress
+        let customer: ICustomer = <ICustomer>commandz[i].customer;
+        if (customer.id == this.id) {
+          if (commandz[i].state == CommandState.InProgress) {
+            this.progress_command.push(commandz[i]);
+          } else {
+            this.list_command_passed.push(commandz[i]);
+          }
         }
       }
-    }
+    });
   }
   getPrice(command: ICommand): number {
     let total: number = 0;
-    let plant: Pick<IPlant, 'id' | 'price'>;
-    for (let i: number = 0; i < <number>command.plants?.length; i++) {
-      // @ts-ignore
-      plant = command.plants[i];
-      total = total + <number>plant.price;
+    if (command.commandItems) {
+      let items: ICommandItem[] = command.commandItems;
+      for (let item of items) {
+        if (item.plant) {
+          let plant: IPlant = item.plant;
+          if (plant.price && item.quantity) {
+            total += plant.price * item.quantity;
+          }
+        }
+      }
     }
     return total;
   }

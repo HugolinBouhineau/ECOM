@@ -27,7 +27,6 @@ describe('Plant Form Service', () => {
             stock: expect.any(Object),
             imagePath: expect.any(Object),
             categories: expect.any(Object),
-            commands: expect.any(Object),
           })
         );
       });
@@ -45,7 +44,6 @@ describe('Plant Form Service', () => {
             stock: expect.any(Object),
             imagePath: expect.any(Object),
             categories: expect.any(Object),
-            commands: expect.any(Object),
           })
         );
       });

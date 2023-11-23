@@ -1,0 +1,26 @@
+{
+  "ecomApp": {
+    "commandItem": {
+      "home": {
+        "title": "CommandItems",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Command Item",
+        "createOrEditLabel": "Créer ou éditer un Command Item",
+        "notFound": "Aucun Command Item trouvé"
+      },
+      "created": "Un nouveau Command Item a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Command Item avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Command Item avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Command Item {{ id }} ?"
+      },
+      "detail": {
+        "title": "Command Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "command": "Command",
+      "plant": "Plant"
+    }
+  }
+}

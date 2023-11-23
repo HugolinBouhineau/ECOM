@@ -22,22 +22,21 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "address",
-      "ownerSide": true,
-      "relationshipName": "address",
-      "relationshipType": "one-to-one"
-    },
-    {
-      "otherEntityName": "plant",
-      "otherEntityRelationshipName": "commands",
-      "ownerSide": true,
-      "relationshipName": "plants",
-      "relationshipType": "many-to-many"
+      "otherEntityName": "commandItem",
+      "otherEntityRelationshipName": "command",
+      "relationshipName": "commandItems",
+      "relationshipType": "one-to-many"
     },
     {
       "otherEntityName": "customer",
       "otherEntityRelationshipName": "commands",
       "relationshipName": "customer",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "address",
+      "otherEntityRelationshipName": "commands",
+      "relationshipName": "address",
       "relationshipType": "many-to-one"
     }
   ],

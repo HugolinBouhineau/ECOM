@@ -2,7 +2,7 @@
   "ecomApp": {
     "plant": {
       "home": {
-        "title": "La Serre enchantée",
+        "title": "Plants",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Plant",
         "createOrEditLabel": "Create or edit a Plant",
@@ -15,7 +15,7 @@
         "question": "Are you sure you want to delete Plant {{ id }}?"
       },
       "detail": {
-        "title": "La Serre enchantée"
+        "title": "Plant"
       },
       "id": "ID",
       "name": "Name",
@@ -24,8 +24,8 @@
       "price": "Price",
       "stock": "Stock",
       "imagePath": "Image Path",
-      "categories": "Categories",
-      "commands": "Commands"
+      "commandItems": "Command Items",
+      "categories": "Categories"
     }
   }
 }

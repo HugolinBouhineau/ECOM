@@ -141,17 +141,12 @@ public class CommandResource {
     /**
      * {@code GET  /commands} : get all the commands.
      *
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of commands in body.
      */
     @GetMapping("/commands")
-    public List<Command> getAllCommands(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public List<Command> getAllCommands() {
         log.debug("REST request to get all Commands");
-        if (eagerload) {
-            return commandRepository.findAllWithEagerRelationships();
-        } else {
-            return commandRepository.findAll();
-        }
+        return commandRepository.findAll();
     }
 
     /**
@@ -163,7 +158,7 @@ public class CommandResource {
     @GetMapping("/commands/{id}")
     public ResponseEntity<Command> getCommand(@PathVariable Long id) {
         log.debug("REST request to get Command : {}", id);
-        Optional<Command> command = commandRepository.findOneWithEagerRelationships(id);
+        Optional<Command> command = commandRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(command);
     }
 

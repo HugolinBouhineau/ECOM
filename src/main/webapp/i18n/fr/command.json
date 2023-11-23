@@ -20,9 +20,9 @@
       "id": "ID",
       "state": "State",
       "purchaseDate": "Purchase Date",
-      "address": "Address",
-      "plants": "Plants",
-      "customer": "Customer"
+      "commandItems": "Command Items",
+      "customer": "Customer",
+      "address": "Address"
     }
   }
 }

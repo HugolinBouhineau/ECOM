@@ -8,28 +8,16 @@
     -->
     <changeSet id="20231018191001-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="address_id"
-                                 baseTableName="command"
-                                 constraintName="fk_command__address_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="address"/>
-
-        <addForeignKeyConstraint baseColumnNames="command_id"
-                                 baseTableName="rel_command__plants"
-                                 constraintName="fk_rel_command__plants__command_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="command"/>
-
-        <addForeignKeyConstraint baseColumnNames="plants_id"
-                                 baseTableName="rel_command__plants"
-                                 constraintName="fk_rel_command__plants__plants_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="plant"/>
-
         <addForeignKeyConstraint baseColumnNames="customer_id"
                                  baseTableName="command"
                                  constraintName="fk_command__customer_id"
                                  referencedColumnNames="id"
                                  referencedTableName="customer"/>
+
+        <addForeignKeyConstraint baseColumnNames="address_id"
+                                 baseTableName="command"
+                                 constraintName="fk_command__address_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="address"/>
     </changeSet>
 </databaseChangeLog>

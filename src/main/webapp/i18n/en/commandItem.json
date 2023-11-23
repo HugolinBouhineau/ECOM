@@ -1,0 +1,26 @@
+{
+  "ecomApp": {
+    "commandItem": {
+      "home": {
+        "title": "Command Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Command Item",
+        "createOrEditLabel": "Create or edit a Command Item",
+        "notFound": "No Command Items found"
+      },
+      "created": "A new Command Item is created with identifier {{ param }}",
+      "updated": "A Command Item is updated with identifier {{ param }}",
+      "deleted": "A Command Item is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Command Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Command Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "command": "Command",
+      "plant": "Plant"
+    }
+  }
+}

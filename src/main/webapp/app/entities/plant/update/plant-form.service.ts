@@ -14,7 +14,7 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type PlantFormGroupInput = IPlant | PartialWithRequiredKeyOf<NewPlant>;
 
-type PlantFormDefaults = Pick<NewPlant, 'id' | 'categories' | 'commands'>;
+type PlantFormDefaults = Pick<NewPlant, 'id' | 'categories'>;
 
 type PlantFormGroupContent = {
   id: FormControl<IPlant['id'] | NewPlant['id']>;
@@ -25,7 +25,6 @@ type PlantFormGroupContent = {
   stock: FormControl<IPlant['stock']>;
   imagePath: FormControl<IPlant['imagePath']>;
   categories: FormControl<IPlant['categories']>;
-  commands: FormControl<IPlant['commands']>;
 };
 
 export type PlantFormGroup = FormGroup<PlantFormGroupContent>;
@@ -52,7 +51,6 @@ export class PlantFormService {
       stock: new FormControl(plantRawValue.stock),
       imagePath: new FormControl(plantRawValue.imagePath),
       categories: new FormControl(plantRawValue.categories ?? []),
-      commands: new FormControl(plantRawValue.commands ?? []),
     });
   }
 
@@ -74,7 +72,6 @@ export class PlantFormService {
     return {
       id: null,
       categories: [],
-      commands: [],
     };
   }
 }

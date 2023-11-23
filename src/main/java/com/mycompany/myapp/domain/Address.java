@@ -2,6 +2,8 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -34,6 +36,11 @@ public class Address implements Serializable {
 
     @Column(name = "zip_code")
     private String zipCode;
+
+    @OneToMany(mappedBy = "address")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "commandItems", "customer", "address" }, allowSetters = true)
+    private Set<Command> commands = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "user", "commands", "addresses" }, allowSetters = true)
@@ -106,6 +113,37 @@ public class Address implements Serializable {
         this.zipCode = zipCode;
     }
 
+    public Set<Command> getCommands() {
+        return this.commands;
+    }
+
+    public void setCommands(Set<Command> commands) {
+        if (this.commands != null) {
+            this.commands.forEach(i -> i.setAddress(null));
+        }
+        if (commands != null) {
+            commands.forEach(i -> i.setAddress(this));
+        }
+        this.commands = commands;
+    }
+
+    public Address commands(Set<Command> commands) {
+        this.setCommands(commands);
+        return this;
+    }
+
+    public Address addCommands(Command command) {
+        this.commands.add(command);
+        command.setAddress(this);
+        return this;
+    }
+
+    public Address removeCommands(Command command) {
+        this.commands.remove(command);
+        command.setAddress(null);
+        return this;
+    }
+
     public Customer getCustomer() {
         return this.customer;
     }
@@ -146,7 +184,7 @@ public class Address implements Serializable {
             ", city='" + getCity() + "'" +
             ", street='" + getStreet() + "'" +
             ", additionalInfo='" + getAdditionalInfo() + "'" +
-            ", zipCode=" + getZipCode() +
+            ", zipCode='" + getZipCode() + "'" +
             "}";
     }
 }

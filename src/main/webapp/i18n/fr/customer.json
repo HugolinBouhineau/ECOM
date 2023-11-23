@@ -20,7 +20,7 @@
       "id": "ID",
       "user": "User",
       "commands": "Commands",
-      "address": "Address"
+      "addresses": "Addresses"
     }
   }
 }
