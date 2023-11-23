@@ -24,8 +24,8 @@
       "price": "Price",
       "stock": "Stock",
       "imagePath": "Image Path",
-      "categories": "Categories",
-      "commands": "Commands"
+      "commandItems": "Command Items",
+      "categories": "Categories"
     }
   }
 }

@@ -7,12 +7,10 @@ import { finalize, map } from 'rxjs/operators';
 import { CommandFormService, CommandFormGroup } from './command-form.service';
 import { ICommand } from '../command.model';
 import { CommandService } from '../service/command.service';
-import { IAddress } from 'app/entities/address/address.model';
-import { AddressService } from 'app/entities/address/service/address.service';
-import { IPlant } from 'app/entities/plant/plant.model';
-import { PlantService } from 'app/entities/plant/service/plant.service';
 import { ICustomer } from 'app/entities/customer/customer.model';
 import { CustomerService } from 'app/entities/customer/service/customer.service';
+import { IAddress } from 'app/entities/address/address.model';
+import { AddressService } from 'app/entities/address/service/address.service';
 import { CommandState } from 'app/entities/enumerations/command-state.model';
 
 @Component({
@@ -24,26 +22,22 @@ export class CommandUpdateComponent implements OnInit {
   command: ICommand | null = null;
   commandStateValues = Object.keys(CommandState);
 
-  addressesSharedCollection: IAddress[] = [];
-  plantsSharedCollection: IPlant[] = [];
   customersSharedCollection: ICustomer[] = [];
+  addressesSharedCollection: IAddress[] = [];
 
   editForm: CommandFormGroup = this.commandFormService.createCommandFormGroup();
 
   constructor(
     protected commandService: CommandService,
     protected commandFormService: CommandFormService,
-    protected addressService: AddressService,
-    protected plantService: PlantService,
     protected customerService: CustomerService,
+    protected addressService: AddressService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
-  compareAddress = (o1: IAddress | null, o2: IAddress | null): boolean => this.addressService.compareAddress(o1, o2);
-
-  comparePlant = (o1: IPlant | null, o2: IPlant | null): boolean => this.plantService.comparePlant(o1, o2);
-
   compareCustomer = (o1: ICustomer | null, o2: ICustomer | null): boolean => this.customerService.compareCustomer(o1, o2);
+
+  compareAddress = (o1: IAddress | null, o2: IAddress | null): boolean => this.addressService.compareAddress(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ command }) => {
@@ -93,33 +87,17 @@ export class CommandUpdateComponent implements OnInit {
     this.command = command;
     this.commandFormService.resetForm(this.editForm, command);
 
-    this.addressesSharedCollection = this.addressService.addAddressToCollectionIfMissing<IAddress>(
-      this.addressesSharedCollection,
-      command.address
-    );
-    this.plantsSharedCollection = this.plantService.addPlantToCollectionIfMissing<IPlant>(
-      this.plantsSharedCollection,
-      ...(command.plants ?? [])
-    );
     this.customersSharedCollection = this.customerService.addCustomerToCollectionIfMissing<ICustomer>(
       this.customersSharedCollection,
       command.customer
     );
+    this.addressesSharedCollection = this.addressService.addAddressToCollectionIfMissing<IAddress>(
+      this.addressesSharedCollection,
+      command.address
+    );
   }
 
   protected loadRelationshipsOptions(): void {
-    this.addressService
-      .query()
-      .pipe(map((res: HttpResponse<IAddress[]>) => res.body ?? []))
-      .pipe(map((addresses: IAddress[]) => this.addressService.addAddressToCollectionIfMissing<IAddress>(addresses, this.command?.address)))
-      .subscribe((addresses: IAddress[]) => (this.addressesSharedCollection = addresses));
-
-    this.plantService
-      .query()
-      .pipe(map((res: HttpResponse<IPlant[]>) => res.body ?? []))
-      .pipe(map((plants: IPlant[]) => this.plantService.addPlantToCollectionIfMissing<IPlant>(plants, ...(this.command?.plants ?? []))))
-      .subscribe((plants: IPlant[]) => (this.plantsSharedCollection = plants));
-
     this.customerService
       .query()
       .pipe(map((res: HttpResponse<ICustomer[]>) => res.body ?? []))
@@ -127,5 +105,11 @@ export class CommandUpdateComponent implements OnInit {
         map((customers: ICustomer[]) => this.customerService.addCustomerToCollectionIfMissing<ICustomer>(customers, this.command?.customer))
       )
       .subscribe((customers: ICustomer[]) => (this.customersSharedCollection = customers));
+
+    this.addressService
+      .query()
+      .pipe(map((res: HttpResponse<IAddress[]>) => res.body ?? []))
+      .pipe(map((addresses: IAddress[]) => this.addressService.addAddressToCollectionIfMissing<IAddress>(addresses, this.command?.address)))
+      .subscribe((addresses: IAddress[]) => (this.addressesSharedCollection = addresses));
   }
 }

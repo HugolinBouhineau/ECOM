@@ -26,7 +26,7 @@
     {
       "otherEntityName": "address",
       "otherEntityRelationshipName": "customer",
-      "relationshipName": "address",
+      "relationshipName": "addresses",
       "relationshipType": "one-to-many"
     }
   ],

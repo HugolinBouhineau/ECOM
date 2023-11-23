@@ -20,28 +20,14 @@
             <column name="purchase_date" type="date">
                 <constraints nullable="true" />
             </column>
-            <column name="address_id" type="bigint">
-                <constraints nullable="true" uniqueConstraintName="ux_command__address_id" />
-            </column>
             <column name="customer_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="address_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-    </changeSet>
-
-    <changeSet id="20231018191001-1-relations" author="jhipster">
-
-        <createTable tableName="rel_command__plants">
-            <column name="plants_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="command_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="command_id, plants_id" tableName="rel_command__plants"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->

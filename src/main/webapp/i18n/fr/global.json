@@ -12,6 +12,7 @@
         "command": "Command",
         "customer": "Customer",
         "address": "Address",
+        "commandItem": "Command Item",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

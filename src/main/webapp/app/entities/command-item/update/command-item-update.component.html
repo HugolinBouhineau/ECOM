@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-command-item-heading" data-cy="CommandItemCreateUpdateHeading" jhiTranslate="ecomApp.commandItem.home.createOrEditLabel">
+        Create or edit a Command Item
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="ecomApp.commandItem.quantity" for="field_quantity">Quantity</label>
+          <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="ecomApp.commandItem.command" for="field_command">Command</label>
+          <select
+            class="form-control"
+            id="field_command"
+            data-cy="command"
+            name="command"
+            formControlName="command"
+            [compareWith]="compareCommand"
+          >
+            <option [ngValue]="null"></option>
+            <option [ngValue]="commandOption" *ngFor="let commandOption of commandsSharedCollection">{{ commandOption.id }}</option>
+          </select>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="ecomApp.commandItem.plant" for="field_plant">Plant</label>
+          <select class="form-control" id="field_plant" data-cy="plant" name="plant" formControlName="plant" [compareWith]="comparePlant">
+            <option [ngValue]="null"></option>
+            <option [ngValue]="plantOption" *ngFor="let plantOption of plantsSharedCollection">{{ plantOption.id }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

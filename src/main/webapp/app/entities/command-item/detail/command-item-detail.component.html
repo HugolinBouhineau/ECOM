@@ -1,0 +1,44 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="commandItem">
+      <h2 data-cy="commandItemDetailsHeading"><span jhiTranslate="ecomApp.commandItem.detail.title">Command Item</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ commandItem.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.commandItem.quantity">Quantity</span></dt>
+        <dd>
+          <span>{{ commandItem.quantity }}</span>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.commandItem.command">Command</span></dt>
+        <dd>
+          <div *ngIf="commandItem.command">
+            <a [routerLink]="['/command', commandItem.command.id, 'view']">{{ commandItem.command.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="ecomApp.commandItem.plant">Plant</span></dt>
+        <dd>
+          <div *ngIf="commandItem.plant">
+            <a [routerLink]="['/plant', commandItem.plant.id, 'view']">{{ commandItem.plant.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/command-item', commandItem.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -37,17 +37,16 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityName": "commandItem",
+      "otherEntityRelationshipName": "plant",
+      "relationshipName": "commandItems",
+      "relationshipType": "one-to-many"
+    },
+    {
       "otherEntityName": "category",
       "otherEntityRelationshipName": "plants",
       "ownerSide": true,
       "relationshipName": "categories",
-      "relationshipType": "many-to-many"
-    },
-    {
-      "otherEntityName": "command",
-      "otherEntityRelationshipName": "plants",
-      "ownerSide": false,
-      "relationshipName": "commands",
       "relationshipType": "many-to-many"
     }
   ],

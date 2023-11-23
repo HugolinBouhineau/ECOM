@@ -43,36 +43,6 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ecomApp.command.address" for="field_address">Address</label>
-          <select
-            class="form-control"
-            id="field_address"
-            data-cy="address"
-            name="address"
-            formControlName="address"
-            [compareWith]="compareAddress"
-          >
-            <option [ngValue]="null"></option>
-            <option [ngValue]="addressOption" *ngFor="let addressOption of addressesSharedCollection">{{ addressOption.id }}</option>
-          </select>
-        </div>
-
-        <div class="row mb-3">
-          <label jhiTranslate="ecomApp.command.plants" for="field_plants">Plants</label>
-          <select
-            class="form-control"
-            id="field_plants"
-            data-cy="plants"
-            multiple
-            name="plants"
-            formControlName="plants"
-            [compareWith]="comparePlant"
-          >
-            <option [ngValue]="plantOption" *ngFor="let plantOption of plantsSharedCollection">{{ plantOption.id }}</option>
-          </select>
-        </div>
-
-        <div class="row mb-3">
           <label class="form-label" jhiTranslate="ecomApp.command.customer" for="field_customer">Customer</label>
           <select
             class="form-control"
@@ -84,6 +54,21 @@
           >
             <option [ngValue]="null"></option>
             <option [ngValue]="customerOption" *ngFor="let customerOption of customersSharedCollection">{{ customerOption.id }}</option>
+          </select>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="ecomApp.command.address" for="field_address">Address</label>
+          <select
+            class="form-control"
+            id="field_address"
+            data-cy="address"
+            name="address"
+            formControlName="address"
+            [compareWith]="compareAddress"
+          >
+            <option [ngValue]="null"></option>
+            <option [ngValue]="addressOption" *ngFor="let addressOption of addressesSharedCollection">{{ addressOption.id }}</option>
           </select>
         </div>
       </div>

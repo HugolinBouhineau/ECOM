@@ -29,8 +29,14 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "customer",
+      "otherEntityName": "command",
       "otherEntityRelationshipName": "address",
+      "relationshipName": "commands",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "addresses",
       "relationshipName": "customer",
       "relationshipType": "many-to-one"
     }

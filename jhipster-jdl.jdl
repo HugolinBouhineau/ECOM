@@ -17,6 +17,10 @@ entity Command {
     purchaseDate LocalDate
 }
 
+entity CommandItem {
+	quantity Integer
+}
+
 entity Customer {
 }
 
@@ -29,17 +33,18 @@ entity Address {
 
 relationship OneToOne{
 	Customer{user} to User
-    Command{address} to Address
 }
 
 relationship ManyToMany {
 	Plant{categories} to Category{plants}
-  	Command{plants} to Plant{commands}
 }
 
-relationship OneToMany{
+relationship OneToMany {
     Customer{commands} to Command{customer}
-    Customer{address} to Address
+    Customer{addresses} to Address{customer}
+    Command{commandItems} to CommandItem{command}
+    Plant{commandItems} to CommandItem {plant}
+    Address{commands} to Command{address}
 }
 
 enum CommandState {
