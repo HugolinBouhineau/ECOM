@@ -1,5 +1,6 @@
 package com.mycompany.myapp.repository;
 
+import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.Plant;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PlantRepository extends PlantRepositoryWithBagRelationships, JpaRepository<Plant, Long> {
+    @Query("SELECT DISTINCT plant from Plant plant left join fetch plant.categories WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0")
+    List<Plant> findPlantsByName(@Param("name") String name);
+
+    @Query("SELECT plant FROM Plant plant left join fetch plant.categories pc where :category = pc")
+    List<Plant> findPlantsByCategory(@Param("category") Category category);
+
     default Optional<Plant> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
     }

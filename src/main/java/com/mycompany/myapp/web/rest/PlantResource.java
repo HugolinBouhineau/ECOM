@@ -1,14 +1,14 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.Plant;
+import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.domain.PlantQuantity;
 import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +42,11 @@ public class PlantResource {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PlantResource(PlantRepository plantRepository) {
+    private final CategoryRepository categoryRepository;
+
+    public PlantResource(PlantRepository plantRepository, CategoryRepository categoryRepository) {
         this.plantRepository = plantRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     /**
@@ -210,6 +213,37 @@ public class PlantResource {
         log.debug("REST request to get Plant : {}", id);
         Optional<Plant> plant = plantRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(plant);
+    }
+
+    @GetMapping("/plants/filter/categories")
+    public List<Plant> filterPlant(
+        @RequestParam(required = false, defaultValue = "") String name,
+        @RequestParam(required = false, defaultValue = "") List<Long> categoriesId
+    ) {
+        log.debug("REST request to get Plants containing '{}' and with these categories {}", name, categoriesId);
+        if (name.isEmpty() && categoriesId.isEmpty()) {
+            return plantRepository.findAll();
+        }
+
+        if (!name.isEmpty() && categoriesId.isEmpty()) {
+            return plantRepository.findPlantsByName(name);
+        }
+
+        List<Plant> plantsRes;
+        List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+        if (!name.isEmpty()) {
+            plantsRes = plantRepository.findPlantsByName(name);
+            List<Plant> plantFirstCat = plantRepository.findPlantsByCategory(categories.get(0));
+            plantsRes.retainAll(plantFirstCat);
+        } else {
+            plantsRes = plantRepository.findPlantsByCategory(categories.get(0));
+        }
+        // Intersection between the plants from older categories and this category
+        for (int i = 1; i < categories.size(); i++) {
+            List<Plant> p = plantRepository.findPlantsByCategory(categories.get(i));
+            plantsRes.retainAll(p);
+        }
+        return plantsRes;
     }
 
     /**

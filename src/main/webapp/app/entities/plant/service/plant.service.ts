@@ -42,6 +42,12 @@ export class PlantService {
     return this.http.get<IPlant>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  filterPlant(searchPlant: string, categories: Number[]): Observable<IPlant[]> {
+    return this.http
+      .get(this.resourceUrl + '/filter/categories?name=' + searchPlant + '&categoriesId=' + categories.toString())
+      .pipe(map((body:any) => body));
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IPlant[]>(this.resourceUrl, { params: options, observe: 'response' });

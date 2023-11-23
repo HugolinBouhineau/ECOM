@@ -3,9 +3,7 @@ import { CategoryService } from '../../entities/category/service/category.servic
 import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
-import { Router } from '@angular/router';
 import { PanierService } from '../../panier.service';
-import { AlertService } from '../../core/util/alert.service';
 
 @Component({
   selector: 'jhi-catalog',
@@ -20,16 +18,10 @@ export class CatalogComponent implements OnInit {
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
 
-  constructor(
-    private cs: CategoryService,
-    private ps: PlantService,
-    private router: Router,
-    private panierService: PanierService,
-    private alertService: AlertService
-  ) {}
+  constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
   ngOnInit(): void {
-    this.cs.all().subscribe(value => {
+    this.categoryService.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
       this.categories.map(cat => {
@@ -39,29 +31,24 @@ export class CatalogComponent implements OnInit {
       });
     });
 
-    this.ps.all().subscribe(value => {
+    this.plantService.all().subscribe(value => {
       this.plants = value;
     });
   }
 
-  onlyUnique(value: any, index: any, array: any) {
-    return array.indexOf(value) === index;
-  }
-
-  checkCategory(cat: ICategory) {
+  filterPlantsFromCategory(cat: ICategory) {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
       this.categoriesSelected.push(cat.id);
     }
+    console.log("here")
+    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(value => {
+      this.plants = value;
+      console.log(value);
+    });
   }
 
-  checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {
-    return (
-      this.categoriesSelected.length == 0 ||
-      (cats != null && cats.filter(value => this.categoriesSelected.includes(value.id)).length == this.categoriesSelected.length)
-    );
-  }
 
   addToCart(plant: IPlant) {
     this.panierService.addToCart(plant);
@@ -92,5 +79,12 @@ export class CatalogComponent implements OnInit {
       return this.imgUrl + a.imagePath.split('**')[0];
     }
     return '';
+  }
+
+  newSearchWord(event: string) {
+    this.searchWord = event;
+    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(
+      (value) => {this.plants = value;}
+    );
   }
 }
