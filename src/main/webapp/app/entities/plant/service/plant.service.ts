@@ -5,7 +5,7 @@ import { map, Observable } from 'rxjs';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { IPlant, NewPlant } from '../plant.model';
+import {IPlant, NewPlant, PlantQuantity} from '../plant.model';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -17,6 +17,10 @@ export class PlantService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/plants');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+
+  verifyAndUpdateStock(plants: PlantQuantity[]){
+    return this.http.post<Boolean>(this.resourceUrl + '/verifyAndUpdateStock', plants, { observe: 'response' });
+  }
 
   all(): Observable<IPlant[]> {
     return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));

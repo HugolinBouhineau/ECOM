@@ -9,6 +9,8 @@ import { IPlant } from '../plant.model';
 import { PlantService } from '../service/plant.service';
 import { ICategory } from 'app/entities/category/category.model';
 import { CategoryService } from 'app/entities/category/service/category.service';
+import { FileHandle } from '../../../drag-ndrop.directive';
+import { AzureBlobStorageService } from '../../../azure-blob-storage.service';
 
 @Component({
   selector: 'jhi-plant-update',
@@ -17,6 +19,11 @@ import { CategoryService } from 'app/entities/category/service/category.service'
 export class PlantUpdateComponent implements OnInit {
   isSaving = false;
   plant: IPlant | null = null;
+  files: FileHandle[] = [];
+  files_names: string[] = [];
+  saved_files: FileHandle[] = [];
+  sas =
+    'sp=racwdli&st=2023-11-18T13:43:30Z&se=2024-01-01T21:43:30Z&spr=https&sv=2022-11-02&sr=c&sig=7az5ERRS2B0gz%2F72aHTdDAQgSWu4g53NJDqxPUWiB5Q%3D';
 
   categoriesSharedCollection: ICategory[] = [];
 
@@ -26,7 +33,8 @@ export class PlantUpdateComponent implements OnInit {
     protected plantService: PlantService,
     protected plantFormService: PlantFormService,
     protected categoryService: CategoryService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
+    private blobService: AzureBlobStorageService
   ) {}
 
   compareCategory = (o1: ICategory | null, o2: ICategory | null): boolean => this.categoryService.compareCategory(o1, o2);
@@ -49,6 +57,22 @@ export class PlantUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const plant = this.plantFormService.getPlant(this.editForm);
+    let pathname: string = '';
+    for (let i = 0; i < this.files_names.length; i++) {
+      let file = this.files_names[i];
+      pathname = pathname + file;
+
+      if (i != this.files_names.length - 1) {
+        pathname = pathname + '**';
+      }
+    }
+
+    // Upload images to azure using blobServicce
+    for (let savedFile of this.saved_files) {
+      this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name, () => {});
+    }
+
+    plant.imagePath = pathname;
     if (plant.id !== null) {
       this.subscribeToSaveResponse(this.plantService.update(plant));
     } else {
@@ -95,5 +119,23 @@ export class PlantUpdateComponent implements OnInit {
         )
       )
       .subscribe((categories: ICategory[]) => (this.categoriesSharedCollection = categories));
+  }
+
+  filesDropped(files: FileHandle[]): void {
+    this.files = files;
+  }
+
+  upload(): void {
+    for (let i = 0; i < this.files.length; i++) {
+      this.files_names.push(this.files[i].file.name);
+      this.saved_files.push(this.files[i]);
+    }
+    this.files = [];
+  }
+
+  clean_files(): void {
+    this.files = [];
+    this.files_names = [];
+    this.saved_files = [];
   }
 }

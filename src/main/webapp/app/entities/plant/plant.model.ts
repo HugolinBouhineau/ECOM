@@ -13,4 +13,9 @@ export interface IPlant {
   commands?: Pick<ICommand, 'id'>[] | null;
 }
 
+export interface PlantQuantity {
+  plantId: number;
+  plantQuantity: number;
+}
+
 export type NewPlant = Omit<IPlant, 'id'> & { id: null };

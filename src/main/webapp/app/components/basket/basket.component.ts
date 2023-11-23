@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Item, PanierService } from '../../panier.service';
-import { IPlant } from '../../entities/plant/plant.model';
-import { AlertService } from '../../core/util/alert.service';
+import {IPlant} from '../../entities/plant/plant.model';
 import { Account } from '../../core/auth/account.model';
 import { AccountService } from '../../core/auth/account.service';
-import { Router } from '@angular/router';
-import { StateStorageService } from '../../core/auth/state-storage.service';
-import {ITEM_DELETED_EVENT} from "../../config/navigation.constants";
+import {PlantService} from "../../entities/plant/service/plant.service";
+import { AlertService} from "../../core/util/alert.service";
 import {CommandDialogServiceService} from "../../command-dialog/command-dialog-service.service";
-import {ICommand} from "../../entities/command/command.model";
 
 @Component({
   selector: 'jhi-basket',
@@ -21,15 +18,15 @@ export class BasketComponent implements OnInit {
 
   constructor(
     private ps: PanierService,
-    private alertService: AlertService,
     private accountService: AccountService,
-    private router: Router,
-    private stateStorageService: StateStorageService,
+    private plantService: PlantService,
+    private alertService: AlertService,
     private cds: CommandDialogServiceService
   ) {}
 
   ngOnInit(): void {
     this.ps.restore();
+    this.updateStock();
     this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
     });
@@ -57,6 +54,28 @@ export class BasketComponent implements OnInit {
 
   removeItem(plant: IPlant): void {
     this.ps.removeItem(plant);
+  }
+
+  updateStock() : void {
+    for (let item of this.ps.getItems()) {
+      this.plantService.find(item.plant.id).subscribe(value => {
+        if(value.body){
+          let plant : IPlant = value.body;
+          console.log(plant)
+          if(plant && plant.stock!=undefined){
+            // Remove item from basket in no longer in stock
+            if(plant.stock<=0){
+              this.ps.removeItem(plant);
+              this.alertService.addAlert({ type: 'warning', message: "Un objet de votre panier n'est plus disponible dans la quantité souhaitée, veuillez vérifier les objets de votre panier" });
+            }else{
+              if(this.ps.setStock(plant.stock, plant)){
+                this.alertService.addAlert({ type: 'warning', message: "Un objet de votre panier n'est plus disponible dans la quantité souhaitée, veuillez vérifier les objets de votre panier" });
+              }
+            }
+          }
+        }
+      });
+    }
   }
 
   getImageUrl(item: Item): string {
