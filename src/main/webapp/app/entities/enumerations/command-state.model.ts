@@ -4,4 +4,6 @@ export enum CommandState {
   Completed = 'Completed',
 
   Cancelled = 'Cancelled',
+
+  Shipping = 'Shipping'
 }
