@@ -194,17 +194,21 @@ public class PlantResource {
             return plantRepository.findPlantsByName(name);
         }
 
-        if (name.isEmpty() && !categoriesId.isEmpty()) {
-            // Get Categories from list of ids
-            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-            List<Plant> plants = plantRepository.findPlantsByCategory(categories.get(0));
-            for (int i = 1; i < categories.size(); i++) {
-                List<Plant> p = plantRepository.findPlantsByCategory(categories.get(i));
-                plants.retainAll(p);
-            }
-            return plants;
+        List<Plant> plantsRes;
+        List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+        if (!name.isEmpty()) {
+            plantsRes = plantRepository.findPlantsByName(name);
+            List<Plant> plantFirstCat = plantRepository.findPlantsByCategory(categories.get(0));
+            plantsRes.retainAll(plantFirstCat);
+        } else {
+            plantsRes = plantRepository.findPlantsByCategory(categories.get(0));
         }
-        return plantRepository.findAll();
+        // Intersection between the plants from older categories and this category
+        for (int i = 1; i < categories.size(); i++) {
+            List<Plant> p = plantRepository.findPlantsByCategory(categories.get(i));
+            plantsRes.retainAll(p);
+        }
+        return plantsRes;
     }
 
     /**

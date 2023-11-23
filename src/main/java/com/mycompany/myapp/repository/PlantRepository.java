@@ -4,7 +4,6 @@ import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.Plant;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PlantRepository extends PlantRepositoryWithBagRelationships, JpaRepository<Plant, Long> {
-    @Query("SELECT plant from Plant plant WHERE locate(lower(:name), lower(plant.name)) > 0")
+    @Query("SELECT DISTINCT plant from Plant plant left join fetch plant.categories WHERE locate(lower(:name), lower(plant.name)) > 0")
     List<Plant> findPlantsByName(@Param("name") String name);
 
     @Query("SELECT plant FROM Plant plant left join fetch plant.categories pc where :category = pc")
