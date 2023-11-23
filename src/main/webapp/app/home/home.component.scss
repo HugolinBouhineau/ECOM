@@ -1,12 +1,9 @@
-body{
-  height:250vh;
-}
-
-
 .header{
   display:flex;
-  height: 1000px;
+  flex-direction: column;
+  height: 85vh;
   width: 100%;
+  justify-content: center;
   background-image: url("https://ecom1465.blob.core.windows.net/test/serre.jpg");
   background-size: cover;
   background-position: center;
@@ -20,27 +17,27 @@ body{
   justify-content: center;
   padding:40px;
   box-sizing: border-box;
-}
-
-
-.content{
-  padding:40px;
-  box-sizing: border-box;
+  font-size:100px;
+  color:#ffffff;
+  text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
+  1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
 }
 
 .burton{
+  align-items: center;
   display:flex;
   justify-content: center;
-  align-items: center;
-}
-.flower{
-  background:#487526;
-  height:50px;
-  width:70px;
-  font-size:35px;
 }
 
-.img_az{
-  height:50em;
-  width: auto;
+.but{
+  background-color :#04AA6D;
+  border: 2px solid #000000;
+  color: white;
+  padding: 30px 64px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 24px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
