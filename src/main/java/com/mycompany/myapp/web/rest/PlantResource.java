@@ -1,5 +1,6 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.repository.PlantRepository;
@@ -193,13 +194,16 @@ public class PlantResource {
             return plantRepository.findPlantsByName(name);
         }
 
-        //        if (name.isEmpty() && !categoriesId.isEmpty()) {
-        //            // Get Categories from list of ids
-        //            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-        //            Set<Category> c = categories.stream().collect(Collectors.toSet());
-        //            List<Plant> a = plantRepository.findPlantsByCategories(c);
-        //            log.debug("Plant from categories : {}", a);
-        //        }
+        if (name.isEmpty() && !categoriesId.isEmpty()) {
+            // Get Categories from list of ids
+            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+            List<Plant> plants = plantRepository.findPlantsByCategory(categories.get(0));
+            for (int i = 1; i < categories.size(); i++) {
+                List<Plant> p = plantRepository.findPlantsByCategory(categories.get(i));
+                plants.retainAll(p);
+            }
+            return plants;
+        }
         return plantRepository.findAll();
     }
 

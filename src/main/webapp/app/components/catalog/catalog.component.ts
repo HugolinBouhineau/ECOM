@@ -36,27 +36,19 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  onlyUnique(value: any, index: any, array: any) {
-    return array.indexOf(value) === index;
-  }
-
   filterPlantsFromCategory(cat: ICategory) {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
       this.categoriesSelected.push(cat.id);
     }
+    console.log("here")
     this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(value => {
       this.plants = value;
+      console.log(value);
     });
   }
 
-  checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {
-    return (
-      this.categoriesSelected.length == 0 ||
-      (cats != null && cats.filter(value => this.categoriesSelected.includes(value.id)).length == this.categoriesSelected.length)
-    );
-  }
 
   addToCart(plant: IPlant) {
     this.panierService.addToCart(plant);
@@ -87,5 +79,12 @@ export class CatalogComponent implements OnInit {
       return this.imgUrl + a.imagePath.split('**')[0];
     }
     return '';
+  }
+
+  newSearchWord(event: string) {
+    this.searchWord = event;
+    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(
+      (value) => {this.plants = value;}
+    );
   }
 }

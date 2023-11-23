@@ -2,7 +2,7 @@
 <div class="container pt-5">
   <div class="row justify-content-end m-5">
     <div class="form-group has-search col-md-8">
-      <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchWord" />
+      <input type="text" class="form-control" placeholder="Search" [ngModel]="searchWord" (ngModelChange)="newSearchWord($event)"/>
     </div>
     <div
       ngbDropdown
@@ -33,7 +33,6 @@
         <div class="row">
           <ng-container *ngFor="let plant of plants">
             <div
-              *ngIf="checkArrayIntersect(plant.categories) && plant.name && plant.name.toLowerCase().includes(searchWord.toLowerCase())"
               class="col-6 col-md-6 col-lg-4 mb-3"
             >
               <div class="card h-100 border-0" [ngStyle]="{ filter: !plant.stock || plant.stock <= 0 ? 'grayscale(1)' : '' }">

@@ -41,7 +41,7 @@ export class PlantService {
   filterPlant(searchPlant: string, categories: Number[]): Observable<IPlant[]> {
     return this.http
       .get(this.resourceUrl + '/filter/categories?name=' + searchPlant + '&categoriesId=' + categories.toString())
-      .pipe(map((body: any) => body));
+      .pipe(map((body:any) => body));
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

@@ -22,8 +22,8 @@ public interface PlantRepository extends PlantRepositoryWithBagRelationships, Jp
     @Query("SELECT plant from Plant plant WHERE locate(lower(:name), lower(plant.name)) > 0")
     List<Plant> findPlantsByName(@Param("name") String name);
 
-    @Query("SELECT plant FROM Plant plant where plant.categories IN ?1")
-    List<Plant> findPlantsByCategories(@Param("categories") Set<Category> categories);
+    @Query("SELECT plant FROM Plant plant left join fetch plant.categories pc where :category = pc")
+    List<Plant> findPlantsByCategory(@Param("category") Category category);
 
     default Optional<Plant> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
