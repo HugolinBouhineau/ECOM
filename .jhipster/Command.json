@@ -8,7 +8,7 @@
     {
       "fieldName": "state",
       "fieldType": "CommandState",
-      "fieldValues": "InProgress,Completed,Cancelled"
+      "fieldValues": "InProgress,Completed,Cancelled,Shipping"
     },
     {
       "fieldName": "purchaseDate",

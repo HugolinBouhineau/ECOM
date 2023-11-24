@@ -76,7 +76,7 @@ export class CommandsComponent implements OnInit {
         // Chek if command is passed or in progress
         let customer: ICustomer = <ICustomer>commandz[i].customer;
         if (customer.id == this.id) {
-          if (commandz[i].state == CommandState.InProgress) {
+          if (commandz[i].state == CommandState.InProgress || commandz[i].state == CommandState.Shipping) {
             this.progress_command.push(commandz[i]);
           } else {
             this.list_command_passed.push(commandz[i]);

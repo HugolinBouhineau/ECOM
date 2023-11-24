@@ -7,4 +7,5 @@ public enum CommandState {
     InProgress,
     Completed,
     Cancelled,
+    Shipping
 }
