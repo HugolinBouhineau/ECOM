@@ -2,13 +2,17 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.Plant;
-import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.domain.PlantQuantity;
+import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.repository.PlantRepository;
+import com.mycompany.myapp.service.InvalidPageException;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Plant}.
@@ -75,27 +75,38 @@ public class PlantResource {
 
     @Transactional
     @PostMapping("/plants/verifyAndUpdateStock")
-    public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked){
+    public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked) {
         log.debug("REST request to verifyStock :");
         boolean inStock = true;
         for (PlantQuantity quantityAsked : quantitiesAsked) {
             Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
-            log.debug("PLANT : {}",plant);
+            log.debug("PLANT : {}", plant);
             int remainingStock = plant.getStock() - quantityAsked.getPlantQuantity();
-            if(remainingStock < 0){
-                log.debug("plante {} pas en stock, asked: {}, stock: {}", quantityAsked.getPlantId(), quantityAsked.getPlantQuantity(), plant.getStock());
+            if (remainingStock < 0) {
+                log.debug(
+                    "plante {} pas en stock, asked: {}, stock: {}",
+                    quantityAsked.getPlantId(),
+                    quantityAsked.getPlantQuantity(),
+                    plant.getStock()
+                );
                 inStock = false;
             } else {
-                log.debug("plante {} en stock, asked: {}, stock: {}, remaining: {}",quantityAsked.getPlantId() ,quantityAsked.getPlantQuantity(), plant.getStock(), remainingStock);
+                log.debug(
+                    "plante {} en stock, asked: {}, stock: {}, remaining: {}",
+                    quantityAsked.getPlantId(),
+                    quantityAsked.getPlantQuantity(),
+                    plant.getStock(),
+                    remainingStock
+                );
             }
         }
-        if(inStock){
+        if (inStock) {
             for (PlantQuantity quantityAsked : quantitiesAsked) {
                 Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
                 plant.setStock(plant.getStock() - quantityAsked.getPlantQuantity());
             }
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -237,7 +248,18 @@ public class PlantResource {
         @RequestParam(required = false, defaultValue = "") String name,
         @RequestParam(required = false, defaultValue = "") List<Long> categoriesId
     ) {
-        log.debug("REST request with page {} and size {} to get Plants containing '{}' and with these categories {}", page, size, name, categoriesId);
+        log.debug(
+            "REST request with page {} and size {} to get Plants containing '{}' and with these categories {}",
+            page,
+            size,
+            name,
+            categoriesId
+        );
+
+        if (page < 0) {
+            throw new InvalidPageException(page);
+        }
+
         Pageable paging;
         switch (sort) {
             case "asc":
@@ -249,16 +271,22 @@ public class PlantResource {
             default:
                 paging = PageRequest.of(page, size);
         }
+
+        Page<Plant> pageResult;
         if (name.isEmpty() && categoriesId.isEmpty()) {
-            return plantRepository.findAllWithPagination(paging);
+            pageResult = plantRepository.findAllWithPagination(paging);
+        } else if (!name.isEmpty() && categoriesId.isEmpty()) {
+            pageResult = plantRepository.findPlantsByNameWithPagination(name, paging);
+        } else {
+            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+            pageResult = plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
         }
 
-        if (!name.isEmpty() && categoriesId.isEmpty()) {
-            return plantRepository.findPlantsByNameWithPagination(name, paging);
+        if (page > pageResult.getTotalPages()) {
+            throw new InvalidPageException(page);
         }
 
-        List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-        return plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
+        return pageResult;
     }
 
     /**

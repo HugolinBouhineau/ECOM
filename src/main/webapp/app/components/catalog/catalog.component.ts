@@ -24,17 +24,16 @@ export class CatalogComponent implements OnInit {
   sortby: string = 'no';
   isLastPage: boolean = false;
   isFirstPage: boolean = false;
-  isOutsidePage: boolean = false;
   hasNoPlants: boolean = false;
   windowScrolled: boolean = false;
-
+  error: boolean = false;
 
   constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
   ngOnInit(): void {
     window.addEventListener('scroll', () => {
       this.windowScrolled = window.pageYOffset !== 0;
-    })
+    });
 
     this.categoryService.all().subscribe(value => {
       this.categories = value;
@@ -57,18 +56,17 @@ export class CatalogComponent implements OnInit {
     this.filterPlant();
   }
 
-
   addToCart(plant: IPlant) {
     this.panierService.addToCart(plant);
   }
 
   sortByAscendingPrice() {
-    this.sortby = "asc";
+    this.sortby = 'asc';
     this.filterPlant();
   }
 
   sortByDescendingPrice() {
-    this.sortby = "desc";
+    this.sortby = 'desc';
     this.filterPlant();
   }
 
@@ -90,13 +88,15 @@ export class CatalogComponent implements OnInit {
   }
 
   filterPlant(useCurrentPage: boolean = false): void {
-    this.plantService.filterPlant((useCurrentPage ? this.currentPage : 0), this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      body => {
+    this.plantService
+      .filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected)
+      .subscribe({
+        next: body => {
+          this.error = false;
           this.plants = body.content;
           this.totalPlants = body.totalElements;
           this.currentPage = body.pageable.pageNumber;
           this.totalPage = body.totalPages;
-          this.isOutsidePage = false;
           this.hasNoPlants = false;
           this.isLastPage = false;
           this.isFirstPage = false;
@@ -104,30 +104,30 @@ export class CatalogComponent implements OnInit {
           if (body.numberOfElements === 0) {
             this.hasNoPlants = true;
           }
-          if (this.currentPage >= this.totalPage) {
-            this.isOutsidePage = true;
-          }
           if (this.currentPage === this.totalPage - 1) {
             this.isLastPage = true;
           }
           if (this.currentPage === 0) {
             this.isFirstPage = true;
           }
-      }
-    );
+        },
+        error: () => {
+          this.error = true;
+        },
+      });
   }
 
   upPage() {
-      this.currentPage += 1;
-      this.filterPlant(true);
+    this.currentPage += 1;
+    this.filterPlant(true);
   }
 
   downPage() {
-      this.currentPage -= 1;
-      this.filterPlant(true);
+    this.currentPage -= 1;
+    this.filterPlant(true);
   }
 
-    scrollToTop() {
-      window.scrollTo(0, 0);
-    }
+  scrollToTop() {
+    window.scrollTo(0, 0);
+  }
 }
