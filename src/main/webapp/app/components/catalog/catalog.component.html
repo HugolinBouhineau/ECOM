@@ -4,67 +4,92 @@
   <div class="row justify-content-end m-5">
     <!-- Search bar, sort by, back to top, views, arrows, product card -->
     <div class="col-md-8 order-md-2 col-lg-9">
-      <!-- Search bar, sort by, views, arrows -->
-      <div class="row mb-5">
+      <!-- Search bar, views, arrows -->
+      <div class="row justify-content-between">
         <!-- Search bar -->
-        <div class="form-group has-search col-md-7 mt-1">
-          <input type="text" class="form-control" placeholder="Search" [ngModel]="searchWord" (ngModelChange)="newSearchWord($event)"/>
-        </div>
-        <!-- Sort by -->
-        <div
-          ngbDropdown
-          class="nav-item dropdown pointer col-md-auto mt-2-5"
-          display="dynamic"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);">
-        <span>
-          <fa-icon icon="th-list"></fa-icon>
-          <span>Trier par</span>
-        </span>
-          </a>
-          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
-            <li class="dropdown-item" (click)="sortByAscendingPrice()">
-              <span>Prix croissant</span>
-            </li>
-            <li class="dropdown-item" (click)="sortByDescendingPrice()">
-              <span>Prix décroissant</span>
-            </li>
-          </ul>
+        <div class="form-group has-search col-md-7 mt-0-5">
+          <input type="text" class="form-control" placeholder="Search" [ngModel]="searchWord" (ngModelChange)="newSearchWord($event)" />
         </div>
         <!-- Views -->
-        <div
-          ngbDropdown
-          class="dropdown col-md-auto"
-          display="dynamic"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <label class="mr2">Vues:</label>
-          <a ngbDropdownToggle class="btn btn-lg btn-light dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">{{ size }}</a>
-          <div
-            ngbDropdownMenu
-            class="dropdown-menu"
-            aria-labelledby="size-menu"
-            style="will-change: transform; position: absolute; transform: translate3d(120px, 48px, 0px); top: 0px; left: 0px;"
-          >
-            <a ngbDropdownItem class="dropdown-item" (click)="changeSizePlants(6)">6</a>
-            <a ngbDropdownItem class="dropdown-item" (click)="changeSizePlants(12)">12</a>
+        <div class="col">
+          <div class="row justify-content-end">
+            <div
+              ngbDropdown
+              class="dropdown col-md-auto"
+              display="dynamic"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <label class="mr2">Vues:</label>
+              <a
+                ngbDropdownToggle
+                class="btn btn-mg btn-light rounded-3 dropdown-toggle"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >{{ size }}</a
+              >
+              <div
+                ngbDropdownMenu
+                class="dropdown-menu"
+                aria-labelledby="size-menu"
+                style="will-change: transform; position: absolute; transform: translate3d(120px, 48px, 0px); top: 0px; left: 0px"
+              >
+                <a ngbDropdownItem class="dropdown-item" (click)="changeSizePlants(6)">6</a>
+                <a ngbDropdownItem class="dropdown-item" (click)="changeSizePlants(12)">12</a>
+              </div>
+            </div>
+            <!-- Arrows -->
+            <div class="col-md-auto ps-2">
+              <nav aria-label="Search results page">
+                <ul class="pagination">
+                  <li class="page-item">
+                    <button
+                      type="button"
+                      class="btn btn-mg btn-light rounded"
+                      [disabled]="isFirstPage || isOutsidePage"
+                      (click)="downPage()"
+                    >
+                      <fa-icon icon="arrow-left"></fa-icon>
+                    </button>
+                  </li>
+                  <li class="page-item">
+                    <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }}</button>
+                  </li>
+                  <li class="page-item">
+                    <button type="button" class="btn btn-mg btn-light rounded" [disabled]="isLastPage || isOutsidePage" (click)="upPage()">
+                      <fa-icon icon="arrow-right"></fa-icon>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
-        <!-- Arrows -->
-        <div class="btn-group col-md-auto">
-          <button type="button" class="btn btn-lg btn-light" [disabled]="isFirstPage || isOutsidePage" (click)="downPage()"> <fa-icon icon="arrow-left"></fa-icon> </button>
-          <button type="button" class="btn btn-lg btn-light" [disabled]="isLastPage || isOutsidePage" (click)="upPage()"> <fa-icon icon="arrow-right" ></fa-icon>  </button>
+      </div>
+
+      <hr class="hr-mts" />
+
+      <!-- Sort by -->
+      <div class="row">
+        <!-- Sort by -->
+        <div class="col-md-auto">
+          <label class="mr2">Trier par :</label>
+          <div class="col-md-auto btn-group" aria-label="Sort By Button">
+            <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" />
+            <label class="btn" for="btnSortAscending">Prix: ordre croissant</label>
+            <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" />
+            <label class="btn" for="btnSortDescending">Prix: ordre décroissant</label>
+          </div>
         </div>
       </div>
+
+      <hr />
+
       <!-- Product Card -->
       <div class="row">
         <ng-container *ngFor="let plant of plants">
-          <div
-            class="col-6 col-md-6 col-lg-4 mb-3"
-          >
+          <div class="col-6 col-md-6 col-lg-4 mb-3">
             <div class="card h-100 border-0" [ngStyle]="{ filter: !plant.stock || plant.stock <= 0 ? 'grayscale(1)' : '' }">
               <div class="card-img-top">
                 <a routerLink="/plant/{{ plant.id }}" class="no-underline font-weight-bold text-dark text-uppercase small">
@@ -74,7 +99,9 @@
               <div class="card-body text-center">
                 <h4 class="card-title">
                   <a routerLink="/plant/{{ plant.id }}" class="no-underline font-weight-bold text-dark text-uppercase small">
-                    {{ plant.name }}</a></h4>
+                    {{ plant.name }}</a
+                  >
+                </h4>
                 <h5>
                   <p class="font-italic">{{ plant.latinName }}</p>
                 </h5>
@@ -98,27 +125,41 @@
         </ng-container>
       </div>
       <!-- back to top, Views, Arrows -->
-      <div class="row mt-1">
-        <!-- Button back to top -->
-        <ng-container *ngIf="!hasNoPlants">
-          <div class="col-md-8 mt-1">
-            <a class="btn btn-light" (click)="scrollToTop()">
-              <fa-icon icon="arrow-up"></fa-icon> Retour haut de page
-            </a>
+      <ng-container *ngIf="!hasNoPlants">
+        <div class="row mt-1 justify-content-between">
+          <div class="col-md-5 mt-1">
+            <!-- Button back to top -->
+            <a class="btn btn-mg" (click)="scrollToTop()"> <fa-icon icon="arrow-up"></fa-icon> Retour haut de page </a>
           </div>
-          <div class="col-md-2"></div>
           <!-- Arrows -->
-          <div class="btn-group col-md-auto">
-            <button type="button" class="btn btn-lg btn-light" [disabled]="isFirstPage || isOutsidePage" (click)="downPage()"> <fa-icon icon="arrow-left"></fa-icon> </button>
-            <button type="button" class="btn btn-lg btn-light" [disabled]="isLastPage || isOutsidePage" (click)="upPage()"> <fa-icon icon="arrow-right"></fa-icon>  </button>
+          <div class="col-md-auto">
+            <nav aria-label="Search results page">
+              <ul class="pagination">
+                <li class="page-item">
+                  <button type="button" class="btn btn-mg btn-light rounded" [disabled]="isFirstPage || isOutsidePage" (click)="downPage()">
+                    <fa-icon icon="arrow-left"></fa-icon>
+                  </button>
+                </li>
+                <li class="page-item">
+                  <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }}</button>
+                </li>
+                <li class="page-item">
+                  <button type="button" class="btn btn-mg btn-light rounded" [disabled]="isLastPage || isOutsidePage" (click)="upPage()">
+                    <fa-icon icon="arrow-right"></fa-icon>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
-        </ng-container>
-      </div>
+        </div>
+      </ng-container>
     </div>
     <!-- Printing, Categories -->
     <div class="col-md-4 order-md-1 col-lg-3 sidebar-filter">
       <!-- Printing -->
-      <h3 class="mt-0 mb-5">Affiche <span class="text-primary">{{ totalPlants }}</span> produits</h3>
+      <h3 class="mt-0 mb-5">
+        Affiche <span class="text-primary">{{ totalPlants }}</span> produits
+      </h3>
       <h6 class="text-uppercase font-weight-bold mb-3">Categories</h6>
       <!-- Categories -->
       <div *ngFor="let type of categoryTypes">

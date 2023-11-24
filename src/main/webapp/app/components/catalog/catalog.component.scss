@@ -8,6 +8,23 @@
   background: #e5e5e5;
 }
 
-.mt-2-5 {
-  margin-top: (1rem * .75) !important;
+.mt-0-5 {
+  margin-top: (1rem * 0.2) !important;
+}
+
+.btn-mg {
+  padding: 0.5rem 0.95rem;
+}
+
+.btn-unactived {
+  border-style: outset;
+  outline: 0;
+  cursor: default;
+  border-color: #000000;
+  border-radius: 30px;
+  border-width: 1px;
+}
+
+.hr-mts {
+  margin-top: 0.1rem;
 }
