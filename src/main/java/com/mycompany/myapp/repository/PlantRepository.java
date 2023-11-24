@@ -18,11 +18,21 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PlantRepository extends PlantRepositoryWithBagRelationships, JpaRepository<Plant, Long> {
-    @Query("SELECT DISTINCT plant from Plant plant left join fetch plant.categories WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0")
-    List<Plant> findPlantsByName(@Param("name") String name);
 
-    @Query("SELECT plant FROM Plant plant left join fetch plant.categories pc where :category = pc")
-    List<Plant> findPlantsByCategory(@Param("category") Category category);
+    // With Pagination
+    @Query("SELECT plant FROM Plant plant")
+    Page<Plant> findAllWithPagination(Pageable pageable);
+
+    @Query("SELECT DISTINCT plant FROM Plant plant JOIN plant.categories WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0")
+    Page<Plant> findPlantsByNameWithPagination(@Param("name") String name, Pageable page);
+
+    @Query(value = "SELECT plant FROM Plant plant JOIN plant.categories pc WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0 AND pc IN (:category) GROUP BY plant HAVING COUNT(plant) = :size")
+    Page<Plant> findPlantsByCategoriesWithPagination (
+        @Param("name") String name,
+        @Param("category") List<Category> category,
+        @Param("size") Long size,
+        Pageable page
+    );
 
     default Optional<Plant> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
