@@ -12,6 +12,10 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -215,35 +219,46 @@ public class PlantResource {
         return ResponseUtil.wrapOrNotFound(plant);
     }
 
-    @GetMapping("/plants/filter/categories")
-    public List<Plant> filterPlant(
+    /**
+     * {@code GET /plants/filter/paginate} : get the number "page" of a page with "size" plants
+     * where the name of the plant contains "name" and all of his categories ids containing "categoriesId"
+     *
+     * @param page the number of the page
+     * @param size the number of elements in a page
+     * @param name the name containing in the name of a plant
+     * @param categoriesId categories id contains in the categories of a plant
+     * @return the page with the "size" plants
+     */
+    @GetMapping("plants/filter/paginate")
+    public Page<Plant> filterPlantPaginate(
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "5") int size,
+        @RequestParam(required = false, defaultValue = "no") String sort,
         @RequestParam(required = false, defaultValue = "") String name,
         @RequestParam(required = false, defaultValue = "") List<Long> categoriesId
     ) {
-        log.debug("REST request to get Plants containing '{}' and with these categories {}", name, categoriesId);
+        log.debug("REST request with page {} and size {} to get Plants containing '{}' and with these categories {}", page, size, name, categoriesId);
+        Pageable paging;
+        switch (sort) {
+            case "asc":
+                paging = PageRequest.of(page, size, Sort.by("price"));
+                break;
+            case "desc":
+                paging = PageRequest.of(page, size, Sort.by("price").descending());
+                break;
+            default:
+                paging = PageRequest.of(page, size);
+        }
         if (name.isEmpty() && categoriesId.isEmpty()) {
-            return plantRepository.findAll();
+            return plantRepository.findAllWithPagination(paging);
         }
 
         if (!name.isEmpty() && categoriesId.isEmpty()) {
-            return plantRepository.findPlantsByName(name);
+            return plantRepository.findPlantsByNameWithPagination(name, paging);
         }
 
-        List<Plant> plantsRes;
         List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-        if (!name.isEmpty()) {
-            plantsRes = plantRepository.findPlantsByName(name);
-            List<Plant> plantFirstCat = plantRepository.findPlantsByCategory(categories.get(0));
-            plantsRes.retainAll(plantFirstCat);
-        } else {
-            plantsRes = plantRepository.findPlantsByCategory(categories.get(0));
-        }
-        // Intersection between the plants from older categories and this category
-        for (int i = 1; i < categories.size(); i++) {
-            List<Plant> p = plantRepository.findPlantsByCategory(categories.get(i));
-            plantsRes.retainAll(p);
-        }
-        return plantsRes;
+        return plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
     }
 
     /**

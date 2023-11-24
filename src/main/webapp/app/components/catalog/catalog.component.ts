@@ -17,6 +17,10 @@ export class CatalogComponent implements OnInit {
   categoriesSelected: Number[] = [];
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
+  page: number = 0;
+  size: number = 10;
+  sortby: string = 'no';
+
 
   constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
@@ -31,9 +35,11 @@ export class CatalogComponent implements OnInit {
       });
     });
 
-    this.plantService.all().subscribe(value => {
-      this.plants = value;
-    });
+    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      body => {
+        this.plants = body.content;
+      }
+    )
   }
 
   filterPlantsFromCategory(cat: ICategory) {
@@ -42,11 +48,11 @@ export class CatalogComponent implements OnInit {
     } else {
       this.categoriesSelected.push(cat.id);
     }
-    console.log("here")
-    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(value => {
-      this.plants = value;
-      console.log(value);
-    });
+    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      value => {
+        this.plants = value.content;
+      }
+    )
   }
 
 
@@ -55,23 +61,21 @@ export class CatalogComponent implements OnInit {
   }
 
   sortByAscendingPrice() {
-    this.plants.sort((a: IPlant, b: IPlant) => this.compare(a, b));
+    this.sortby = "asc";
+    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      value => {
+        this.plants = value.content;
+      }
+    );
   }
 
   sortByDescendingPrice() {
-    this.plants.sort((a: IPlant, b: IPlant) => this.compare(b, a));
-  }
-
-  compare(a: IPlant, b: IPlant) {
-    if (a.price == null || b.price == null) {
-      return 0;
-    }
-    if (a.price < b.price) {
-      return -1;
-    } else if (a.price > b.price) {
-      return 1;
-    }
-    return 0;
+    this.sortby = "desc";
+    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      value => {
+        this.plants = value.content;
+      }
+    );
   }
 
   getPath(a: IPlant): string {
@@ -83,8 +87,10 @@ export class CatalogComponent implements OnInit {
 
   newSearchWord(event: string) {
     this.searchWord = event;
-    this.plantService.filterPlant(this.searchWord, this.categoriesSelected).subscribe(
-      (value) => {this.plants = value;}
-    );
+    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      value => {
+        this.plants = value.content;
+      }
+    )
   }
 }
