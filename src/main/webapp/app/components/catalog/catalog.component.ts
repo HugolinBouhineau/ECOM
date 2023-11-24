@@ -14,17 +14,28 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
+  totalPlants: number = 0;
   categoriesSelected: Number[] = [];
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
-  page: number = 0;
-  size: number = 10;
+  currentPage: number = 0;
+  totalPage: number = 0;
+  size: number = 6;
   sortby: string = 'no';
+  isLastPage: boolean = false;
+  isFirstPage: boolean = false;
+  isOutsidePage: boolean = false;
+  hasNoPlants: boolean = false;
+  windowScrolled: boolean = false;
 
 
   constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
   ngOnInit(): void {
+    window.addEventListener('scroll', () => {
+      this.windowScrolled = window.pageYOffset !== 0;
+    })
+
     this.categoryService.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
@@ -34,12 +45,7 @@ export class CatalogComponent implements OnInit {
         }
       });
     });
-
-    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      body => {
-        this.plants = body.content;
-      }
-    )
+    this.filterPlant();
   }
 
   filterPlantsFromCategory(cat: ICategory) {
@@ -48,11 +54,7 @@ export class CatalogComponent implements OnInit {
     } else {
       this.categoriesSelected.push(cat.id);
     }
-    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      value => {
-        this.plants = value.content;
-      }
-    )
+    this.filterPlant();
   }
 
 
@@ -62,20 +64,12 @@ export class CatalogComponent implements OnInit {
 
   sortByAscendingPrice() {
     this.sortby = "asc";
-    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      value => {
-        this.plants = value.content;
-      }
-    );
+    this.filterPlant();
   }
 
   sortByDescendingPrice() {
     this.sortby = "desc";
-    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      value => {
-        this.plants = value.content;
-      }
-    );
+    this.filterPlant();
   }
 
   getPath(a: IPlant): string {
@@ -87,10 +81,53 @@ export class CatalogComponent implements OnInit {
 
   newSearchWord(event: string) {
     this.searchWord = event;
-    this.plantService.filterPlant(this.page, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
-      value => {
-        this.plants = value.content;
-      }
-    )
+    this.filterPlant();
   }
+
+  changeSizePlants(number: number) {
+    this.size = number;
+    this.filterPlant();
+  }
+
+  filterPlant(useCurrentPage: boolean = false): void {
+    this.plantService.filterPlant((useCurrentPage ? this.currentPage : 0), this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe(
+      body => {
+          this.plants = body.content;
+          this.totalPlants = body.totalElements;
+          this.currentPage = body.pageable.pageNumber;
+          this.totalPage = body.totalPages;
+          this.isOutsidePage = false;
+          this.hasNoPlants = false;
+          this.isLastPage = false;
+          this.isFirstPage = false;
+
+          if (body.numberOfElements === 0) {
+            this.hasNoPlants = true;
+          }
+          if (this.currentPage >= this.totalPage) {
+            this.isOutsidePage = true;
+          }
+          if (this.currentPage === this.totalPage - 1) {
+            this.isLastPage = true;
+          }
+          if (this.currentPage === 0) {
+            this.isFirstPage = true;
+          }
+      }
+    );
+  }
+
+  upPage() {
+      this.currentPage += 1;
+      this.filterPlant(true);
+  }
+
+  downPage() {
+      this.currentPage -= 1;
+      this.filterPlant(true);
+  }
+
+    scrollToTop() {
+      window.scrollTo(0, 0);
+    }
 }
