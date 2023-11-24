@@ -7,15 +7,6 @@
         Added the constraints for entity Plant.
     -->
     <changeSet id="20231018190959-2" author="jhipster">
-        <loadData
-            file="config/liquibase/fake-data/rel-plant-categories.csv"
-            separator=";"
-            tableName="rel_plant__categories"
-            usePreparedStatements="true">
-            <column name="categories_id" type="numeric"/>
-            <column name="plant_id" type="numeric"/>
-            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
-        </loadData>
         <addForeignKeyConstraint baseColumnNames="plant_id"
                                  baseTableName="rel_plant__categories"
                                  constraintName="fk_rel_plant__categories__plant_id"
