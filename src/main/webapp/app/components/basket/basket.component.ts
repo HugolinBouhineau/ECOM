@@ -86,6 +86,7 @@ export class BasketComponent implements OnInit {
   }
 
   getImageUrl(item: Item): string {
+    console.log('je suis une erreur eslint');
     if (item.plant.imagePath) {
       return item.plant.imagePath.split('**')[0];
     } else {
