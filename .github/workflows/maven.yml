@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-
+    name: Run the Maven verify phase
     runs-on: ubuntu-latest
 
     steps:
