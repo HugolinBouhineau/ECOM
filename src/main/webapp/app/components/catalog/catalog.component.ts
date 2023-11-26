@@ -14,19 +14,19 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
-  totalPlants: number = 0;
-  categoriesSelected: Number[] = [];
-  searchWord: string = '';
-  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
-  currentPage: number = 0;
-  totalPage: number = 0;
-  size: number = 6;
-  sortby: string = 'no';
-  isLastPage: boolean = false;
-  isFirstPage: boolean = false;
-  hasNoPlants: boolean = false;
-  windowScrolled: boolean = false;
-  error: boolean = false;
+  totalPlants = 0;
+  categoriesSelected: number[] = [];
+  searchWord = '';
+  imgUrl = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage = 0;
+  totalPage = 0;
+  size = 6;
+  sortby = 'no';
+  isLastPage = false;
+  isFirstPage = false;
+  hasNoPlants = false;
+  windowScrolled = false;
+  error = false;
 
   constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
 
@@ -47,7 +47,7 @@ export class CatalogComponent implements OnInit {
     this.filterPlant();
   }
 
-  filterPlantsFromCategory(cat: ICategory) {
+  filterPlantsFromCategory(cat: ICategory): void {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
@@ -56,16 +56,16 @@ export class CatalogComponent implements OnInit {
     this.filterPlant();
   }
 
-  addToCart(plant: IPlant) {
+  addToCart(plant: IPlant): void {
     this.panierService.addToCart(plant);
   }
 
-  sortByAscendingPrice() {
+  sortByAscendingPrice(): void {
     this.sortby = 'asc';
     this.filterPlant();
   }
 
-  sortByDescendingPrice() {
+  sortByDescendingPrice(): void {
     this.sortby = 'desc';
     this.filterPlant();
   }
@@ -77,17 +77,17 @@ export class CatalogComponent implements OnInit {
     return '';
   }
 
-  newSearchWord(event: string) {
+  newSearchWord(event: string): void {
     this.searchWord = event;
     this.filterPlant();
   }
 
-  changeSizePlants(number: number) {
+  changeSizePlants(number: number): void {
     this.size = number;
     this.filterPlant();
   }
 
-  filterPlant(useCurrentPage: boolean = false): void {
+  filterPlant(useCurrentPage = false): void {
     this.plantService
       .filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected)
       .subscribe({
@@ -117,17 +117,17 @@ export class CatalogComponent implements OnInit {
       });
   }
 
-  upPage() {
+  upPage(): void {
     this.currentPage += 1;
     this.filterPlant(true);
   }
 
-  downPage() {
+  downPage(): void {
     this.currentPage -= 1;
     this.filterPlant(true);
   }
 
-  scrollToTop() {
+  scrollToTop(): void {
     window.scrollTo(0, 0);
   }
 }

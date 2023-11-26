@@ -19,7 +19,7 @@ export class CommandItemService {
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   all(): Observable<ICommandItem[]> {
-    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+    return this.http.get<ICommandItem[]>(this.resourceUrl + '?eagerload=true').pipe(map((body: ICommandItem[]) => body));
   }
 
   create(commandItem: NewCommandItem): Observable<EntityResponseType> {

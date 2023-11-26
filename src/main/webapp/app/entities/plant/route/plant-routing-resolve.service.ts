@@ -13,7 +13,7 @@ export class PlantRoutingResolveService implements Resolve<IPlant | null> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<IPlant | null | never> {
     const id = route.params['id'];
-    if (id && id!='new') {
+    if (id && id !== 'new') {
       return this.service.find(id).pipe(
         mergeMap((plant: HttpResponse<IPlant>) => {
           if (plant.body) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -6,7 +6,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './command-dialog.component.html',
   styleUrls: ['./command-dialog.component.scss'],
 })
-export class CommandDialogComponent implements OnInit {
+export class CommandDialogComponent {
   @Input() title: string | undefined;
   @Input() message: string | undefined;
   @Input() btnOkText: string | undefined;
@@ -14,17 +14,15 @@ export class CommandDialogComponent implements OnInit {
 
   constructor(private activeModal: NgbActiveModal) {}
 
-  ngOnInit() {}
-
-  public decline() {
+  public decline(): void {
     this.activeModal.close(false);
   }
 
-  public accept() {
+  public accept(): void {
     this.activeModal.close(true);
   }
 
-  public dismiss() {
+  public dismiss(): void {
     this.activeModal.dismiss();
   }
 }

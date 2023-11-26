@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { IPlant } from '../../entities/plant/plant.model';
-import { PanierService, Item } from '../../panier.service';
+import { PanierService } from '../../panier.service';
 import { AlertService } from '../../core/util/alert.service';
 
 @Component({
@@ -12,11 +12,11 @@ import { AlertService } from '../../core/util/alert.service';
 })
 export class ProductComponent implements OnInit {
   plant: any;
-  href: string = '';
-  stock: number = 0;
-  plantID: number = 0;
+  href = '';
+  stock = 0;
+  plantID = 0;
   imagePath: string[] = [];
-  path: string = 'https://ecom1465.blob.core.windows.net/test/';
+  path = 'https://ecom1465.blob.core.windows.net/test/';
   constructor(
     private ps: PlantService,
     private activatedRoute: ActivatedRoute,
@@ -24,7 +24,7 @@ export class ProductComponent implements OnInit {
     private alertService: AlertService
   ) {}
 
-  public AddToCart() {
+  public AddToCart(): void {
     this.paniers.addToCart(<IPlant>this.plant);
   }
 
