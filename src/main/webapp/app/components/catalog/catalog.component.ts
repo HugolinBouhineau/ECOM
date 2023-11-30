@@ -4,6 +4,8 @@ import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
 import { PanierService } from '../../panier.service';
+import { AlertService } from '../../core/util/alert.service';
+import {CommandItemService} from "../../entities/command-item/service/command-item.service";
 
 @Component({
   selector: 'jhi-catalog',
@@ -14,6 +16,7 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
+  best_sellers: IPlant[] = [];
   totalPlants: number = 0;
   categoriesSelected: Number[] = [];
   searchWord: string = '';
@@ -28,14 +31,20 @@ export class CatalogComponent implements OnInit {
   windowScrolled: boolean = false;
   error: boolean = false;
 
-  constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
+  constructor(
+    private cs: CategoryService,
+    private ps: PlantService,
+    private panierService: PanierService,
+    private alertService: AlertService,
+    private cis:CommandItemService
+  ) {}
 
   ngOnInit(): void {
     window.addEventListener('scroll', () => {
       this.windowScrolled = window.pageYOffset !== 0;
     });
 
-    this.categoryService.all().subscribe(value => {
+    this.cs.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
       this.categories.map(cat => {
@@ -44,6 +53,8 @@ export class CatalogComponent implements OnInit {
         }
       });
     });
+    this.cis.getBestSeller().subscribe(best_seller => {
+      this.best_sellers = best_seller;})
     this.filterPlant();
   }
 
@@ -88,7 +99,7 @@ export class CatalogComponent implements OnInit {
   }
 
   filterPlant(useCurrentPage: boolean = false): void {
-    this.plantService
+    this.ps
       .filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected)
       .subscribe({
         next: body => {
@@ -129,5 +140,18 @@ export class CatalogComponent implements OnInit {
 
   scrollToTop() {
     window.scrollTo(0, 0);
+  }
+
+  GetBestSellPath():string{
+    return this.imgUrl + "bestsell.png";
+  }
+
+  best_sell(a:IPlant):boolean{
+    let verif:boolean = false;
+    this.best_sellers.forEach(item => {
+      if(a.id == item.id){verif = true;
+      }
+    })
+    return verif;
   }
 }
