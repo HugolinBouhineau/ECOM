@@ -76,7 +76,7 @@ export class NavbarComponent implements OnInit {
     this.isNavbarCollapsed = !this.isNavbarCollapsed;
   }
 
-  getNbItemsCart() {
+  getNbItemsCart(): number {
     return this.panierService.getItems().length;
   }
 }

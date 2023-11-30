@@ -32,7 +32,7 @@ export class CommandService {
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   all(): Observable<ICommand[]> {
-    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+    return this.http.get<ICommand[]>(this.resourceUrl + '?eagerload=true').pipe(map((body: ICommand[]) => body));
   }
 
   create(command: NewCommand): Observable<EntityResponseType> {

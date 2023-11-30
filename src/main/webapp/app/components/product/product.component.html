@@ -10,7 +10,7 @@
                 <div class="picsum-img-wrapper">
                   <img [src]="path + image" class="imTop" alt="Random first slide" />
                   <div *ngIf="best_sell()">
-                    <img src="{{GetBestSellerPath()}}" class="img-fluid mx-auto d-block best_sell" alt="Best Seller" />
+                    <img src="{{ GetBestSellerPath() }}" class="img-fluid mx-auto d-block best_sell" alt="Best Seller" />
                   </div>
                 </div>
               </ng-template>

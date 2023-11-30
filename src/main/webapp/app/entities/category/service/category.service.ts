@@ -19,7 +19,7 @@ export class CategoryService {
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   all(): Observable<ICategory[]> {
-    return this.http.get(this.resourceUrl).pipe(map((body: any) => body));
+    return this.http.get<ICategory[]>(this.resourceUrl).pipe(map((body: ICategory[]) => body));
   }
 
   create(category: NewCategory): Observable<EntityResponseType> {

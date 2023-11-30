@@ -49,7 +49,7 @@ export class CustomerService {
   }
 
   getCustomer(): Observable<ICustomer> {
-    return this.http.get<ICustomer>('/api/customers/current').pipe(map((body: any) => body));
+    return this.http.get<ICustomer>('/api/customers/current').pipe(map((body: ICustomer) => body));
   }
 
   compareCustomer(o1: Pick<ICustomer, 'id'> | null, o2: Pick<ICustomer, 'id'> | null): boolean {
