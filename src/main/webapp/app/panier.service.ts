@@ -40,12 +40,8 @@ export class PanierService {
   items: Item[] = [];
   constructor(private alertService: AlertService) {}
 
-  ngOnInit(): void {
-    this.restore();
-  }
-
   addToCart(plant: IPlant): void {
-    let item = this.items.find(value => value.plant.id === plant.id);
+    const item = this.items.find(value => value.plant.id === plant.id);
     if (item) {
       if (item.plant.stock && item.plant.stock > item.get_quantity()) {
         item.add_item();
@@ -54,7 +50,7 @@ export class PanierService {
         this.alertService.addAlert({ type: 'danger', message: "L'item n'a pas pû être ajoutée (stock insuffisant)" });
       }
     } else {
-      this.items.push(new Item({ quantity: 1, plant: plant }));
+      this.items.push(new Item({ quantity: 1, plant }));
       this.alertService.addAlert({ type: 'success', message: "L'item a bien été ajouté au panier" });
     }
     this.save();
@@ -65,7 +61,7 @@ export class PanierService {
   }
 
   LessToCart(plant: IPlant): void {
-    let item = this.items.find(value => value.plant.id === plant.id);
+    const item = this.items.find(value => value.plant.id === plant.id);
     if (item && item.get_quantity() > 1) {
       item.remove_item();
     }
@@ -73,12 +69,12 @@ export class PanierService {
     this.save();
   }
 
-  setStock(stock : number, plant: IPlant) : boolean{
-    let item = this.items.find(value => value.plant.id == plant.id);
-    let quantityChanged : boolean = false;
-    if(item){
+  setStock(stock: number, plant: IPlant): boolean {
+    const item = this.items.find(value => value.plant.id === plant.id);
+    let quantityChanged = false;
+    if (item) {
       item.plant.stock = stock;
-      if(item.quantity> item.plant.stock){
+      if (item.quantity > item.plant.stock) {
         item.quantity = item.plant.stock;
         quantityChanged = true;
       }
@@ -94,8 +90,8 @@ export class PanierService {
   }
 
   getTotal(): number {
-    let total: number = 0;
-    for (let item of this.items) {
+    let total = 0;
+    for (const item of this.items) {
       total += item.get_price();
     }
     return total;
@@ -106,16 +102,16 @@ export class PanierService {
     this.save();
   }
 
-  save() {
+  save(): void {
     localStorage.setItem('cart', JSON.stringify(this.items));
   }
 
-  restore() {
-    let value = localStorage.getItem('cart');
-    if (value != '' && value != null && typeof value != 'undefined') {
-      let results = JSON.parse(value!);
+  restore(): void {
+    const value = localStorage.getItem('cart');
+    if (value !== '' && value != null && typeof value !== 'undefined') {
+      const results = JSON.parse(value);
       this.items = [];
-      for (let result of results) {
+      for (const result of results) {
         this.items.push(new Item(result));
       }
     }

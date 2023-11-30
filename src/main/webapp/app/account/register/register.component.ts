@@ -5,10 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/config/error.constants';
 import { RegisterService } from './register.service';
-import {LoginService} from "../../login/login.service";
-import {Login} from "../../login/login.model";
-import {StateStorageService} from "../../core/auth/state-storage.service";
-import {Router} from "@angular/router";
+import { LoginService } from '../../login/login.service';
+import { StateStorageService } from '../../core/auth/state-storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'jhi-register',
@@ -23,7 +22,7 @@ export class RegisterComponent implements AfterViewInit {
   errorEmailExists = false;
   errorUserExists = false;
   success = false;
-  redirectToPayment: boolean = false;
+  redirectToPayment = false;
 
   registerForm = new FormGroup({
     login: new FormControl('', {
@@ -49,15 +48,15 @@ export class RegisterComponent implements AfterViewInit {
     }),
   });
 
-
-  constructor(private translateService: TranslateService,
-              private registerService: RegisterService,
-              private ls: LoginService,
-              private stateStorageService:StateStorageService,
-              private router:Router) {}
+  constructor(
+    private translateService: TranslateService,
+    private registerService: RegisterService,
+    private ls: LoginService,
+    private stateStorageService: StateStorageService,
+    private router: Router
+  ) {}
 
   ngAfterViewInit(): void {
-    console.log(this.stateStorageService.getUrl());
     if (this.stateStorageService.getUrl() === '/payment') {
       this.redirectToPayment = true;
     }
@@ -79,29 +78,26 @@ export class RegisterComponent implements AfterViewInit {
       this.doNotMatch = true;
     } else {
       const { login, email } = this.registerForm.getRawValue();
-      let rememberMe:boolean = false;
-      let username: string = login;
-      this.registerService
-        .save({ login, email, password, langKey: this.translateService.currentLang })
-        .subscribe({ next: () => {
-          this.success = true
-          this.ls.login({username, password, rememberMe}).subscribe({
+      const rememberMe = false;
+      const username: string = login;
+      this.registerService.save({ login, email, password, langKey: this.translateService.currentLang }).subscribe({
+        next: () => {
+          this.success = true;
+          this.ls.login({ username, password, rememberMe }).subscribe({
             next: () => {
-              console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
               if (!this.router.getCurrentNavigation()) {
-                console.log("oraihzrtrou");
                 // There were no routing during login (eg from navigationToStoredUrl)
                 if (this.redirectToPayment) {
-                  console.log("huh");
                   this.router.navigate(['/payment']);
                 } else {
                   this.router.navigate(['']);
                 }
               }
-            }
+            },
           });
-          },
-          error: response => this.processError(response) });
+        },
+        error: response => this.processError(response),
+      });
     }
   }
 

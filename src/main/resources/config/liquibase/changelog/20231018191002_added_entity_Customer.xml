@@ -36,7 +36,7 @@
                   file="config/liquibase/fake-data/customer.csv"
                   separator=";"
                   tableName="customer"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
             <column name="user_id" type="bigint"/>

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { LoginService } from 'app/login/login.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { StateStorageService } from '../core/auth/state-storage.service';
-import {AlertService} from "../core/util/alert.service";
+import { AlertService } from '../core/util/alert.service';
 
 @Component({
   selector: 'jhi-login',
@@ -23,19 +23,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
     rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  redirectToPayment: boolean = false;
+  redirectToPayment = false;
 
   constructor(
     private accountService: AccountService,
     private loginService: LoginService,
     private router: Router,
     private stateStorageService: StateStorageService,
-    private alertService:AlertService
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
     if (this.stateStorageService.getUrl() === '/payment') {
-      this.alertService.addAlert({ type: 'info', message: "Veuillez vous connecter avant de passer au payement" });
+      this.alertService.addAlert({ type: 'info', message: 'Veuillez vous connecter avant de passer au payement' });
       this.redirectToPayment = true;
     }
     this.stateStorageService.clearUrl();
@@ -68,10 +68,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
     });
   }
 
-  register(){
-    if(this.redirectToPayment){
-      this.stateStorageService.storeUrl("/payment")
+  register(): void {
+    if (this.redirectToPayment) {
+      this.stateStorageService.storeUrl('/payment');
     }
-    this.router.navigate(['/account/register'])
+    this.router.navigate(['/account/register']);
   }
 }

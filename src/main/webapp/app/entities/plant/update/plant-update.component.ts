@@ -63,19 +63,19 @@ export class PlantUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const plant = this.plantFormService.getPlant(this.editForm);
-    let pathname: string = '';
+    let pathname = '';
     for (let i = 0; i < this.files_names.length; i++) {
-      let file = this.files_names[i];
+      const file = this.files_names[i];
       pathname = pathname + file;
 
-      if (i != this.files_names.length - 1) {
+      if (i !== this.files_names.length - 1) {
         pathname = pathname + '**';
       }
     }
 
     // Upload images to azure using blobServicce
-    for (let savedFile of this.saved_files) {
-      this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name, () => {});
+    for (const savedFile of this.saved_files) {
+      this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name);
     }
 
     plant.imagePath = pathname;
@@ -84,6 +84,24 @@ export class PlantUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.plantService.create(plant));
     }
+  }
+
+  filesDropped(files: FileHandle[]): void {
+    this.files = files;
+  }
+
+  upload(): void {
+    for (let i = 0; i < this.files.length; i++) {
+      this.files_names.push(this.files[i].file.name);
+      this.saved_files.push(this.files[i]);
+    }
+    this.files = [];
+  }
+
+  clean_files(): void {
+    this.files = [];
+    this.files_names = [];
+    this.saved_files = [];
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPlant>>): void {
@@ -125,23 +143,5 @@ export class PlantUpdateComponent implements OnInit {
         )
       )
       .subscribe((categories: ICategory[]) => (this.categoriesSharedCollection = categories));
-  }
-
-  filesDropped(files: FileHandle[]): void {
-    this.files = files;
-  }
-
-  upload(): void {
-    for (let i = 0; i < this.files.length; i++) {
-      this.files_names.push(this.files[i].file.name);
-      this.saved_files.push(this.files[i]);
-    }
-    this.files = [];
-  }
-
-  clean_files(): void {
-    this.files = [];
-    this.files_names = [];
-    this.saved_files = [];
   }
 }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import {IPlant, NewPlant, PlantQuantity} from '../plant.model';
+import { IPlant, NewPlant, PlantQuantity } from '../plant.model';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -18,12 +18,8 @@ export class PlantService {
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
-  verifyAndUpdateStock(plants: PlantQuantity[]){
-    return this.http.post<Boolean>(this.resourceUrl + '/verifyAndUpdateStock', plants, { observe: 'response' });
-  }
-
-  all(): Observable<IPlant[]> {
-    return this.http.get(this.resourceUrl + '?eagerload=true').pipe(map((body: any) => body));
+  verifyAndUpdateStock(plants: PlantQuantity[]): Observable<HttpResponse<boolean>> {
+    return this.http.post<boolean>(this.resourceUrl + '/verifyAndUpdateStock', plants, { observe: 'response' });
   }
 
   create(plant: NewPlant): Observable<EntityResponseType> {
@@ -42,11 +38,10 @@ export class PlantService {
     return this.http.get<IPlant>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  filterPlant(page: number, size: number, sort: string, searchPlant: string, categories: Number[]) {
-    return this.http
-      .get(this.resourceUrl + '/filter/paginate?page='+ page + '&size=' + size + '&sort=' + sort +
-        '&name=' + searchPlant + '&categoriesId=' + categories.toString())
-      .pipe(map((body:any) => body));
+  filterPlant(page: number, size: number, sort: string, searchPlant: string, categories: number[]): Observable<any> {
+    return this.http.get(
+      `${this.resourceUrl}/filter/paginate?page=${page}&size=${size}&sort=${sort}&name=${searchPlant}&categoriesId=${categories.toString()}`
+    );
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {
