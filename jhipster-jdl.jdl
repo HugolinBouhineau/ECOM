@@ -48,5 +48,5 @@ relationship OneToMany {
 }
 
 enum CommandState {
-	InProgress, Completed, Cancelled
+	InProgress, Completed, Cancelled, Shipping
 }

@@ -1,5 +1,6 @@
 import {
   faArrowLeft,
+  faArrowRight,
   faAsterisk,
   faBan,
   faBars,
@@ -45,10 +46,12 @@ import {
   faXmark,
   faSunPlantWilt,
   // jhipster-needle-add-icon-import
+  faArrowUp
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
   faArrowLeft,
+  faArrowRight,
   faAsterisk,
   faBan,
   faBars,
@@ -94,4 +97,5 @@ export const fontAwesomeIcons = [
   faXmark,
   faSunPlantWilt,
   // jhipster-needle-add-icon-import
+  faArrowUp,
 ];
