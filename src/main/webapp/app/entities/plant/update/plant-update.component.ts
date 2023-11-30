@@ -44,7 +44,7 @@ export class PlantUpdateComponent implements OnInit {
       this.plant = plant;
       if (plant) {
         this.updateForm(plant);
-        let pathlink:string[] | undefined = this.plant?.imagePath?.split("**");
+        const pathlink:string[] | undefined = this.plant?.imagePath?.split("**");
         if (pathlink){
           pathlink.forEach(link => {
             this.files_names.push(link)
