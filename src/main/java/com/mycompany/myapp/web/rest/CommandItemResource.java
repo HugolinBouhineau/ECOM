@@ -1,9 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Command;
 import com.mycompany.myapp.domain.CommandItem;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.repository.CommandItemRepository;
+import com.mycompany.myapp.service.CommandItemService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,8 +34,11 @@ public class CommandItemResource {
 
     private final CommandItemRepository commandItemRepository;
 
-    public CommandItemResource(CommandItemRepository commandItemRepository) {
+    private final CommandItemService commandItemService;
+
+    public CommandItemResource(CommandItemRepository commandItemRepository, CommandItemService commandItemService) {
         this.commandItemRepository = commandItemRepository;
+        this.commandItemService = commandItemService;
     }
 
     /**
@@ -179,33 +182,6 @@ public class CommandItemResource {
 
     @GetMapping("/command-items/best-seller")
     public List<Plant> getBestSeller() {
-        log.debug("REST request to get all CommandItems");
-        List<CommandItem> list_items = commandItemRepository.findAll();
-        List<Plant> list_plant = new ArrayList<Plant>();
-        List<Integer> list_quantite = new ArrayList<Integer>();
-        int index = 0;
-        for (CommandItem item : list_items) {
-            Plant plant = item.getPlant();
-            Integer quantite = item.getQuantity();
-            if (list_plant.contains(plant)) {
-                index = list_plant.indexOf(plant);
-                quantite = list_quantite.get(index) + quantite;
-                list_quantite.set(index, quantite);
-            } else {
-                list_plant.add(plant);
-                list_quantite.add(quantite);
-            }
-        }
-        List<Plant> list_final = new ArrayList<Plant>();
-        for (int i = 0; i < 3; i++) {
-            if (!list_plant.isEmpty()) {
-                Integer max = Collections.max(list_quantite);
-                index = list_quantite.indexOf(max);
-                list_final.add(list_plant.get(index));
-                list_quantite.remove(index);
-                list_plant.remove(index);
-            }
-        }
-        return list_final;
+        return commandItemService.getBestSeller();
     }
 }
