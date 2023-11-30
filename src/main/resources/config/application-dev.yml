@@ -50,13 +50,11 @@ spring:
     host: smtp.gmail.com
     port: 587 #25
     username: laserreenchantee@gmail.com
-    password: La$Serre$Enchantee
-    protocol: smtp
-    tls: true
+    password: maedwolpuwshunvc
     properties.mail.smtp:
       auth: true
       starttls.enable: true
-      ssl.trust: smtp.gmail.com
+      starttls.required: true
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
