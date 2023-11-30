@@ -6,6 +6,7 @@ import { IPlant } from '../../entities/plant/plant.model';
 import { Router } from '@angular/router';
 import { PanierService } from '../../panier.service';
 import { AlertService } from '../../core/util/alert.service';
+import {CommandItemService} from "../../entities/command-item/service/command-item.service";
 
 @Component({
   selector: 'jhi-catalog',
@@ -16,6 +17,7 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
+  best_sellers: IPlant[] = [];
   categoriesSelected: Number[] = [];
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
@@ -25,7 +27,8 @@ export class CatalogComponent implements OnInit {
     private ps: PlantService,
     private router: Router,
     private panierService: PanierService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private cis:CommandItemService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +44,8 @@ export class CatalogComponent implements OnInit {
 
     this.ps.all().subscribe(value => {
       this.plants = value;
+      this.cis.getBestSeller().subscribe(best_seller => {
+          this.best_sellers = best_seller;})
     });
   }
 
@@ -92,5 +97,18 @@ export class CatalogComponent implements OnInit {
       return this.imgUrl + a.imagePath.split('**')[0];
     }
     return '';
+  }
+
+  GetBestSellPath():string{
+    return this.imgUrl + "bestsell.png";
+  }
+
+  best_sell(a:IPlant):boolean{
+    let verif:boolean = false;
+    this.best_sellers.forEach(item => {
+      if(a.id == item.id){verif = true;
+      }
+    })
+    return verif;
   }
 }
