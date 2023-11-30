@@ -7,6 +7,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,10 +24,8 @@ public class PlantService {
     @Transactional
     public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked) {
         log.debug("REST request to verifyStock :");
-        boolean inStock = true;
         for (PlantQuantity quantityAsked : quantitiesAsked) {
             Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
-            log.debug("PLANT : {}", plant);
             int remainingStock = plant.getStock() - quantityAsked.getPlantQuantity();
             if (remainingStock < 0) {
                 log.debug(
@@ -35,8 +34,9 @@ public class PlantService {
                     quantityAsked.getPlantQuantity(),
                     plant.getStock()
                 );
-                inStock = false;
+                throw new DataIntegrityViolationException("Une plante n'est plus en stock dans la quantité demandé");
             } else {
+                plant.setStock(remainingStock);
                 log.debug(
                     "plante {} en stock, asked: {}, stock: {}, remaining: {}",
                     quantityAsked.getPlantId(),
@@ -46,14 +46,6 @@ public class PlantService {
                 );
             }
         }
-        if (inStock) {
-            for (PlantQuantity quantityAsked : quantitiesAsked) {
-                Plant plant = entityManager.find(Plant.class, quantityAsked.getPlantId(), LockModeType.PESSIMISTIC_WRITE);
-                plant.setStock(plant.getStock() - quantityAsked.getPlantQuantity());
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 }
