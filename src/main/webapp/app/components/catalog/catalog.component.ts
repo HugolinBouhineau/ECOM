@@ -17,19 +17,19 @@ export class CatalogComponent implements OnInit {
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
   best_sellers: IPlant[] = [];
-  totalPlants: number = 0;
+  totalPlants = 0;
   categoriesSelected: number[] = [];
-  searchWord: string = '';
-  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
-  currentPage: number = 0;
-  totalPage: number = 0;
-  size: number = 6;
-  sortby: string = 'no';
-  isLastPage: boolean = false;
-  isFirstPage: boolean = false;
-  hasNoPlants: boolean = false;
-  windowScrolled: boolean = false;
-  error: boolean = false;
+  searchWord = '';
+  imgUrl = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage = 0;
+  totalPage = 0;
+  size = 6;
+  sortby = 'no';
+  isLastPage = false;
+  isFirstPage = false;
+  hasNoPlants = false;
+  windowScrolled = false;
+  error = false;
 
   constructor(
     private cs: CategoryService,
@@ -146,9 +146,9 @@ export class CatalogComponent implements OnInit {
   }
 
   best_sell(a: IPlant): boolean {
-    let verif: boolean = false;
+    let verif = false;
     this.best_sellers.forEach(item => {
-      if (a.id == item.id) {
+      if (a.id === item.id) {
         verif = true;
       }
     });

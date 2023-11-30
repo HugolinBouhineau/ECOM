@@ -13,11 +13,11 @@ import { CommandItemService } from '../../entities/command-item/service/command-
 })
 export class ProductComponent implements OnInit {
   plant: any;
-  href: string = '';
-  stock: number = 0;
-  plantID: number = 0;
+  href = '';
+  stock = 0;
+  plantID = 0;
   imagePath: string[] = [];
-  path: string = 'https://ecom1465.blob.core.windows.net/test/';
+  path = 'https://ecom1465.blob.core.windows.net/test/';
   best_sellers: IPlant[] = [];
   constructor(
     private ps: PlantService,
@@ -46,14 +46,14 @@ export class ProductComponent implements OnInit {
     });
   }
 
-  GetBestSellerPath() {
+  GetBestSellerPath(): string {
     return this.path + 'bestsell.png';
   }
 
   best_sell(): boolean {
-    let verif: boolean = false;
+    let verif = false;
     this.best_sellers.forEach(item => {
-      if (item.id == this.plant.id) {
+      if (item.id === this.plant.id) {
         verif = true;
       }
     });
