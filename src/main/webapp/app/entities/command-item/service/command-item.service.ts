@@ -6,6 +6,7 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { ICommandItem, NewCommandItem } from '../command-item.model';
+import { IPlant } from '../../plant/plant.model';
 
 export type PartialUpdateCommandItem = Partial<ICommandItem> & Pick<ICommandItem, 'id'>;
 
@@ -79,5 +80,9 @@ export class CommandItemService {
       return [...commandItemsToAdd, ...commandItemCollection];
     }
     return commandItemCollection;
+  }
+
+  getBestSeller(): Observable<IPlant[]> {
+    return this.http.get<IPlant[]>(`${this.resourceUrl}/best-seller`);
   }
 }

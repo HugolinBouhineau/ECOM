@@ -8,7 +8,10 @@
             <ngb-carousel *ngIf="imagePath">
               <ng-template ngbSlide *ngFor="let image of imagePath">
                 <div class="picsum-img-wrapper">
-                  <img [src]="path + image" alt="Random first slide" />
+                  <img [src]="path + image" class="imTop" alt="Random first slide" />
+                  <div *ngIf="best_sell()">
+                    <img src="{{ GetBestSellerPath() }}" class="img-fluid mx-auto d-block best_sell" alt="Best Seller" />
+                  </div>
                 </div>
               </ng-template>
             </ngb-carousel>

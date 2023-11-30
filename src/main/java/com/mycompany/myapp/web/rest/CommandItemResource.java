@@ -1,13 +1,13 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Command;
 import com.mycompany.myapp.domain.CommandItem;
+import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.repository.CommandItemRepository;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -175,5 +175,37 @@ public class CommandItemResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/command-items/best-seller")
+    public List<Plant> getBestSeller() {
+        log.debug("REST request to get all CommandItems");
+        List<CommandItem> list_items = commandItemRepository.findAll();
+        List<Plant> list_plant = new ArrayList<Plant>();
+        List<Integer> list_quantite = new ArrayList<Integer>();
+        int index = 0;
+        for (CommandItem item : list_items) {
+            Plant plant = item.getPlant();
+            Integer quantite = item.getQuantity();
+            if (list_plant.contains(plant)) {
+                index = list_plant.indexOf(plant);
+                quantite = list_quantite.get(index) + quantite;
+                list_quantite.set(index, quantite);
+            } else {
+                list_plant.add(plant);
+                list_quantite.add(quantite);
+            }
+        }
+        List<Plant> list_final = new ArrayList<Plant>();
+        for (int i = 0; i < 3; i++) {
+            if (!list_plant.isEmpty()) {
+                Integer max = Collections.max(list_quantite);
+                index = list_quantite.indexOf(max);
+                list_final.add(list_plant.get(index));
+                list_quantite.remove(index);
+                list_plant.remove(index);
+            }
+        }
+        return list_final;
     }
 }
