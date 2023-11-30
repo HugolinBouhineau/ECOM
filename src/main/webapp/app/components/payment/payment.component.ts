@@ -12,7 +12,7 @@ import dayjs from 'dayjs/esm';
 import { CommandService } from '../../entities/command/service/command.service';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { Router } from '@angular/router';
-import { NewCommandItem } from 'app/entities/command-item/command-item.model';
+import { NewCommandItem } from '../../entities/command-item/command-item.model';
 import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 
 /* Compare year : if expiration Year > current Year => OK
@@ -226,37 +226,43 @@ export class PaymentComponent implements OnInit {
     }
 
     // Verify that the plants are still in stock
-    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe(value => {
-      if (value.body === true) {
-        // Plants are still in stock and stock was decremented
-        // Save the address
-        const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
-        const newAddress: NewAddress = {
-          additionalInfo,
-          city,
-          customer: this.saveAddress ? this.customer : null,
-          id: null,
-          street,
-          zipCode: zipCode.replace(/\s/g, ''),
-        };
-        if (this.addresses) {
-          for (const address of this.addresses) {
-            if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
-              this.sendNewCommand(address);
-              this.addressFound = true;
-              break;
+    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe({
+      next: value => {
+        if (value.body === true) {
+          // Plants are still in stock and stock was decremented
+          // Save the address
+          const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+          const newAddress: NewAddress = {
+            additionalInfo,
+            city,
+            customer: this.saveAddress ? this.customer : null,
+            id: null,
+            street,
+            zipCode: zipCode.replace(/\s/g, ''),
+          };
+          if (this.addresses) {
+            for (const address of this.addresses) {
+              if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
+                this.sendNewCommand(address);
+                this.addressFound = true;
+                break;
+              }
             }
           }
-        }
 
-        if (!this.addressFound) {
-          this.sendNewAaddress(newAddress);
-          return;
+          if (!this.addressFound) {
+            this.sendNewAaddress(newAddress);
+            return;
+          }
+        } else {
+          // Plants are no longer available and stock wasn't decremented
+          this.router.navigate(['/basket']);
         }
-      } else {
+      },
+      error: () => {
         // Plants are no longer available and stock wasn't decremented
         this.router.navigate(['/basket']);
-      }
+      },
     });
   }
 
