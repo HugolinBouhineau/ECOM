@@ -24,12 +24,15 @@
                 {{ command.purchaseDate }}
               </h4>
             </td>
-            <td>Commande en cours !</td>
+            <td>
+              <div *ngIf="command.state == CommandState.InProgress; else shipping">Commande en cours de préparation</div>
+              <ng-template #shipping>Commande en cours de livraison </ng-template>
+            </td>
             <td>
               <h4 class="child">
                 <strong> {{ getPrice(command) }} <span class="text-muted">€</span> </strong>
               </h4>
-              <button type="button" class="btn btn-link child" (click)="openConfirmationDialog(command)">
+              <button *ngIf="command.state == CommandState.InProgress" type="button" class="btn btn-link child" (click)="openConfirmationDialog(command)">
                 <fa-icon icon="xmark" style="color: red"></fa-icon>
               </button>
             </td>

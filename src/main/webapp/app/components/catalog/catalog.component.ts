@@ -3,7 +3,6 @@ import { CategoryService } from '../../entities/category/service/category.servic
 import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
-import { Router } from '@angular/router';
 import { PanierService } from '../../panier.service';
 import { AlertService } from '../../core/util/alert.service';
 import {CommandItemService} from "../../entities/command-item/service/command-item.service";
@@ -18,20 +17,33 @@ export class CatalogComponent implements OnInit {
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
   best_sellers: IPlant[] = [];
+  totalPlants: number = 0;
   categoriesSelected: Number[] = [];
   searchWord: string = '';
   imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage: number = 0;
+  totalPage: number = 0;
+  size: number = 6;
+  sortby: string = 'no';
+  isLastPage: boolean = false;
+  isFirstPage: boolean = false;
+  hasNoPlants: boolean = false;
+  windowScrolled: boolean = false;
+  error: boolean = false;
 
   constructor(
     private cs: CategoryService,
     private ps: PlantService,
-    private router: Router,
     private panierService: PanierService,
     private alertService: AlertService,
     private cis:CommandItemService
   ) {}
 
   ngOnInit(): void {
+    window.addEventListener('scroll', () => {
+      this.windowScrolled = window.pageYOffset !== 0;
+    });
+
     this.cs.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
@@ -41,31 +53,18 @@ export class CatalogComponent implements OnInit {
         }
       });
     });
-
-    this.ps.all().subscribe(value => {
-      this.plants = value;
-      this.cis.getBestSeller().subscribe(best_seller => {
-          this.best_sellers = best_seller;})
-    });
+    this.cis.getBestSeller().subscribe(best_seller => {
+      this.best_sellers = best_seller;})
+    this.filterPlant();
   }
 
-  onlyUnique(value: any, index: any, array: any) {
-    return array.indexOf(value) === index;
-  }
-
-  checkCategory(cat: ICategory) {
+  filterPlantsFromCategory(cat: ICategory) {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
       this.categoriesSelected.push(cat.id);
     }
-  }
-
-  checkArrayIntersect(cats: Pick<ICategory, 'id'>[] | null | undefined): boolean {
-    return (
-      this.categoriesSelected.length == 0 ||
-      (cats != null && cats.filter(value => this.categoriesSelected.includes(value.id)).length == this.categoriesSelected.length)
-    );
+    this.filterPlant();
   }
 
   addToCart(plant: IPlant) {
@@ -73,23 +72,13 @@ export class CatalogComponent implements OnInit {
   }
 
   sortByAscendingPrice() {
-    this.plants.sort((a: IPlant, b: IPlant) => this.compare(a, b));
+    this.sortby = 'asc';
+    this.filterPlant();
   }
 
   sortByDescendingPrice() {
-    this.plants.sort((a: IPlant, b: IPlant) => this.compare(b, a));
-  }
-
-  compare(a: IPlant, b: IPlant) {
-    if (a.price == null || b.price == null) {
-      return 0;
-    }
-    if (a.price < b.price) {
-      return -1;
-    } else if (a.price > b.price) {
-      return 1;
-    }
-    return 0;
+    this.sortby = 'desc';
+    this.filterPlant();
   }
 
   getPath(a: IPlant): string {
@@ -97,6 +86,60 @@ export class CatalogComponent implements OnInit {
       return this.imgUrl + a.imagePath.split('**')[0];
     }
     return '';
+  }
+
+  newSearchWord(event: string) {
+    this.searchWord = event;
+    this.filterPlant();
+  }
+
+  changeSizePlants(number: number) {
+    this.size = number;
+    this.filterPlant();
+  }
+
+  filterPlant(useCurrentPage: boolean = false): void {
+    this.ps
+      .filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected)
+      .subscribe({
+        next: body => {
+          this.error = false;
+          this.plants = body.content;
+          this.totalPlants = body.totalElements;
+          this.currentPage = body.pageable.pageNumber;
+          this.totalPage = body.totalPages;
+          this.hasNoPlants = false;
+          this.isLastPage = false;
+          this.isFirstPage = false;
+
+          if (body.numberOfElements === 0) {
+            this.hasNoPlants = true;
+          }
+          if (this.currentPage === this.totalPage - 1) {
+            this.isLastPage = true;
+          }
+          if (this.currentPage === 0) {
+            this.isFirstPage = true;
+          }
+        },
+        error: () => {
+          this.error = true;
+        },
+      });
+  }
+
+  upPage() {
+    this.currentPage += 1;
+    this.filterPlant(true);
+  }
+
+  downPage() {
+    this.currentPage -= 1;
+    this.filterPlant(true);
+  }
+
+  scrollToTop() {
+    window.scrollTo(0, 0);
   }
 
   GetBestSellPath():string{
