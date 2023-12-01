@@ -20,9 +20,10 @@ import { ICommandItem } from '../../entities/command-item/command-item.model';
 export class CommandsComponent implements OnInit {
   list_command_passed: ICommand[] = [];
   progress_command: ICommand[] = [];
-  id: number = 0;
+  id = 0;
   authenticatedUser: Account | undefined = undefined;
   customer: ICustomer | undefined = undefined;
+  protected readonly CommandState = CommandState;
 
   constructor(
     private accountService: AccountService,
@@ -57,26 +58,26 @@ export class CommandsComponent implements OnInit {
     });
 
     this.list_command_passed.sort((a: ICommand, b: ICommand) => {
-      let date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
+      const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
       return date_a.diff(b.purchaseDate);
     });
 
     this.progress_command.sort((a: ICommand, b: ICommand) => {
-      let date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
+      const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
       return date_a.diff(b.purchaseDate);
     });
   }
 
-  parce(commandz: ICommand[]) {
+  parce(commandz: ICommand[]): void {
     this.commandItemService.all().subscribe(value => {
-      let commandItems: ICommandItem[] = value;
+      const commandItems: ICommandItem[] = value;
       for (let i = 0; i < commandz.length; i++) {
         // Add command items to command
         commandz[i].commandItems = commandItems.filter(value1 => value1.command?.id === commandz[i].id);
         // Chek if command is passed or in progress
-        let customer: ICustomer = <ICustomer>commandz[i].customer;
-        if (customer.id == this.id) {
-          if (commandz[i].state == CommandState.InProgress || commandz[i].state == CommandState.Shipping) {
+        const customer: ICustomer = <ICustomer>commandz[i].customer;
+        if (customer.id === this.id) {
+          if (commandz[i].state === CommandState.InProgress || commandz[i].state === CommandState.Shipping) {
             this.progress_command.push(commandz[i]);
           } else {
             this.list_command_passed.push(commandz[i]);
@@ -86,12 +87,12 @@ export class CommandsComponent implements OnInit {
     });
   }
   getPrice(command: ICommand): number {
-    let total: number = 0;
+    let total = 0;
     if (command.commandItems) {
-      let items: ICommandItem[] = command.commandItems;
-      for (let item of items) {
+      const items: ICommandItem[] = command.commandItems;
+      for (const item of items) {
         if (item.plant) {
-          let plant: IPlant = item.plant;
+          const plant: IPlant = item.plant;
           if (plant.price && item.quantity) {
             total += plant.price * item.quantity;
           }
@@ -102,23 +103,18 @@ export class CommandsComponent implements OnInit {
   }
 
   public openConfirmationDialog(command: ICommand): void {
-    this.cds
-      .confirm('Veuillez confirmer', 'Voulez-vous vraiment annuler cette commande ?')
-      .then((confirmed: boolean): void => {
-        if (confirmed) {
-          this.Cancel(command);
-        }
-      })
-      .catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+    this.cds.confirm('Veuillez confirmer', 'Voulez-vous vraiment annuler cette commande ?').then((confirmed: boolean): void => {
+      if (confirmed) {
+        this.Cancel(command);
+      }
+    });
   }
 
   Cancel(command: ICommand): void {
     command.state = CommandState.Cancelled;
     command.purchaseDate = dayjs(command.purchaseDate);
-    this.commandService.update(command).subscribe((body: any) => {
+    this.commandService.update(command).subscribe(() => {
       this.load();
     });
   }
-
-  protected readonly CommandState = CommandState;
 }

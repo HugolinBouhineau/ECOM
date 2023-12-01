@@ -4,6 +4,8 @@ import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
 import { PanierService } from '../../panier.service';
+import { AlertService } from '../../core/util/alert.service';
+import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 
 @Component({
   selector: 'jhi-catalog',
@@ -14,28 +16,35 @@ export class CatalogComponent implements OnInit {
   categories: ICategory[] = [];
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
-  totalPlants: number = 0;
-  categoriesSelected: Number[] = [];
-  searchWord: string = '';
-  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
-  currentPage: number = 0;
-  totalPage: number = 0;
-  size: number = 6;
-  sortby: string = 'no';
-  isLastPage: boolean = false;
-  isFirstPage: boolean = false;
-  hasNoPlants: boolean = false;
-  windowScrolled: boolean = false;
-  error: boolean = false;
+  best_sellers: IPlant[] = [];
+  totalPlants = 0;
+  categoriesSelected: number[] = [];
+  searchWord = '';
+  imgUrl = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage = 0;
+  totalPage = 0;
+  size = 6;
+  sortby = 'no';
+  isLastPage = false;
+  isFirstPage = false;
+  hasNoPlants = false;
+  windowScrolled = false;
+  error = false;
 
-  constructor(private categoryService: CategoryService, private plantService: PlantService, private panierService: PanierService) {}
+  constructor(
+    private cs: CategoryService,
+    private ps: PlantService,
+    private panierService: PanierService,
+    private alertService: AlertService,
+    private cis: CommandItemService
+  ) {}
 
   ngOnInit(): void {
     window.addEventListener('scroll', () => {
       this.windowScrolled = window.pageYOffset !== 0;
     });
 
-    this.categoryService.all().subscribe(value => {
+    this.cs.all().subscribe(value => {
       this.categories = value;
       this.categoryTypes = [...new Set(this.categories.map(item => item.categoryType))];
       this.categories.map(cat => {
@@ -44,10 +53,13 @@ export class CatalogComponent implements OnInit {
         }
       });
     });
+    this.cis.getBestSeller().subscribe(best_seller => {
+      this.best_sellers = best_seller;
+    });
     this.filterPlant();
   }
 
-  filterPlantsFromCategory(cat: ICategory) {
+  filterPlantsFromCategory(cat: ICategory): void {
     if (this.categoriesSelected.includes(cat.id)) {
       this.categoriesSelected.splice(this.categoriesSelected.indexOf(cat.id), 1);
     } else {
@@ -56,16 +68,16 @@ export class CatalogComponent implements OnInit {
     this.filterPlant();
   }
 
-  addToCart(plant: IPlant) {
+  addToCart(plant: IPlant): void {
     this.panierService.addToCart(plant);
   }
 
-  sortByAscendingPrice() {
+  sortByAscendingPrice(): void {
     this.sortby = 'asc';
     this.filterPlant();
   }
 
-  sortByDescendingPrice() {
+  sortByDescendingPrice(): void {
     this.sortby = 'desc';
     this.filterPlant();
   }
@@ -77,57 +89,69 @@ export class CatalogComponent implements OnInit {
     return '';
   }
 
-  newSearchWord(event: string) {
+  newSearchWord(event: string): void {
     this.searchWord = event;
     this.filterPlant();
   }
 
-  changeSizePlants(number: number) {
+  changeSizePlants(number: number): void {
     this.size = number;
     this.filterPlant();
   }
 
-  filterPlant(useCurrentPage: boolean = false): void {
-    this.plantService
-      .filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected)
-      .subscribe({
-        next: body => {
-          this.error = false;
-          this.plants = body.content;
-          this.totalPlants = body.totalElements;
-          this.currentPage = body.pageable.pageNumber;
-          this.totalPage = body.totalPages;
-          this.hasNoPlants = false;
-          this.isLastPage = false;
-          this.isFirstPage = false;
+  filterPlant(useCurrentPage = false): void {
+    this.ps.filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe({
+      next: body => {
+        this.error = false;
+        this.plants = body.content;
+        this.totalPlants = body.totalElements;
+        this.currentPage = body.pageable.pageNumber;
+        this.totalPage = body.totalPages;
+        this.hasNoPlants = false;
+        this.isLastPage = false;
+        this.isFirstPage = false;
 
-          if (body.numberOfElements === 0) {
-            this.hasNoPlants = true;
-          }
-          if (this.currentPage === this.totalPage - 1) {
-            this.isLastPage = true;
-          }
-          if (this.currentPage === 0) {
-            this.isFirstPage = true;
-          }
-        },
-        error: () => {
-          this.error = true;
-        },
-      });
+        if (body.numberOfElements === 0) {
+          this.hasNoPlants = true;
+        }
+        if (this.currentPage === this.totalPage - 1) {
+          this.isLastPage = true;
+        }
+        if (this.currentPage === 0) {
+          this.isFirstPage = true;
+        }
+      },
+      error: () => {
+        this.error = true;
+      },
+    });
   }
 
-  upPage() {
+  upPage(): void {
     this.currentPage += 1;
     this.filterPlant(true);
   }
 
-  downPage() {
+  downPage(): void {
     this.currentPage -= 1;
     this.filterPlant(true);
   }
 
-  scrollToTop() {
+  scrollToTop(): void {
     window.scrollTo(0, 0);
+  }
+
+  GetBestSellPath(): string {
+    return this.imgUrl + 'bestsell.png';
+  }
+
+  best_sell(a: IPlant): boolean {
+    let verif = false;
+    this.best_sellers.forEach(item => {
+      if (a.id === item.id) {
+        verif = true;
+      }
+    });
+    return verif;
   }
 }

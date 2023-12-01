@@ -100,6 +100,9 @@
               <div class="card-img-top">
                 <a routerLink="/plant/{{ plant.id }}" class="no-underline font-weight-bold text-dark text-uppercase small">
                   <img src="{{ getPath(plant) }}" class="img-fluid mx-auto d-block" alt="Card image cap" />
+                  <div *ngIf="best_sell(plant)">
+                    <img src="{{ GetBestSellPath() }}" class="img-fluid mx-auto d-block best_sell" alt="Best Seller" />
+                  </div>
                 </a>
               </div>
               <div class="card-body text-center">

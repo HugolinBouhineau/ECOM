@@ -48,7 +48,7 @@
                   file="config/liquibase/fake-data/address.csv"
                   separator=";"
                   tableName="address"
-                  usePreparedStatements="true">
+                  usePreparedStatements="false">
             <column name="id" type="numeric"/>
             <column name="city" type="string"/>
             <column name="street" type="string"/>

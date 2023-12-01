@@ -12,15 +12,15 @@ import dayjs from 'dayjs/esm';
 import { CommandService } from '../../entities/command/service/command.service';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { Router } from '@angular/router';
-import { NewCommandItem } from 'app/entities/command-item/command-item.model';
+import { NewCommandItem } from '../../entities/command-item/command-item.model';
 import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 
 /* Compare year : if expiration Year > current Year => OK
                   if expiration Year = current Year => MAYBE (Check Month)
                   if expiration Year < current Year => NOK
 */
-function compareYear(currentYear: string, expiredYear: string) {
-  let diff: number = currentYear.localeCompare(expiredYear);
+function compareYear(currentYear: string, expiredYear: string): string {
+  const diff: number = currentYear.localeCompare(expiredYear);
   if (diff < 0) {
     return 'OK';
   } else if (diff === 0) {
@@ -34,16 +34,16 @@ function compareYear(currentYear: string, expiredYear: string) {
                    if expiration Month = current Month => OK (Expire at the end of the month)
                    if expiration Month < current Month => NOK
 */
-function compareMonth(currentMonth: string, expiredMonth: string) {
+function compareMonth(currentMonth: string, expiredMonth: string): string {
   if (currentMonth.localeCompare(expiredMonth) <= 0) {
     return 'OK';
   }
   return 'NOK';
 }
 
-function creditCardValidator(control: FormControl) {
-  let currentDate: string[] = dayjs(new Date()).format('MM/YYYY').split('/');
-  let expiredDate: string[] = control.value.replace(/\s/g, '').split('/');
+function creditCardValidator(control: FormControl): {} | null {
+  const currentDate: string[] = dayjs(new Date()).format('MM/YYYY').split('/');
+  const expiredDate: string[] = control.value.replace(/\s/g, '').split('/');
   if (expiredDate.length === 2) {
     if (expiredDate[1].length === 2) {
       // Remove the first 2 digit
@@ -78,14 +78,14 @@ function creditCardValidator(control: FormControl) {
 export class PaymentComponent implements OnInit {
   customer: ICustomer | null = null;
   addresses: IAddress[] | null = null;
-  selectedAddrIndex: number = -1;
+  selectedAddrIndex = -1;
 
-  success: boolean = false;
-  errorSaveAddress: boolean = false;
-  errorCreateCommand: boolean = false;
+  success = false;
+  errorSaveAddress = false;
+  errorCreateCommand = false;
 
-  addressFound: boolean = false;
-  saveAddress: boolean = false;
+  addressFound = false;
+  saveAddress = false;
 
   /*
     Modifier les regex des patterns pour ne pas prendre en compte les espaces et les tirets (num carte)
@@ -135,20 +135,11 @@ export class PaymentComponent implements OnInit {
   ngOnInit(): void {
     this.customerService.getCustomer().subscribe(customer => {
       this.customer = customer;
-      if (this.customer && this.customer.addresses) {
+      if (this.customer.addresses) {
         this.addresses = this.customer.addresses;
       } else {
         this.addresses = null;
       }
-    });
-  }
-
-  private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string) {
-    this.paymentForm.patchValue({
-      street: street,
-      zipCode: zipCode,
-      city: city,
-      additionalInfo: additionalInfo,
     });
   }
 
@@ -157,10 +148,10 @@ export class PaymentComponent implements OnInit {
       return;
     }
 
-    if (this.selectedAddrIndex == -1) {
+    if (this.selectedAddrIndex === -1) {
       this.patchValueAddresses('', '', '', '');
     } else {
-      let selectedAddresse = this.addresses[this.selectedAddrIndex];
+      const selectedAddresse = this.addresses[this.selectedAddrIndex];
       this.patchValueAddresses(
         typeof selectedAddresse.street === 'string' ? selectedAddresse.street : '',
         typeof selectedAddresse.zipCode === 'string' ? selectedAddresse.zipCode : '',
@@ -179,8 +170,8 @@ export class PaymentComponent implements OnInit {
   }
 
   getListPlants(): IPlant[] {
-    let listPlants: IPlant[] = [];
-    for (let item of this.getItems()) {
+    const listPlants: IPlant[] = [];
+    for (const item of this.getItems()) {
       listPlants.push(item.plant);
     }
     return listPlants;
@@ -196,9 +187,9 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  sendNewCommand(address: IAddress | null) {
-    let newCommand: NewCommand = {
-      address: address,
+  sendNewCommand(address: IAddress | null): void {
+    const newCommand: NewCommand = {
+      address,
       customer: this.customer,
       id: null,
       purchaseDate: dayjs(new Date()),
@@ -209,12 +200,12 @@ export class PaymentComponent implements OnInit {
       next: value => {
         if (!this.errorCreateCommand && !this.errorSaveAddress) {
           if (value.body) {
-            let command: ICommand = value.body;
-            for (let item of this.getItems()) {
-              let commandItem: NewCommandItem = {
+            const command: ICommand = value.body;
+            for (const item of this.getItems()) {
+              const commandItem: NewCommandItem = {
                 id: null,
                 quantity: item.quantity,
-                command: command,
+                command,
                 plant: item.plant,
               };
               this.commandItemService.create(commandItem).subscribe();
@@ -229,43 +220,58 @@ export class PaymentComponent implements OnInit {
   }
 
   submit(): void {
-    let quantitiesAsked: PlantQuantity[] = [];
-    for (let item of this.panierService.getItems()) {
+    const quantitiesAsked: PlantQuantity[] = [];
+    for (const item of this.panierService.getItems()) {
       quantitiesAsked.push({ plantId: item.plant.id, plantQuantity: item.quantity });
     }
 
     // Verify that the plants are still in stock
-    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe(value => {
-      if (value.body === true) {
-        // Plants are still in stock and stock was decremented
-        // Save the address
-        const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
-        let newAddress: NewAddress = {
-          additionalInfo: additionalInfo,
-          city: city,
-          customer: this.saveAddress ? this.customer : null,
-          id: null,
-          street: street,
-          zipCode: zipCode.replace(/\s/g, ''),
-        };
-        if (this.addresses) {
-          for (let address of this.addresses) {
-            if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
-              this.sendNewCommand(address);
-              this.addressFound = true;
-              break;
+    this.plantService.verifyAndUpdateStock(quantitiesAsked).subscribe({
+      next: value => {
+        if (value.body === true) {
+          // Plants are still in stock and stock was decremented
+          // Save the address
+          const { city, street, zipCode, additionalInfo } = this.paymentForm.getRawValue();
+          const newAddress: NewAddress = {
+            additionalInfo,
+            city,
+            customer: this.saveAddress ? this.customer : null,
+            id: null,
+            street,
+            zipCode: zipCode.replace(/\s/g, ''),
+          };
+          if (this.addresses) {
+            for (const address of this.addresses) {
+              if (address.city === newAddress.city && address.zipCode === newAddress.zipCode && address.street === newAddress.street) {
+                this.sendNewCommand(address);
+                this.addressFound = true;
+                break;
+              }
             }
           }
-        }
 
-        if (!this.addressFound) {
-          this.sendNewAaddress(newAddress);
-          return;
+          if (!this.addressFound) {
+            this.sendNewAaddress(newAddress);
+            return;
+          }
+        } else {
+          // Plants are no longer available and stock wasn't decremented
+          this.router.navigate(['/basket']);
         }
-      } else {
+      },
+      error: () => {
         // Plants are no longer available and stock wasn't decremented
         this.router.navigate(['/basket']);
-      }
+      },
+    });
+  }
+
+  private patchValueAddresses(street: string, zipCode: string, city: string, additionalInfo: string): void {
+    this.paymentForm.patchValue({
+      street,
+      zipCode,
+      city,
+      additionalInfo,
     });
   }
 }

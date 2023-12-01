@@ -9,10 +9,10 @@ export class CommandDialogServiceService {
   public confirm(
     title: string,
     message: string,
-    btnOkText: string = 'OK',
-    btnCancelText: string = 'Annuler',
+    btnOkText = 'OK',
+    btnCancelText = 'Annuler',
     dialogSize: 'sm' | 'lg' = 'sm'
-  ): Promise<boolean> {
+  ): Promise<any> {
     const modalRef = this.modalService.open(CommandDialogComponent, { size: dialogSize });
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.message = message;

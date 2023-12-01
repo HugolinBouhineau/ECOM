@@ -1,13 +1,13 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.CommandItem;
+import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.repository.CommandItemRepository;
+import com.mycompany.myapp.service.CommandItemService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +34,11 @@ public class CommandItemResource {
 
     private final CommandItemRepository commandItemRepository;
 
-    public CommandItemResource(CommandItemRepository commandItemRepository) {
+    private final CommandItemService commandItemService;
+
+    public CommandItemResource(CommandItemRepository commandItemRepository, CommandItemService commandItemService) {
         this.commandItemRepository = commandItemRepository;
+        this.commandItemService = commandItemService;
     }
 
     /**
@@ -175,5 +178,10 @@ public class CommandItemResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/command-items/best-seller")
+    public List<Plant> getBestSeller() {
+        return commandItemService.getBestSeller();
     }
 }

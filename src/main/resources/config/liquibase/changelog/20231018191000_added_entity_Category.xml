@@ -45,5 +45,14 @@
             <column name="category_type" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
+        <loadData
+            file="config/liquibase/fake-data/rel-plant-categories.csv"
+            separator=";"
+            tableName="rel_plant__categories"
+            usePreparedStatements="true">
+            <column name="categories_id" type="numeric"/>
+            <column name="plant_id" type="numeric"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
     </changeSet>
 </databaseChangeLog>
