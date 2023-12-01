@@ -163,7 +163,7 @@
         </div>
       </ng-container>
     </div>
-    <!-- Printing, Categories -->
+    <!-- Printing, Categories, Slider for price -->
     <div class="col-md-4 order-md-1 col-lg-3 sidebar-filter">
       <!-- Printing -->
       <h3 class="mt-0 mb-5">
@@ -180,6 +180,19 @@
               <label class="custom-control-label">{{ cat.categoryName }}</label>
             </div>
           </div>
+        </div>
+      </div>
+      <!-- Slider price -->
+      <div class="range">
+        <div class="range-slider">
+          <span id="totalSlider" [ngStyle]="{'left': leftSlide + '%', 'right': rightSlide + '%'}" class="range-selected"></span>
+        </div>
+        <div class="range-input">
+          <input id="fromSlider" type="range" min="0" [max]="maxRange" [(ngModel)]="minPrice" (input)="controlFromSlider($event)"
+          (change)="controlFromSlider($event)">
+          <input id="toSlider" type="range" min="0" [max]="maxRange" [(ngModel)]="maxPrice" (input)="controlToSlider($event)"
+          (change)="controlToSlider($event)">
+          {{ minPrice }}, {{ maxPrice }}, {{ maxRange }}
         </div>
       </div>
     </div>

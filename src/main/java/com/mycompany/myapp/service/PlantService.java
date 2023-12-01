@@ -123,4 +123,8 @@ public class PlantService {
 
         return pageResult;
     }
+
+    public Integer findMaxPrice() {
+        return plantRepository.findMaxPrice();
+    }
 }

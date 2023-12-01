@@ -17,19 +17,25 @@ export class CatalogComponent implements OnInit {
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
   best_sellers: IPlant[] = [];
-  totalPlants = 0;
+  totalPlants: number = 0;
   categoriesSelected: number[] = [];
-  searchWord = '';
-  imgUrl = 'https://ecom1465.blob.core.windows.net/test/';
-  currentPage = 0;
-  totalPage = 0;
-  size = 6;
-  sortby = 'no';
-  isLastPage = false;
-  isFirstPage = false;
-  hasNoPlants = false;
-  windowScrolled = false;
-  error = false;
+  searchWord: string = '';
+  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage: number = 0;
+  totalPage: number = 0;
+  size: number = 6;
+  sortby: string = 'no';
+  minPrice: number = 0;
+  maxPrice: number = 0;
+  maxRange: number = 0;
+  isLastPage: boolean = false;
+  isFirstPage: boolean = false;
+  hasNoPlants: boolean = false;
+  windowScrolled: boolean = false;
+  error: boolean = false;
+  leftSlide = 0;
+  rightSlide = 0;
+
 
   constructor(
     private cs: CategoryService,
@@ -40,6 +46,7 @@ export class CatalogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Event
     window.addEventListener('scroll', () => {
       this.windowScrolled = window.pageYOffset !== 0;
     });
@@ -57,6 +64,11 @@ export class CatalogComponent implements OnInit {
       this.best_sellers = best_seller;
     });
     this.filterPlant();
+
+    this.ps.getMaxPrice().subscribe(value => {
+      this.maxPrice = value;
+      this.maxRange = value;
+    });
   }
 
   filterPlantsFromCategory(cat: ICategory): void {
@@ -153,5 +165,22 @@ export class CatalogComponent implements OnInit {
       }
     });
     return verif;
+  }
+
+  controlFromSlider(event: any) {
+    console.log(event)
+    if (this.minPrice > this.maxPrice) {
+      this.minPrice = this.maxPrice;
+      event.target.value = this.minPrice;
+    }
+    this.leftSlide = this.minPrice * 100 / this.maxRange;
+  }
+
+  controlToSlider(event: any) {
+    if (this.minPrice > this.maxPrice) {
+      this.maxPrice = this.minPrice;
+      event.target.value = this.maxPrice;
+    }
+    this.rightSlide = (this.maxRange - this.maxPrice) * 100 / this.maxRange;
   }
 }

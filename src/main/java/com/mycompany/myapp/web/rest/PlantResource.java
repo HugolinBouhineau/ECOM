@@ -236,6 +236,11 @@ public class PlantResource {
         return pageResult;
     }
 
+    @GetMapping("plants/price/max")
+    public Integer getMaxPrice() {
+        return plantService.findMaxPrice();
+    }
+
     /**
      * {@code DELETE  /plants/:id} : delete the "id" plant.
      *

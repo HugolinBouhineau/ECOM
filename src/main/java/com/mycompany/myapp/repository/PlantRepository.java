@@ -34,6 +34,9 @@ public interface PlantRepository extends PlantRepositoryWithBagRelationships, Jp
         Pageable page
     );
 
+    @Query(value = "SELECT MAX(plant.price) FROM Plant plant")
+    Integer findMaxPrice();
+
     default Optional<Plant> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
     }
