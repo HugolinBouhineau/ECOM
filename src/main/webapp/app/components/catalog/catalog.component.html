@@ -185,13 +185,27 @@
       <!-- Slider price -->
       <div class="range">
         <div class="range-slider">
-          <span id="totalSlider" [ngStyle]="{'left': leftSlide + '%', 'right': rightSlide + '%'}" class="range-selected"></span>
+          <span id="totalSlider" [ngStyle]="{ left: leftSlide + '%', right: rightSlide + '%' }" class="range-selected"></span>
         </div>
         <div class="range-input">
-          <input id="fromSlider" type="range" min="0" [max]="maxRange" [(ngModel)]="minPrice" (input)="controlFromSlider($event)"
-          (change)="controlFromSlider($event)">
-          <input id="toSlider" type="range" min="0" [max]="maxRange" [(ngModel)]="maxPrice" (input)="controlToSlider($event)"
-          (change)="controlToSlider($event)">
+          <input
+            id="fromSlider"
+            type="range"
+            min="0"
+            [max]="maxRange"
+            [(ngModel)]="minPrice"
+            (input)="controlFromSlider($event)"
+            (change)="controlFromSliderChange($event)"
+          />
+          <input
+            id="toSlider"
+            type="range"
+            min="0"
+            [max]="maxRange"
+            [(ngModel)]="maxPrice"
+            (input)="controlToSlider($event)"
+            (change)="controlToSliderChange($event)"
+          />
           {{ minPrice }}, {{ maxPrice }}, {{ maxRange }}
         </div>
       </div>

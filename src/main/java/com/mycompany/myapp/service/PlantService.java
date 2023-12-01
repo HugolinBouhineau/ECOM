@@ -4,12 +4,12 @@ import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.CommandItem;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.domain.PlantQuantity;
+import com.mycompany.myapp.repository.CategoryRepository;
+import com.mycompany.myapp.repository.PlantRepository;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-
-import com.mycompany.myapp.repository.CategoryRepository;
-import com.mycompany.myapp.repository.PlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,8 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -70,11 +68,11 @@ public class PlantService {
     }
 
     @Transactional
-    public Boolean refillPlant(@RequestBody long commandId, List<CommandItem> list_command ) {
+    public Boolean refillPlant(@RequestBody long commandId, List<CommandItem> list_command) {
         log.debug("REST request to refillPlant for {}:", commandId);
-        for(CommandItem command : list_command){
+        for (CommandItem command : list_command) {
             log.debug("item : {} ", command.getCommand().getId());
-            if(command.getCommand().getId() == commandId){
+            if (command.getCommand().getId() == commandId) {
                 Plant plant = entityManager.find(Plant.class, command.getPlant().getId(), LockModeType.PESSIMISTIC_WRITE);
                 int refillStock = plant.getStock() + command.getQuantity();
                 plant.setStock(refillStock);
@@ -90,15 +88,15 @@ public class PlantService {
         return true;
     }
 
-    public Page<Plant> filterPlantPaginate(Integer page, Integer size, String sort, String name, List<Long> categoriesId) {
-        log.debug(
-            "REST request with page {} and size {} to get Plants containing '{}' and with these categories {}",
-            page,
-            size,
-            name,
-            categoriesId
-        );
-
+    public Page<Plant> filterPlantPaginate(
+        Integer page,
+        Integer size,
+        String sort,
+        String name,
+        List<Long> categoriesId,
+        Integer minPrice,
+        Integer maxPrice
+    ) {
         Pageable paging;
         switch (sort) {
             case "asc":
@@ -111,14 +109,26 @@ public class PlantService {
                 paging = PageRequest.of(page, size);
         }
 
+        if (maxPrice == -1) {
+            maxPrice = plantRepository.findMaxPrice();
+        }
+
         Page<Plant> pageResult;
         if (name.isEmpty() && categoriesId.isEmpty()) {
-            pageResult = plantRepository.findAllWithPagination(paging);
+            pageResult = plantRepository.findAllDependsPriceWithPagination(minPrice, maxPrice, paging);
         } else if (!name.isEmpty() && categoriesId.isEmpty()) {
-            pageResult = plantRepository.findPlantsByNameWithPagination(name, paging);
+            pageResult = plantRepository.findPlantsByNameAndPriceWithPagination(name, minPrice, maxPrice, paging);
         } else {
             List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-            pageResult = plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
+            pageResult =
+                plantRepository.findPlantsByCategoriesAndNameAndPriceWithPagination(
+                    name,
+                    categories,
+                    (long) categories.size(),
+                    minPrice,
+                    maxPrice,
+                    paging
+                );
         }
 
         return pageResult;

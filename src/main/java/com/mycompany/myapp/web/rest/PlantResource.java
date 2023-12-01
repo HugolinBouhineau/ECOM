@@ -213,21 +213,25 @@ public class PlantResource {
         @RequestParam(required = false, defaultValue = "5") int size,
         @RequestParam(required = false, defaultValue = "no") String sort,
         @RequestParam(required = false, defaultValue = "") String name,
-        @RequestParam(required = false, defaultValue = "") List<Long> categoriesId
+        @RequestParam(required = false, defaultValue = "") List<Long> categoriesId,
+        @RequestParam(required = false, defaultValue = "0") Integer minPrice,
+        @RequestParam(required = false, defaultValue = "-1") Integer maxPrice
     ) {
         log.debug(
-            "REST request with page {} and size {} to get Plants containing '{}' and with these categories {}",
+            "REST request with page {} and size {} to get Plants containing '{}', with these categories {} and the price is between {} and {}",
             page,
             size,
             name,
-            categoriesId
+            categoriesId,
+            minPrice,
+            maxPrice
         );
 
         if (page < 0) {
             throw new InvalidPageException(page);
         }
 
-        Page<Plant> pageResult = plantService.filterPlantPaginate(page, size, sort, name, categoriesId);
+        Page<Plant> pageResult = plantService.filterPlantPaginate(page, size, sort, name, categoriesId, minPrice, maxPrice);
 
         if (page > pageResult.getTotalPages()) {
             throw new InvalidPageException(page);
