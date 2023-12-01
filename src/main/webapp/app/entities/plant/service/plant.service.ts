@@ -22,6 +22,11 @@ export class PlantService {
     return this.http.post<boolean>(this.resourceUrl + '/verifyAndUpdateStock', plants, { observe: 'response' });
   }
 
+  refillPlant(commandId:number):Observable<HttpResponse<boolean>>{
+    return this.http.post<boolean>(this.resourceUrl + '/refillPlant', commandId, { observe: 'response' });
+  }
+
+
   create(plant: NewPlant): Observable<EntityResponseType> {
     return this.http.post<IPlant>(this.resourceUrl, plant, { observe: 'response' });
   }
