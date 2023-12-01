@@ -18,21 +18,27 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PlantRepository extends PlantRepositoryWithBagRelationships, JpaRepository<Plant, Long> {
-
     // With Pagination
-    @Query("SELECT plant FROM Plant plant")
-    Page<Plant> findAllWithPagination(Pageable pageable);
 
-    @Query("SELECT DISTINCT plant FROM Plant plant JOIN plant.categories WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0")
-    Page<Plant> findPlantsByNameWithPagination(@Param("name") String name, Pageable page);
+    @Query("SELECT plant FROM Plant plant WHERE plant.price >= :minPrice AND plant.price <= :maxPrice")
+    Page<Plant> findAllDependsPriceWithPagination(
+        @Param("minPrice") Integer minPrice,
+        @Param("maxPrice") Integer maxPrice,
+        Pageable pageable
+    );
 
-    @Query(value = "SELECT plant FROM Plant plant JOIN plant.categories pc WHERE locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0 AND pc IN (:category) GROUP BY plant HAVING COUNT(plant) = :size")
-    Page<Plant> findPlantsByCategoriesWithPagination (
+    @Query(
+        "SELECT DISTINCT plant FROM Plant plant JOIN plant.categories WHERE plant.price >= :minPrice AND plant.price <= :maxPrice AND locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0"
+    )
+    Page<Plant> findPlantsByNameAndPriceWithPagination(
         @Param("name") String name,
-        @Param("category") List<Category> category,
-        @Param("size") Long size,
+        @Param("minPrice") Integer minPrice,
+        @Param("maxPrice") Integer maxPrice,
         Pageable page
     );
+
+    @Query(value = "SELECT MAX(plant.price) FROM Plant plant")
+    Integer findMaxPrice();
 
     default Optional<Plant> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
@@ -45,4 +51,16 @@ public interface PlantRepository extends PlantRepositoryWithBagRelationships, Jp
     default Page<Plant> findAllWithEagerRelationships(Pageable pageable) {
         return this.fetchBagRelationships(this.findAll(pageable));
     }
+
+    @Query(
+        value = "SELECT plant FROM Plant plant JOIN plant.categories pc WHERE plant.price >= :minPrice AND plant.price <= :maxPrice AND locate(replace(lower(:name), ' ', ''), replace(lower(plant.name), ' ', '')) > 0 AND pc IN (:category) GROUP BY plant HAVING COUNT(plant) = :size"
+    )
+    Page<Plant> findPlantsByCategoriesAndNameAndPriceWithPagination(
+        @Param("name") String name,
+        @Param("category") List<Category> category,
+        @Param("size") Long size,
+        @Param("minPrice") Integer minPrice,
+        @Param("maxPrice") Integer maxPrice,
+        Pageable paging
+    );
 }

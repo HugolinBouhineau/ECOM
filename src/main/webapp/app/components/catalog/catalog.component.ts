@@ -25,11 +25,16 @@ export class CatalogComponent implements OnInit {
   totalPage = 0;
   size = 6;
   sortby = 'no';
+  minPrice = 0;
+  maxPrice = 0;
+  maxRange = 0;
   isLastPage = false;
   isFirstPage = false;
   hasNoPlants = false;
   windowScrolled = false;
   error = false;
+  leftSlide = 0;
+  rightSlide = 0;
 
   constructor(
     private cs: CategoryService,
@@ -40,6 +45,7 @@ export class CatalogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Event
     window.addEventListener('scroll', () => {
       this.windowScrolled = window.pageYOffset !== 0;
     });
@@ -56,7 +62,12 @@ export class CatalogComponent implements OnInit {
     this.cis.getBestSeller().subscribe(best_seller => {
       this.best_sellers = best_seller;
     });
-    this.filterPlant();
+
+    this.ps.getMaxPrice().subscribe(value => {
+      this.maxPrice = value;
+      this.maxRange = value;
+      this.filterPlantWithPrice();
+    });
   }
 
   filterPlantsFromCategory(cat: ICategory): void {
@@ -65,7 +76,7 @@ export class CatalogComponent implements OnInit {
     } else {
       this.categoriesSelected.push(cat.id);
     }
-    this.filterPlant();
+    this.filterPlantWithPrice();
   }
 
   addToCart(plant: IPlant): void {
@@ -74,12 +85,12 @@ export class CatalogComponent implements OnInit {
 
   sortByAscendingPrice(): void {
     this.sortby = 'asc';
-    this.filterPlant();
+    this.filterPlantWithPrice();
   }
 
   sortByDescendingPrice(): void {
     this.sortby = 'desc';
-    this.filterPlant();
+    this.filterPlantWithPrice();
   }
 
   getPath(a: IPlant): string {
@@ -91,50 +102,88 @@ export class CatalogComponent implements OnInit {
 
   newSearchWord(event: string): void {
     this.searchWord = event;
-    this.filterPlant();
+    this.filterPlantWithPrice();
   }
 
   changeSizePlants(number: number): void {
     this.size = number;
-    this.filterPlant();
+    this.filterPlantWithPrice();
   }
 
-  filterPlant(useCurrentPage = false): void {
-    this.ps.filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe({
-      next: body => {
-        this.error = false;
-        this.plants = body.content;
-        this.totalPlants = body.totalElements;
-        this.currentPage = body.pageable.pageNumber;
-        this.totalPage = body.totalPages;
-        this.hasNoPlants = false;
-        this.isLastPage = false;
-        this.isFirstPage = false;
+  // filterPlant(useCurrentPage = false): void {
+  //   this.ps.filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe({
+  //     next: body => {
+  //       this.error = false;
+  //       this.plants = body.content;
+  //       this.totalPlants = body.totalElements;
+  //       this.currentPage = body.pageable.pageNumber;
+  //       this.totalPage = body.totalPages;
+  //       this.hasNoPlants = false;
+  //       this.isLastPage = false;
+  //       this.isFirstPage = false;
+  //
+  //       if (body.numberOfElements === 0) {
+  //         this.hasNoPlants = true;
+  //       }
+  //       if (this.currentPage === this.totalPage - 1) {
+  //         this.isLastPage = true;
+  //       }
+  //       if (this.currentPage === 0) {
+  //         this.isFirstPage = true;
+  //       }
+  //     },
+  //     error: () => {
+  //       this.error = true;
+  //     },
+  //   });
+  // }
 
-        if (body.numberOfElements === 0) {
-          this.hasNoPlants = true;
-        }
-        if (this.currentPage === this.totalPage - 1) {
-          this.isLastPage = true;
-        }
-        if (this.currentPage === 0) {
-          this.isFirstPage = true;
-        }
-      },
-      error: () => {
-        this.error = true;
-      },
-    });
+  filterPlantWithPrice(useCurrentPage = false): void {
+    this.ps
+      .filterPlantWithPrice(
+        useCurrentPage ? this.currentPage : 0,
+        this.size,
+        this.sortby,
+        this.searchWord,
+        this.categoriesSelected,
+        this.minPrice,
+        this.maxPrice
+      )
+      .subscribe({
+        next: body => {
+          this.error = false;
+          this.plants = body.content;
+          this.totalPlants = body.totalElements;
+          this.currentPage = body.pageable.pageNumber;
+          this.totalPage = body.totalPages;
+          this.hasNoPlants = false;
+          this.isLastPage = false;
+          this.isFirstPage = false;
+
+          if (body.numberOfElements === 0) {
+            this.hasNoPlants = true;
+          }
+          if (this.currentPage === this.totalPage - 1) {
+            this.isLastPage = true;
+          }
+          if (this.currentPage === 0) {
+            this.isFirstPage = true;
+          }
+        },
+        error: () => {
+          this.error = true;
+        },
+      });
   }
 
   upPage(): void {
     this.currentPage += 1;
-    this.filterPlant(true);
+    this.filterPlantWithPrice(true);
   }
 
   downPage(): void {
     this.currentPage -= 1;
-    this.filterPlant(true);
+    this.filterPlantWithPrice(true);
   }
 
   scrollToTop(): void {
@@ -153,5 +202,39 @@ export class CatalogComponent implements OnInit {
       }
     });
     return verif;
+  }
+
+  controlFromSliderChange(event: any): void {
+    if (this.minPrice > this.maxPrice) {
+      this.minPrice = this.maxPrice;
+      event.target.value = this.minPrice;
+    }
+    this.leftSlide = (this.minPrice * 100) / this.maxRange;
+    this.filterPlantWithPrice();
+  }
+
+  controlToSliderChange(event: any): void {
+    if (this.minPrice > this.maxPrice) {
+      this.maxPrice = this.minPrice;
+      event.target.value = this.maxPrice;
+    }
+    this.rightSlide = ((this.maxRange - this.maxPrice) * 100) / this.maxRange;
+    this.filterPlantWithPrice();
+  }
+
+  controlFromSlider(event: any): void {
+    if (this.minPrice > this.maxPrice) {
+      this.minPrice = this.maxPrice;
+      event.target.value = this.minPrice;
+    }
+    this.leftSlide = (this.minPrice * 100) / this.maxRange;
+  }
+
+  controlToSlider(event: any): void {
+    if (this.minPrice > this.maxPrice) {
+      this.maxPrice = this.minPrice;
+      event.target.value = this.maxPrice;
+    }
+    this.rightSlide = ((this.maxRange - this.maxPrice) * 100) / this.maxRange;
   }
 }

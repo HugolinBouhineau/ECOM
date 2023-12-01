@@ -6,6 +6,7 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IPlant, NewPlant, PlantQuantity } from '../plant.model';
+import { map } from 'rxjs/operators';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -50,6 +51,26 @@ export class PlantService {
     return this.http.get(
       `${this.resourceUrl}/filter/paginate?page=${page}&size=${size}&sort=${sort}&name=${searchPlant}&categoriesId=${categories.toString()}`
     );
+  }
+
+  filterPlantWithPrice(
+    page: number,
+    size: number,
+    sort: string,
+    searchPlant: string,
+    categories: number[],
+    minPrice: number,
+    maxPrice: number
+  ): Observable<any> {
+    return this.http.get(
+      `${
+        this.resourceUrl
+      }/filter/paginate?page=${page}&size=${size}&sort=${sort}&name=${searchPlant}&categoriesId=${categories.toString()}&minPrice=${minPrice.toString()}&maxPrice=${maxPrice.toString()}`
+    );
+  }
+
+  getMaxPrice(): Observable<number> {
+    return this.http.get<number>(`${this.resourceUrl}/price/max`).pipe(map((body: number) => body));
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

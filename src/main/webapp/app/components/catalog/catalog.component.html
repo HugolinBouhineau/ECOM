@@ -163,11 +163,11 @@
         </div>
       </ng-container>
     </div>
-    <!-- Printing, Categories -->
+    <!-- Printing, Categories, Slider for price -->
     <div class="col-md-4 order-md-1 col-lg-3 sidebar-filter">
       <!-- Printing -->
-      <h3 class="mt-0 mb-5">
-        Affiche <span class="text-primary">{{ totalPlants }}</span> produits
+      <h3 class="mb-5">
+        <span class="text-primary">{{ totalPlants }}</span> produits
       </h3>
       <h6 class="text-uppercase font-weight-bold mb-3">Categories</h6>
       <!-- Categories -->
@@ -179,6 +179,40 @@
               <input type="checkbox" class="custom-control-input" (change)="filterPlantsFromCategory(cat)" />
               <label class="custom-control-label">{{ cat.categoryName }}</label>
             </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slider price -->
+      <div class="divider mt-5 mb-3 border-bottom border-secondary">
+        <h6 class="text-uppercase font-weight-bold mb-3">Prix</h6>
+      </div>
+      <div class="mt-3 mb-3">
+        <div class="range">
+          <label class="mb-3"
+            >De <b>{{ minPrice }}</b> € à <b>{{ maxPrice }}</b> €</label
+          >
+          <div class="range-slider">
+            <span id="totalSlider" [ngStyle]="{ left: leftSlide + '%', right: rightSlide + '%' }" class="range-selected"></span>
+          </div>
+          <div class="range-input mb-3">
+            <input
+              id="fromSlider"
+              type="range"
+              min="0"
+              [max]="maxRange"
+              [(ngModel)]="minPrice"
+              (input)="controlFromSlider($event)"
+              (change)="controlFromSliderChange($event)"
+            />
+            <input
+              id="toSlider"
+              type="range"
+              min="0"
+              [max]="maxRange"
+              [(ngModel)]="maxPrice"
+              (input)="controlToSlider($event)"
+              (change)="controlToSliderChange($event)"
+            />
           </div>
         </div>
       </div>
