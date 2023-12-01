@@ -9,6 +9,7 @@ import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.service.InvalidPageException;
 import com.mycompany.myapp.service.PlantService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -48,7 +50,12 @@ public class PlantResource {
 
     private final CategoryRepository categoryRepository;
 
-    public PlantResource(PlantRepository plantRepository, PlantService plantService, CommandItemResource cir, CategoryRepository categoryRepository) {
+    public PlantResource(
+        PlantRepository plantRepository,
+        PlantService plantService,
+        CommandItemResource cir,
+        CategoryRepository categoryRepository
+    ) {
         this.plantRepository = plantRepository;
         this.plantService = plantService;
         this.cir = cir;
@@ -84,6 +91,17 @@ public class PlantResource {
     public Boolean refillPlant(@RequestBody long commandId) {
         List<CommandItem> list_command = cir.getAllCommandItems();
         return plantService.refillPlant(commandId, list_command);
+    }
+
+    @PostMapping("/plants/uploadImage")
+    public Boolean uploadImage(@RequestParam("file") MultipartFile file) {
+        log.debug("REST Request to upload image {} {}", file.getOriginalFilename(), file);
+        try {
+            return plantService.uploadImage(file);
+        } catch (IOException e) {
+            log.error("Echec de l'upload de la plante {}", (Object) e);
+            return false;
+        }
     }
 
     /**
