@@ -39,12 +39,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.redirectToPayment = true;
     }
     this.stateStorageService.clearUrl();
-    // if already authenticated then navigate to home page
-    this.accountService.identity().subscribe(() => {
-      if (this.accountService.isAuthenticated()) {
-        this.router.navigate(['']);
-      }
-    });
+
+    if (this.accountService.isAuthenticated()) {
+      this.router.navigate(['']);
+    }
   }
 
   ngAfterViewInit(): void {
