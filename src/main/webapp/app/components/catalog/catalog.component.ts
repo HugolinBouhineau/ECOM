@@ -17,22 +17,22 @@ export class CatalogComponent implements OnInit {
   categoryTypes: (number | null | undefined)[] = [];
   plants: IPlant[] = [];
   best_sellers: IPlant[] = [];
-  totalPlants: number = 0;
+  totalPlants = 0;
   categoriesSelected: number[] = [];
-  searchWord: string = '';
-  imgUrl: string = 'https://ecom1465.blob.core.windows.net/test/';
-  currentPage: number = 0;
-  totalPage: number = 0;
-  size: number = 6;
-  sortby: string = 'no';
-  minPrice: number = 0;
-  maxPrice: number = 0;
-  maxRange: number = 0;
-  isLastPage: boolean = false;
-  isFirstPage: boolean = false;
-  hasNoPlants: boolean = false;
-  windowScrolled: boolean = false;
-  error: boolean = false;
+  searchWord = '';
+  imgUrl = 'https://ecom1465.blob.core.windows.net/test/';
+  currentPage = 0;
+  totalPage = 0;
+  size = 6;
+  sortby = 'no';
+  minPrice = 0;
+  maxPrice = 0;
+  maxRange = 0;
+  isLastPage = false;
+  isFirstPage = false;
+  hasNoPlants = false;
+  windowScrolled = false;
+  error = false;
   leftSlide = 0;
   rightSlide = 0;
 
@@ -167,8 +167,7 @@ export class CatalogComponent implements OnInit {
     return verif;
   }
 
-  controlFromSlider(event: any) {
-    console.log(event)
+  controlFromSlider(event: any): void {
     if (this.minPrice > this.maxPrice) {
       this.minPrice = this.maxPrice;
       event.target.value = this.minPrice;
@@ -176,7 +175,7 @@ export class CatalogComponent implements OnInit {
     this.leftSlide = this.minPrice * 100 / this.maxRange;
   }
 
-  controlToSlider(event: any) {
+  controlToSlider(event: any): void {
     if (this.minPrice > this.maxPrice) {
       this.maxPrice = this.minPrice;
       event.target.value = this.maxPrice;
