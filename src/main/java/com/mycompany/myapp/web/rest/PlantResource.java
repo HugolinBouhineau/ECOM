@@ -1,10 +1,8 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.CommandItem;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.domain.PlantQuantity;
-import com.mycompany.myapp.repository.CategoryRepository;
 import com.mycompany.myapp.repository.PlantRepository;
 import com.mycompany.myapp.service.InvalidPageException;
 import com.mycompany.myapp.service.PlantService;
@@ -16,9 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -46,13 +41,10 @@ public class PlantResource {
 
     private final CommandItemResource cir;
 
-    private final CategoryRepository categoryRepository;
-
-    public PlantResource(PlantRepository plantRepository, PlantService plantService, CommandItemResource cir, CategoryRepository categoryRepository) {
+    public PlantResource(PlantRepository plantRepository, PlantService plantService, CommandItemResource cir) {
         this.plantRepository = plantRepository;
         this.plantService = plantService;
         this.cir = cir;
-        this.categoryRepository = categoryRepository;
     }
 
     /**
@@ -235,27 +227,7 @@ public class PlantResource {
             throw new InvalidPageException(page);
         }
 
-        Pageable paging;
-        switch (sort) {
-            case "asc":
-                paging = PageRequest.of(page, size, Sort.by("price"));
-                break;
-            case "desc":
-                paging = PageRequest.of(page, size, Sort.by("price").descending());
-                break;
-            default:
-                paging = PageRequest.of(page, size);
-        }
-
-        Page<Plant> pageResult;
-        if (name.isEmpty() && categoriesId.isEmpty()) {
-            pageResult = plantRepository.findAllWithPagination(paging);
-        } else if (!name.isEmpty() && categoriesId.isEmpty()) {
-            pageResult = plantRepository.findPlantsByNameWithPagination(name, paging);
-        } else {
-            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
-            pageResult = plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
-        }
+        Page<Plant> pageResult = plantService.filterPlantPaginate(page, size, sort, name, categoriesId);
 
         if (page > pageResult.getTotalPages()) {
             throw new InvalidPageException(page);

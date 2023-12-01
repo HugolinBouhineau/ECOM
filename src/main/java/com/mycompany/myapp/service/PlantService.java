@@ -1,5 +1,6 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.domain.CommandItem;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.domain.PlantQuantity;
@@ -7,10 +8,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
-import com.mycompany.myapp.web.rest.CommandItemResource;
+import com.mycompany.myapp.repository.CategoryRepository;
+import com.mycompany.myapp.repository.PlantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +31,15 @@ public class PlantService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final PlantRepository plantRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    public PlantService(PlantRepository plantRepository, CategoryRepository categoryRepository) {
+        this.plantRepository = plantRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     @Transactional
     public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked) {
@@ -73,5 +88,39 @@ public class PlantService {
             }
         }
         return true;
+    }
+
+    public Page<Plant> filterPlantPaginate(Integer page, Integer size, String sort, String name, List<Long> categoriesId) {
+        log.debug(
+            "REST request with page {} and size {} to get Plants containing '{}' and with these categories {}",
+            page,
+            size,
+            name,
+            categoriesId
+        );
+
+        Pageable paging;
+        switch (sort) {
+            case "asc":
+                paging = PageRequest.of(page, size, Sort.by("price"));
+                break;
+            case "desc":
+                paging = PageRequest.of(page, size, Sort.by("price").descending());
+                break;
+            default:
+                paging = PageRequest.of(page, size);
+        }
+
+        Page<Plant> pageResult;
+        if (name.isEmpty() && categoriesId.isEmpty()) {
+            pageResult = plantRepository.findAllWithPagination(paging);
+        } else if (!name.isEmpty() && categoriesId.isEmpty()) {
+            pageResult = plantRepository.findPlantsByNameWithPagination(name, paging);
+        } else {
+            List<Category> categories = categoryRepository.getCategoriesByListId(categoriesId);
+            pageResult = plantRepository.findPlantsByCategoriesWithPagination(name, categories, (long) categories.size(), paging);
+        }
+
+        return pageResult;
     }
 }
