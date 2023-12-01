@@ -6,7 +6,6 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IPlant, NewPlant, PlantQuantity } from '../plant.model';
-import { map } from 'rxjs/operators';
 
 export type PartialUpdatePlant = Partial<IPlant> & Pick<IPlant, 'id'>;
 
@@ -25,6 +24,10 @@ export class PlantService {
 
   refillPlant(commandId: number): Observable<HttpResponse<boolean>> {
     return this.http.post<boolean>(this.resourceUrl + '/refillPlant', commandId, { observe: 'response' });
+  }
+
+  uploadImage(img: FormData): Observable<HttpResponse<{}>> {
+    return this.http.post(this.resourceUrl + '/uploadImage', img, { observe: 'response' });
   }
 
   create(plant: NewPlant): Observable<EntityResponseType> {

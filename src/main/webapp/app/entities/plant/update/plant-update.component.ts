@@ -10,7 +10,6 @@ import { PlantService } from '../service/plant.service';
 import { ICategory } from 'app/entities/category/category.model';
 import { CategoryService } from 'app/entities/category/service/category.service';
 import { FileHandle } from '../../../drag-ndrop.directive';
-import { AzureBlobStorageService } from '../../../azure-blob-storage.service';
 
 @Component({
   selector: 'jhi-plant-update',
@@ -22,8 +21,6 @@ export class PlantUpdateComponent implements OnInit {
   files: FileHandle[] = [];
   files_names: string[] = [];
   saved_files: FileHandle[] = [];
-  sas =
-    'sp=racwdli&st=2023-11-18T13:43:30Z&se=2024-01-01T21:43:30Z&spr=https&sv=2022-11-02&sr=c&sig=7az5ERRS2B0gz%2F72aHTdDAQgSWu4g53NJDqxPUWiB5Q%3D';
 
   categoriesSharedCollection: ICategory[] = [];
 
@@ -33,8 +30,7 @@ export class PlantUpdateComponent implements OnInit {
     protected plantService: PlantService,
     protected plantFormService: PlantFormService,
     protected categoryService: CategoryService,
-    protected activatedRoute: ActivatedRoute,
-    private blobService: AzureBlobStorageService
+    protected activatedRoute: ActivatedRoute
   ) {}
 
   compareCategory = (o1: ICategory | null, o2: ICategory | null): boolean => this.categoryService.compareCategory(o1, o2);
@@ -44,11 +40,11 @@ export class PlantUpdateComponent implements OnInit {
       this.plant = plant;
       if (plant) {
         this.updateForm(plant);
-        const pathlink:string[] | undefined = this.plant?.imagePath?.split("**");
-        if (pathlink){
+        const pathlink: string[] | undefined = this.plant?.imagePath?.split('**');
+        if (pathlink) {
           pathlink.forEach(link => {
-            this.files_names.push(link)
-          })
+            this.files_names.push(link);
+          });
         }
       }
 
@@ -73,9 +69,11 @@ export class PlantUpdateComponent implements OnInit {
       }
     }
 
-    // Upload images to azure using blobServicce
+    // Upload images to azure via the backend
     for (const savedFile of this.saved_files) {
-      this.blobService.uploadImage(this.sas, savedFile.file, savedFile.file.name);
+      const formData: FormData = new FormData();
+      formData.append('file', savedFile.file);
+      this.plantService.uploadImage(formData).subscribe();
     }
 
     plant.imagePath = pathname;
