@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="fr">
+<head>
+  <title th:text="#{email.command.valid.title}">Validation de votre commande</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+</head>
+<body>
+  <p th:text="#{email.command.valid.greeting(${user.login})}">Cher</p>
+  <p th:text="#{email.command.valid.text1}">Votre commande a bien été validé</p>
+  <p>
+    <span th:text="#{email.command.valid.text2}">Cordialement,</span>
+    <br>
+    <em th:text="#{email.signature}">La Serre Echantee.</em>
+  </p>
+</body>
+</html>

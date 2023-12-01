@@ -2,6 +2,7 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Command;
 import com.mycompany.myapp.repository.CommandRepository;
+import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,8 +35,11 @@ public class CommandResource {
 
     private final CommandRepository commandRepository;
 
-    public CommandResource(CommandRepository commandRepository) {
+    private final MailService mailService;
+
+    public CommandResource(CommandRepository commandRepository, MailService mailService) {
         this.commandRepository = commandRepository;
+        this.mailService = mailService;
     }
 
     /**
@@ -52,6 +56,7 @@ public class CommandResource {
             throw new BadRequestAlertException("A new command cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Command result = commandRepository.save(command);
+        mailService.sendCommandValid(command);
         return ResponseEntity
             .created(new URI("/api/commands/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
