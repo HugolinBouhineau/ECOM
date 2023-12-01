@@ -1,6 +1,7 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Category;
+import com.mycompany.myapp.domain.CommandItem;
 import com.mycompany.myapp.domain.Plant;
 import com.mycompany.myapp.domain.PlantQuantity;
 import com.mycompany.myapp.repository.CategoryRepository;
@@ -43,11 +44,14 @@ public class PlantResource {
 
     private final PlantService plantService;
 
+    private final CommandItemResource cir;
+
     private final CategoryRepository categoryRepository;
 
-    public PlantResource(PlantRepository plantRepository, PlantService plantService, CategoryRepository categoryRepository) {
+    public PlantResource(PlantRepository plantRepository, PlantService plantService, CommandItemResource cir, CategoryRepository categoryRepository) {
         this.plantRepository = plantRepository;
         this.plantService = plantService;
+        this.cir = cir;
         this.categoryRepository = categoryRepository;
     }
 
@@ -78,7 +82,8 @@ public class PlantResource {
 
     @PostMapping("/plants/refillPlant")
     public Boolean refillPlant(@RequestBody long commandId) {
-        return plantService.refillPlant(commandId);
+        List<CommandItem> list_command = cir.getAllCommandItems();
+        return plantService.refillPlant(commandId, list_command);
     }
 
     /**

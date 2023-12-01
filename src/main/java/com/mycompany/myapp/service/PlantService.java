@@ -22,13 +22,9 @@ import java.util.List;
 public class PlantService {
 
     private final Logger log = LoggerFactory.getLogger(PlantService.class);
-    private final CommandItemResource cir;
+
     @PersistenceContext
     private EntityManager entityManager;
-
-    public PlantService(CommandItemResource cir) {
-        this.cir = cir;
-    }
 
     @Transactional
     public Boolean verifyAndUpdateStock(@RequestBody PlantQuantity[] quantitiesAsked) {
@@ -59,9 +55,8 @@ public class PlantService {
     }
 
     @Transactional
-    public Boolean refillPlant(@RequestBody long commandId) {
+    public Boolean refillPlant(@RequestBody long commandId, List<CommandItem> list_command ) {
         log.debug("REST request to refillPlant for {}:", commandId);
-        List<CommandItem> list_command = cir.getAllCommandItems();
         for(CommandItem command : list_command){
             log.debug("item : {} ", command.getCommand().getId());
             if(command.getCommand().getId() == commandId){
