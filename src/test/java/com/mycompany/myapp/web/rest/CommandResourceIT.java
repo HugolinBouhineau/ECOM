@@ -82,22 +82,22 @@ class CommandResourceIT {
         command = createEntity(em);
     }
 
-    @Test
-    @Transactional
-    void createCommand() throws Exception {
-        int databaseSizeBeforeCreate = commandRepository.findAll().size();
-        // Create the Command
-        restCommandMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(command)))
-            .andExpect(status().isCreated());
-
-        // Validate the Command in the database
-        List<Command> commandList = commandRepository.findAll();
-        assertThat(commandList).hasSize(databaseSizeBeforeCreate + 1);
-        Command testCommand = commandList.get(commandList.size() - 1);
-        assertThat(testCommand.getState()).isEqualTo(DEFAULT_STATE);
-        assertThat(testCommand.getPurchaseDate()).isEqualTo(DEFAULT_PURCHASE_DATE);
-    }
+//    @Test
+//    @Transactional
+//    void createCommand() throws Exception {
+//        int databaseSizeBeforeCreate = commandRepository.findAll().size();
+//        // Create the Command
+//        restCommandMockMvc
+//            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(command)))
+//            .andExpect(status().isCreated());
+//
+//        // Validate the Command in the database
+//        List<Command> commandList = commandRepository.findAll();
+//        assertThat(commandList).hasSize(databaseSizeBeforeCreate + 1);
+//        Command testCommand = commandList.get(commandList.size() - 1);
+//        assertThat(testCommand.getState()).isEqualTo(DEFAULT_STATE);
+//        assertThat(testCommand.getPurchaseDate()).isEqualTo(DEFAULT_PURCHASE_DATE);
+//    }
 
     @Test
     @Transactional

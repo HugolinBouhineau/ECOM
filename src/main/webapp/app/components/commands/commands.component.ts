@@ -7,10 +7,11 @@ import { ICustomer } from '../../entities/customer/customer.model';
 import { CommandService } from '../../entities/command/service/command.service';
 import { CommandState } from '../../entities/enumerations/command-state.model';
 import dayjs from 'dayjs/esm';
-import { IPlant } from '../../entities/plant/plant.model';
+import {IPlant} from '../../entities/plant/plant.model';
 import { CommandDialogServiceService } from '../../command-dialog/command-dialog-service.service';
 import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 import { ICommandItem } from '../../entities/command-item/command-item.model';
+import {PlantService} from "../../entities/plant/service/plant.service";
 
 @Component({
   selector: 'jhi-commands',
@@ -30,7 +31,8 @@ export class CommandsComponent implements OnInit {
     private customerService: CustomerService,
     private commandService: CommandService,
     private commandItemService: CommandItemService,
-    private cds: CommandDialogServiceService
+    private cds: CommandDialogServiceService,
+    private ps: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -114,7 +116,7 @@ export class CommandsComponent implements OnInit {
     command.state = CommandState.Cancelled;
     command.purchaseDate = dayjs(command.purchaseDate);
     this.commandService.update(command).subscribe(() => {
-      this.load();
+      this.ps.refillPlant(command.id).subscribe( () => {this.load();})
     });
   }
 }

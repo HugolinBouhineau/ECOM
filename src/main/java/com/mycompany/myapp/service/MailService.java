@@ -1,5 +1,6 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Command;
 import com.mycompany.myapp.domain.User;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -108,5 +109,11 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    @Async
+    public void sendCommandValid(Command command) {
+        log.debug("Sending command valid email to '{}'", command.getCustomer().getUser().getEmail());
+        sendEmailFromTemplate(command.getCustomer().getUser(), "mail/commandValidEmail", "email.command.valid.title");
     }
 }
