@@ -1,6 +1,7 @@
 name: Deploy
 on: workflow_dispatch
 jobs:
+  runs-on: ubuntu-latest
   steps:
     steps:
       - uses: actions/checkout@v3
