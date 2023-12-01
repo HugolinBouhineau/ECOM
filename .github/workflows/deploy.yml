@@ -1,8 +1,9 @@
 name: Deploy
 on: workflow_dispatch
 jobs:
-  runs-on: ubuntu-latest
-  steps:
+  build:
+    name: Deploy the app
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
