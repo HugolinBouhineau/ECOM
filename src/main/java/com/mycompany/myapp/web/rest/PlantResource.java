@@ -76,6 +76,11 @@ public class PlantResource {
         return plantService.verifyAndUpdateStock(quantitiesAsked);
     }
 
+    @PostMapping("/plants/refillPlant")
+    public Boolean refillPlant(@RequestBody long commandId) {
+        return plantService.refillPlant(commandId);
+    }
+
     /**
      * {@code PUT  /plants/:id} : Updates an existing plant.
      *
