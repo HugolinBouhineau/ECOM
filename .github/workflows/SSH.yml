@@ -17,4 +17,4 @@ jobs:
             sudo docker rm azureuser-ecom-app-1
             sudo docker image rm sp3cialoo7/ecom-app
             sudo docker compose -f app.yml pull
-            sudo docker compose -f app.yml up
+            sudo docker compose -d -f app.yml up
