@@ -5,7 +5,7 @@ export interface ICommandItem {
   id: number;
   quantity?: number | null;
   command?: Pick<ICommand, 'id'> | null;
-  plant?: Pick<IPlant, 'id'> | null;
+  plant?: IPlant | null;
 }
 
 export type NewCommandItem = Omit<ICommandItem, 'id'> & { id: null };
