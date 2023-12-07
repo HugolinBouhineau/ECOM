@@ -25,7 +25,6 @@ export class CatalogComponent implements OnInit {
   totalPage = 0;
   size = 6;
   sortby: FilterSort = 'no';
-  isSortByAsc = false;
   minPrice = 0;
   maxPrice = 0;
   maxRange = 0;
@@ -95,14 +94,12 @@ export class CatalogComponent implements OnInit {
 
   sortByAscendingPrice(): void {
     this.sortby = 'asc';
-    this.isSortByAsc = true;
     this.filteringPlantsService.saveFilter({sortBy: this.sortby});
     this.filterPlants();
   }
 
   sortByDescendingPrice(): void {
     this.sortby = 'desc';
-    this.isSortByAsc = false;
     this.filteringPlantsService.saveFilter({sortBy: this.sortby});
     this.filterPlants();
   }
@@ -230,7 +227,6 @@ export class CatalogComponent implements OnInit {
   resetFilter(): void {
     this.filteringPlantsService.resetFilter();
     this.sortby = 'no';
-    this.isSortByAsc = false;
     this.searchWord = '';
     this.categoriesSelected = [];
     this.minPrice = 0;

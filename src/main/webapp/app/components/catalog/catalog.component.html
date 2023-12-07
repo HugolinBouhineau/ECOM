@@ -82,9 +82,9 @@
         <div class="col-md-auto">
           <label class="mr2">Trier par :</label>
           <div class="col-md-auto btn-group" aria-label="Sort By Button">
-            <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" [(ngModel)]="isSortByAsc"/>
+            <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" [(ngModel)]="sortby" [value]="'asc'"/>
             <label class="btn" for="btnSortAscending">Prix: croissant</label>
-            <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" [(ngModel)]="!isSortByAsc" />
+            <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" [(ngModel)]="sortby" [value]="'desc'"/>
             <label class="btn" for="btnSortDescending">Prix: décroissant</label>
           </div>
         </div>
