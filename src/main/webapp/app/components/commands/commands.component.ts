@@ -24,6 +24,8 @@ export class CommandsComponent implements OnInit {
   id = 0;
   authenticatedUser: Account | undefined = undefined;
   customer: ICustomer | undefined = undefined;
+  commandExpanded : boolean[] = [];
+
   protected readonly CommandState = CommandState;
 
   constructor(
@@ -76,6 +78,13 @@ export class CommandsComponent implements OnInit {
       for (let i = 0; i < commandz.length; i++) {
         // Add command items to command
         commandz[i].commandItems = commandItems.filter(value1 => value1.command?.id === commandz[i].id);
+        commandz[i].commandItems?.forEach(item => {
+          if(item.plant){
+            this.ps.find(item.plant.id).subscribe(value1 => {
+              item.plant = value1.body;
+            });
+          }
+        })
         // Chek if command is passed or in progress
         const customer: ICustomer = <ICustomer>commandz[i].customer;
         if (customer.id === this.id) {
@@ -85,6 +94,7 @@ export class CommandsComponent implements OnInit {
             this.list_command_passed.push(commandz[i]);
           }
         }
+        this.commandExpanded[commandz[i].id] = false;
       }
     });
   }

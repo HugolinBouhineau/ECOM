@@ -8,36 +8,49 @@
           <th scope="col">ID</th>
           <th scope="col">Date D'achat</th>
           <th scope="col">Etat</th>
+          <th scope="col">Détail</th>
           <th scope="col">Total</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let command of progress_command">
-          <ng-container *ngIf="command">
-            <td>
-              <h3 class="child mx-3">
-                <strong>{{ command.id }}</strong>
-              </h3>
-            </td>
-            <td>
-              <h4 class="child">
-                {{ command.purchaseDate }}
-              </h4>
-            </td>
-            <td>
-              <div *ngIf="command.state == CommandState.InProgress; else shipping">Commande en cours de préparation</div>
-              <ng-template #shipping>Commande en cours de livraison </ng-template>
-            </td>
-            <td>
-              <h4 class="child">
-                <strong> {{ getPrice(command) }} <span class="text-muted">€</span> </strong>
-              </h4>
-              <button *ngIf="command.state == CommandState.InProgress" type="button" class="btn btn-link child" (click)="openConfirmationDialog(command)">
-                <fa-icon icon="xmark" style="color: red"></fa-icon>
-              </button>
-            </td>
-          </ng-container>
-        </tr>
+      <ng-container *ngFor="let command of progress_command" >
+        <ng-container *ngIf="command">
+          <tr>
+              <td>
+                <h3 class="child mx-3">
+                  <strong>{{ command.id }}</strong>
+                </h3>
+              </td>
+              <td>
+                <h4 class="child">
+                  {{ command.purchaseDate }}
+                </h4>
+              </td>
+              <td>
+                <div *ngIf="command.state == CommandState.InProgress; else shipping">Commande en cours de préparation</div>
+                <ng-template #shipping>Commande en cours de livraison </ng-template>
+              </td>
+              <td>
+                <button (click)="commandExpanded[command.id] = !commandExpanded[command.id]">
+                  Voir le détail
+                </button>
+              </td>
+              <td>
+                <h4 class="child">
+                  <strong> {{ getPrice(command) }} <span class="text-muted">€</span> </strong>
+                </h4>
+                <button *ngIf="command.state == CommandState.InProgress" type="button" class="btn btn-link child" (click)="openConfirmationDialog(command)">
+                  <fa-icon icon="xmark" style="color: red"></fa-icon>
+                </button>
+              </td>
+          </tr>
+          <ul *ngIf="commandExpanded[command.id]">
+            <li *ngFor="let commandItem of command.commandItems">
+              x{{commandItem.quantity}} {{commandItem.plant?.name}} {{commandItem.plant?.price}}€/unité
+            </li>
+          </ul>
+        </ng-container>
+      </ng-container>
       </tbody>
     </table>
   </div>

@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { PlantService } from '../../entities/plant/service/plant.service';
-import { ActivatedRoute, Params } from '@angular/router';
-import { IPlant } from '../../entities/plant/plant.model';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {PlantService} from '../../entities/plant/service/plant.service';
+import {ActivatedRoute, Params} from '@angular/router';
+import {IPlant} from '../../entities/plant/plant.model';
 import { PanierService } from '../../service/panier.service';
-import { AlertService } from '../../core/util/alert.service';
-import { CommandItemService } from '../../entities/command-item/service/command-item.service';
+import {AlertService} from '../../core/util/alert.service';
+import {CommandItemService} from '../../entities/command-item/service/command-item.service';
 
 @Component({
   selector: 'jhi-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ProductComponent implements OnInit {
   plant: any;
