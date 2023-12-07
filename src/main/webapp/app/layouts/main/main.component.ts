@@ -24,8 +24,11 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // try to log in automatically
-    this.accountService.identity().subscribe();
+    // try to log if there is an authentification token
+    const authToken = localStorage.getItem('jhi-authenticationToken') ?? sessionStorage.getItem('jhi-authenticationToken');
+    if (authToken) {
+      this.accountService.identity().subscribe();
+    }
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
