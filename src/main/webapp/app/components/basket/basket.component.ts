@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Item, PanierService } from '../../panier.service';
+import { Item, PanierService } from '../../service/panier.service';
 import { IPlant } from '../../entities/plant/plant.model';
 import { Account } from '../../core/auth/account.model';
 import { AccountService } from '../../core/auth/account.service';

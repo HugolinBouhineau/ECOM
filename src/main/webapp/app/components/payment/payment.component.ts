@@ -3,7 +3,7 @@ import { CustomerService } from '../../entities/customer/service/customer.servic
 import { ICustomer } from '../../entities/customer/customer.model';
 import { IAddress, NewAddress } from '../../entities/address/address.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Item, PanierService } from '../../panier.service';
+import { Item, PanierService } from '../../service/panier.service';
 import { AddressService } from '../../entities/address/service/address.service';
 import { ICommand, NewCommand } from '../../entities/command/command.model';
 import { CommandState } from '../../entities/enumerations/command-state.model';

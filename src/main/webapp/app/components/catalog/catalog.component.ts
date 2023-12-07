@@ -3,7 +3,7 @@ import { CategoryService } from '../../entities/category/service/category.servic
 import { ICategory } from '../../entities/category/category.model';
 import { PlantService } from '../../entities/plant/service/plant.service';
 import { IPlant } from '../../entities/plant/plant.model';
-import { PanierService } from '../../panier.service';
+import { PanierService } from '../../service/panier.service';
 import { AlertService } from '../../core/util/alert.service';
 import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 
