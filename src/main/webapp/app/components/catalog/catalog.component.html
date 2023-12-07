@@ -115,7 +115,7 @@
                   <p class="font-italic">{{ plant.latinName }}</p>
                 </h5>
                 <div>
-                  <h5 class="card-price small text-warning">{{ plant.price }}€</h5>
+                  <h5 class="card-price text-warning size2">{{ plant.price }}€</h5>
                   <button
                     *ngIf="plant.stock && plant.stock > 0"
                     onClick="this.blur()"
@@ -126,7 +126,7 @@
                     <fa-icon icon="cart-plus"></fa-icon>
                     Ajouter au panier
                   </button>
-                  <p *ngIf="!plant.stock || plant.stock <= 0">Pas en stock</p>
+                  <p *ngIf="!plant.stock || plant.stock <= 0" class="size1">Pas en stock</p>
                 </div>
               </div>
             </div>
