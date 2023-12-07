@@ -59,7 +59,7 @@ body {
 }
 
 .card {
-  margin-top: 50px;
+  margin-top: 10px;
   background: #eee;
   padding: 3em;
   line-height: 1.5em;
@@ -224,4 +224,9 @@ body {
 .imTop {
   position: relative;
   width: 100%;
+}
+
+.size-go-back {
+  height: 50px;
+  width: 50px;
 }

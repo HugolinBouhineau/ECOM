@@ -46,7 +46,8 @@ import {
   faXmark,
   faSunPlantWilt,
   // jhipster-needle-add-icon-import
-  faArrowUp
+  faArrowUp,
+  faXmarksLines
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -98,4 +99,5 @@ export const fontAwesomeIcons = [
   faSunPlantWilt,
   // jhipster-needle-add-icon-import
   faArrowUp,
+  faXmarksLines
 ];
