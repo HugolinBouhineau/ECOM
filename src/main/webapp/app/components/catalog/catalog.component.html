@@ -60,7 +60,7 @@
                     </button>
                   </li>
                   <li class="page-item">
-                    <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }}</button>
+                    <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }} / {{ totalPage }}</button>
                   </li>
                   <li class="page-item">
                     <button type="button" class="btn btn-mg btn-light rounded" [disabled]="isLastPage" (click)="upPage()">
@@ -83,9 +83,9 @@
           <label class="mr2">Trier par :</label>
           <div class="col-md-auto btn-group" aria-label="Sort By Button">
             <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" />
-            <label class="btn" for="btnSortAscending">Prix: ordre croissant</label>
+            <label class="btn" for="btnSortAscending">Prix: croissant</label>
             <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" />
-            <label class="btn" for="btnSortDescending">Prix: ordre décroissant</label>
+            <label class="btn" for="btnSortDescending">Prix: décroissant</label>
           </div>
         </div>
       </div>
@@ -150,7 +150,7 @@
                   </button>
                 </li>
                 <li class="page-item">
-                  <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }}</button>
+                  <button class="btn btn-mg btn-unactived shadow-none">{{ currentPage + 1 }} / {{ totalPage }}</button>
                 </li>
                 <li class="page-item">
                   <button type="button" class="btn btn-mg btn-light rounded" [disabled]="isLastPage" (click)="upPage()">

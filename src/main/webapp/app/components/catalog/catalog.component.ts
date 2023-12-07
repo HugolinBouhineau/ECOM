@@ -110,34 +110,6 @@ export class CatalogComponent implements OnInit {
     this.filterPlantWithPrice();
   }
 
-  // filterPlant(useCurrentPage = false): void {
-  //   this.ps.filterPlant(useCurrentPage ? this.currentPage : 0, this.size, this.sortby, this.searchWord, this.categoriesSelected).subscribe({
-  //     next: body => {
-  //       this.error = false;
-  //       this.plants = body.content;
-  //       this.totalPlants = body.totalElements;
-  //       this.currentPage = body.pageable.pageNumber;
-  //       this.totalPage = body.totalPages;
-  //       this.hasNoPlants = false;
-  //       this.isLastPage = false;
-  //       this.isFirstPage = false;
-  //
-  //       if (body.numberOfElements === 0) {
-  //         this.hasNoPlants = true;
-  //       }
-  //       if (this.currentPage === this.totalPage - 1) {
-  //         this.isLastPage = true;
-  //       }
-  //       if (this.currentPage === 0) {
-  //         this.isFirstPage = true;
-  //       }
-  //     },
-  //     error: () => {
-  //       this.error = true;
-  //     },
-  //   });
-  // }
-
   filterPlantWithPrice(useCurrentPage = false): void {
     this.ps
       .filterPlantWithPrice(
@@ -150,7 +122,7 @@ export class CatalogComponent implements OnInit {
         this.maxPrice
       )
       .subscribe({
-        next: body => {
+        next: (body: any) => {
           this.error = false;
           this.plants = body.content;
           this.totalPlants = body.totalElements;
