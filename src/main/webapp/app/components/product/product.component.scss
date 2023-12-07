@@ -225,3 +225,10 @@ body {
   position: relative;
   width: 100%;
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: black;
+  width: 3rem;
+  height: 3rem;
+}
