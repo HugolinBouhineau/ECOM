@@ -1,4 +1,5 @@
 {
+  "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": ["@angular-eslint/eslint-plugin", "@typescript-eslint"],
   "extends": [

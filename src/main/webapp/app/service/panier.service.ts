@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { IPlant } from './entities/plant/plant.model';
-import { AlertService } from './core/util/alert.service';
+import { IPlant } from '../entities/plant/plant.model';
+import { AlertService } from '../core/util/alert.service';
 
 export class Item implements ItemInterface {
   quantity: number;

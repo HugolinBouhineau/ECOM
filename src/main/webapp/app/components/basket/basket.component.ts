@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Item, PanierService } from '../../panier.service';
+import { Item, PanierService } from '../../service/panier.service';
 import { IPlant } from '../../entities/plant/plant.model';
 import { Account } from '../../core/auth/account.model';
 import { AccountService } from '../../core/auth/account.service';
@@ -69,6 +69,7 @@ export class BasketComponent implements OnInit {
                 type: 'warning',
                 message:
                   "Un objet de votre panier n'est plus disponible dans la quantité souhaitée, veuillez vérifier les objets de votre panier",
+                timeout: 8000
               });
             } else {
               if (this.ps.setStock(plant.stock, plant)) {
@@ -76,6 +77,7 @@ export class BasketComponent implements OnInit {
                   type: 'warning',
                   message:
                     "Un objet de votre panier n'est plus disponible dans la quantité souhaitée, veuillez vérifier les objets de votre panier",
+                  timeout: 8000
                 });
               }
             }

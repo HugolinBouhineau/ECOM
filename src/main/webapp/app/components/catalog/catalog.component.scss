@@ -79,6 +79,7 @@
   background-color: #fff;
   pointer-events: auto;
   -webkit-appearance: none;
+
 }
 .range-input input::-moz-range-thumb {
   height: 15px;
@@ -88,4 +89,15 @@
   background-color: #fff;
   pointer-events: auto;
   -moz-appearance: none;
+  cursor: pointer;
+}
+
+.size1 {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.size2 {
+  font-size: 25px;
+  font-weight: bold;
 }
