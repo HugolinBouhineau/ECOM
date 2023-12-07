@@ -82,9 +82,9 @@
         <div class="col-md-auto">
           <label class="mr2">Trier par :</label>
           <div class="col-md-auto btn-group" aria-label="Sort By Button">
-            <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" />
+            <input type="radio" class="btn-check" name="sortby" id="btnSortAscending" (click)="sortByAscendingPrice()" [(ngModel)]="isSortByAsc"/>
             <label class="btn" for="btnSortAscending">Prix: croissant</label>
-            <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" />
+            <input type="radio" class="btn-check" name="sortby" id="btnSortDescending" (click)="sortByDescendingPrice()" [(ngModel)]="!isSortByAsc" />
             <label class="btn" for="btnSortDescending">Prix: décroissant</label>
           </div>
         </div>
@@ -163,7 +163,7 @@
         </div>
       </ng-container>
     </div>
-    <!-- Printing, Categories, Slider for price -->
+    <!-- Printing, Categories, Slider for price, reset buttons -->
     <div class="col-md-4 order-md-1 col-lg-3 sidebar-filter">
       <!-- Printing -->
       <h3 class="mb-5">
@@ -176,7 +176,7 @@
         <div *ngFor="let cat of categories">
           <div *ngIf="cat.categoryType == type" class="mt-2 mb-2 pl-2">
             <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" (change)="filterPlantsFromCategory(cat)" />
+              <input type="checkbox" class="custom-control-input" (change)="filterPlantsFromCategory(cat)" [checked]="categoriesSelected.includes(cat.id)"/>
               <label class="custom-control-label">{{ cat.categoryName }}</label>
             </div>
           </div>
@@ -215,6 +215,10 @@
             />
           </div>
         </div>
+      </div>
+      <!-- reset button -->
+      <div class="mt-5 mb-5 text-center">
+        <button type="button" class="btn btn-primary" (click)="resetFilter()">Réinitialiser</button>
       </div>
     </div>
   </div>

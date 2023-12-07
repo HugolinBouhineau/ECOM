@@ -47,12 +47,6 @@ export class PlantService {
     return this.http.get<IPlant>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  filterPlant(page: number, size: number, sort: string, searchPlant: string, categories: number[]): Observable<any> {
-    return this.http.get(
-      `${this.resourceUrl}/filter/paginate?page=${page}&size=${size}&sort=${sort}&name=${searchPlant}&categoriesId=${categories.toString()}`
-    );
-  }
-
   filterPlantWithPrice(
     page: number,
     size: number,
