@@ -25,7 +25,7 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     // try to log if there is an authentification token
-    var authToken = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+    const authToken = localStorage.getItem('jhi-authenticationToken') ?? sessionStorage.getItem('jhi-authenticationToken');
     if (authToken) {
       this.accountService.identity().subscribe();
     }
