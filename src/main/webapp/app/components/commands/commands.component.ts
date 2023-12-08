@@ -9,9 +9,9 @@ import { CommandState } from '../../entities/enumerations/command-state.model';
 import dayjs from 'dayjs/esm';
 import {IPlant} from '../../entities/plant/plant.model';
 import { CommandDialogServiceService } from '../../command-dialog/command-dialog-service.service';
-import { CommandItemService } from '../../entities/command-item/service/command-item.service';
 import { ICommandItem } from '../../entities/command-item/command-item.model';
 import {PlantService} from "../../entities/plant/service/plant.service";
+import {CommandItemService} from "../../entities/command-item/service/command-item.service";
 
 @Component({
   selector: 'jhi-commands',
@@ -57,47 +57,39 @@ export class CommandsComponent implements OnInit {
   load(): void {
     this.list_command_passed = [];
     this.progress_command = [];
-    this.commandService.all().subscribe((commandz: ICommand[]) => {
+    this.commandService.getCommandsByCustomerId(this.id).subscribe((commandz: ICommand[]) => {
       this.parce(commandz);
-    });
 
-    this.list_command_passed.sort((a: ICommand, b: ICommand) => {
-      const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
-      return date_a.diff(b.purchaseDate);
-    });
-
-    this.progress_command.sort((a: ICommand, b: ICommand) => {
-      const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
-      return date_a.diff(b.purchaseDate);
+      // TODO : fix ce truc ça ne marche pas
+      // this.list_command_passed.sort((a: ICommand, b: ICommand) => {
+      //   const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
+      //   return date_a.diff(b.purchaseDate);
+      // });
+      //
+      // this.progress_command.sort((a: ICommand, b: ICommand) => {
+      //   const date_a: dayjs.Dayjs = <dayjs.Dayjs>a.purchaseDate;
+      //   return date_a.diff(b.purchaseDate);
+      // });
     });
   }
 
   parce(commandz: ICommand[]): void {
-    this.commandItemService.all().subscribe(value => {
-      const commandItems: ICommandItem[] = value;
-      for (let i = 0; i < commandz.length; i++) {
-        // Add command items to command
-        commandz[i].commandItems = commandItems.filter(value1 => value1.command?.id === commandz[i].id);
-        commandz[i].commandItems?.forEach(item => {
-          if(item.plant){
-            this.ps.find(item.plant.id).subscribe(value1 => {
-              item.plant = value1.body;
-            });
-          }
+    for (let i = 0; i < commandz.length; i++) {
+      // Add command items to command
+      commandz[i].commandItems?.forEach(item => {
+        this.commandItemService.find(item.id).subscribe(value => {
+          item.plant = value.body?.plant;
         })
-        // Chek if command is passed or in progress
-        const customer: ICustomer = <ICustomer>commandz[i].customer;
-        if (customer.id === this.id) {
-          if (commandz[i].state === CommandState.InProgress || commandz[i].state === CommandState.Shipping) {
-            this.progress_command.push(commandz[i]);
-          } else {
-            this.list_command_passed.push(commandz[i]);
-          }
-        }
-        this.commandExpanded[commandz[i].id] = false;
+      })
+      if (commandz[i].state === CommandState.InProgress || commandz[i].state === CommandState.Shipping) {
+        this.progress_command.push(commandz[i]);
+      } else {
+        this.list_command_passed.push(commandz[i]);
       }
-    });
+      this.commandExpanded[commandz[i].id] = false;
+    }
   }
+
   getPrice(command: ICommand): number {
     let total = 0;
     if (command.commandItems) {
