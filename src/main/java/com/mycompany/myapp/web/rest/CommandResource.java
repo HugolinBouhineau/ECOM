@@ -2,6 +2,7 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Command;
 import com.mycompany.myapp.repository.CommandRepository;
+import com.mycompany.myapp.service.CommandService;
 import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -37,9 +38,12 @@ public class CommandResource {
 
     private final MailService mailService;
 
-    public CommandResource(CommandRepository commandRepository, MailService mailService) {
+    private final CommandService commandService;
+
+    public CommandResource(CommandRepository commandRepository, MailService mailService, CommandService commandService) {
         this.commandRepository = commandRepository;
         this.mailService = mailService;
+        this.commandService = commandService;
     }
 
     /**
@@ -152,6 +156,12 @@ public class CommandResource {
     public List<Command> getAllCommands() {
         log.debug("REST request to get all Commands");
         return commandRepository.findAll();
+    }
+
+    @GetMapping("/commands/getByCustomerId/{id}")
+    public List<Command> getByCustomerId(@PathVariable Long id) {
+        log.debug("REST request to get all Commands of a customer");
+        return commandService.getCommandsByCustomerId(id);
     }
 
     /**

@@ -35,6 +35,10 @@ export class CommandService {
     return this.http.get<ICommand[]>(this.resourceUrl + '?eagerload=true').pipe(map((body: ICommand[]) => body));
   }
 
+  getCommandsByCustomerId(customerId: number) : Observable<ICommand[]> {
+    return this.http.get<ICommand[]>(`${this.resourceUrl}/getByCustomerId/${customerId}`).pipe(map((body: ICommand[]) => body));
+  }
+
   create(command: NewCommand): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(command);
     return this.http
