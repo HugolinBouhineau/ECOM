@@ -96,7 +96,7 @@
       <div class="row">
         <ng-container *ngFor="let plant of plants">
           <div class="col-6 col-md-6 col-lg-4 mb-3">
-            <div class="card h-100 border-0" [ngStyle]="{ filter: !plant.stock || plant.stock <= 0 ? 'grayscale(1)' : '' }">
+            <div class="card-catalog h-100 border-0" [ngStyle]="{ filter: !plant.stock || plant.stock <= 0 ? 'grayscale(1)' : '' }">
               <div class="card-img-top">
                 <a routerLink="/plant/{{ plant.id }}" class="no-underline font-weight-bold text-dark text-uppercase small">
                   <img src="{{ getPath(plant) }}" class="img-fluid mx-auto d-block" alt="Card image cap" />
