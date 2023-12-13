@@ -29,7 +29,7 @@
               <br />{{ plant.description }}<br />
             </p>
             <h4 class="price">
-              price: <span> {{ plant.price }}€ </span>
+              prix: <span> {{ plant.price }}€ </span>
             </h4>
             <div *ngIf="stock > 0; else elseBlock" class="action">
               <button class="add-to-cart" (click)="AddToCart()">ajouter au panier</button>
